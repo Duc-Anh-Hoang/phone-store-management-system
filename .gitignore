@@ -1,0 +1,147 @@
+# ==============================================================================
+# BẢO MẬT & DỌN DẸP DỰ ÁN (SECURITY & ARTIFACT CLEANUP)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. BẢO MẬT - THÔNG TIN NHẠY CẢM, KHÓA BẢO MẬT & CREDENTIALS
+# (Chống hacker quét bot crawl password, tokens, secret keys)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.template
+*.key
+*.pem
+*.cer
+*.crt
+*.pfx
+*.p12
+*.jks
+*.keystore
+id_rsa*
+id_ecdsa*
+id_ed25519*
+secrets.*
+secrets/
+secret/
+*credential*.json
+*credentials*.xml
+*service-account*.json
+token.txt
+auth_token*
+*.passwd
+*.shadow
+
+# ------------------------------------------------------------------------------
+# 2. JAVA / MAVEN BUILD ARTIFACTS
+# ------------------------------------------------------------------------------
+**/target/
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+
+# Maven specific
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ------------------------------------------------------------------------------
+# 3. MÔI TRƯỜNG PHÁT TRIỂN / IDE & EDITORS
+# ------------------------------------------------------------------------------
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+# Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json.example
+
+# NetBeans
+**/nbproject/private/
+**/nbbuild/
+**/dist/
+**/nbproject/package-*-run.xml
+
+# Editor swap files
+*.swp
+*.swo
+*~
+*.bak
+
+# ------------------------------------------------------------------------------
+# 4. FRONTEND / NODEJS (NẾU DÙNG THÊM TOOLING)
+# ------------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store
+.next/
+.nuxt/
+dist/
+build/
+.cache/
+
+# ------------------------------------------------------------------------------
+# 5. DOCKER & CƠ SỞ DỮ LIỆU
+# ------------------------------------------------------------------------------
+docker-compose.override.yml
+mssql_data/
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+# Ngoại lệ: Giữ nguyên các script khởi tạo database của dự án
+!database/*.sql
+
+# ------------------------------------------------------------------------------
+# 6. LOGS & FILE TẠM THỜI
+# ------------------------------------------------------------------------------
+*.log
+logs/
+temp/
+tmp/
+*.tmp
+gcm-diagnose.log
+
+# ------------------------------------------------------------------------------
+# 7. HỆ ĐIỀU HÀNH (WINDOWS / MACOS / LINUX)
+# ------------------------------------------------------------------------------
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes

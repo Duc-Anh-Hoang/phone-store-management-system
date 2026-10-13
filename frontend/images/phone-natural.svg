@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 700" width="100%" height="100%">
+  <defs>
+    <!-- Titanium Body Gradient: Natural Titanium -->
+    <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8E8D8A"/>
+      <stop offset="25%" stop-color="#ABA9A4"/>
+      <stop offset="50%" stop-color="#7B7975"/>
+      <stop offset="75%" stop-color="#C2C0BA"/>
+      <stop offset="100%" stop-color="#696763"/>
+    </linearGradient>
+
+    <!-- Metal Frame Edge Gradient -->
+    <linearGradient id="metalEdge" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#B8B6B0"/>
+      <stop offset="50%" stop-color="#6E6D69"/>
+      <stop offset="100%" stop-color="#A8A6A0"/>
+    </linearGradient>
+
+    <radialGradient id="screenWallpaper" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#A5A58D" stop-opacity="0.8"/>
+      <stop offset="35%" stop-color="#6B705C" stop-opacity="0.6"/>
+      <stop offset="70%" stop-color="#1B263B" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#050C1A" stop-opacity="1"/>
+    </radialGradient>
+
+    <filter id="phoneShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="25" stdDeviation="25" flood-color="#0F172A" flood-opacity="0.35"/>
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#6B705C" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <ellipse cx="250" cy="650" rx="170" ry="22" fill="#0F172A" opacity="0.28" filter="blur(14px)"/>
+
+  <g filter="url(#phoneShadow)">
+    <rect x="90" y="45" width="320" height="590" rx="52" fill="url(#metalEdge)" stroke="#C2C0BA" stroke-width="2"/>
+    <rect x="93" y="48" width="314" height="584" rx="49" fill="url(#bodyGradient)" stroke="#5E5C58" stroke-width="1.5"/>
+
+    <rect x="89" y="130" width="3" height="8" fill="#5E5C58" opacity="0.8"/>
+    <rect x="408" y="130" width="3" height="8" fill="#5E5C58" opacity="0.8"/>
+    <rect x="89" y="520" width="3" height="8" fill="#5E5C58" opacity="0.8"/>
+    <rect x="408" y="520" width="3" height="8" fill="#5E5C58" opacity="0.8"/>
+
+    <rect x="98" y="53" width="304" height="574" rx="44" fill="#000000"/>
+    <rect x="101" y="56" width="298" height="568" rx="41" fill="url(#screenWallpaper)"/>
+
+    <circle cx="250" cy="300" r="110" fill="none" stroke="#DDBEA9" stroke-width="24" opacity="0.35"/>
+    <circle cx="250" cy="300" r="70" fill="none" stroke="#B7B7A4" stroke-width="18" opacity="0.45"/>
+    <path d="M 120 450 Q 250 360 380 480" stroke="#FFE8D6" stroke-width="3" fill="none" opacity="0.5"/>
+
+    <text x="140" y="85" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" text-anchor="middle">9:41</text>
+
+    <g transform="translate(340, 75)" fill="#FFFFFF">
+      <rect x="0" y="7" width="2.5" height="4" rx="0.5"/>
+      <rect x="4" y="5" width="2.5" height="6" rx="0.5"/>
+      <rect x="8" y="3" width="2.5" height="8" rx="0.5"/>
+      <rect x="12" y="1" width="2.5" height="10" rx="0.5"/>
+      <path d="M 22 3 A 8 8 0 0 1 32 3 M 24 6 A 5 5 0 0 1 30 6 M 27 9 A 1 1 0 0 1 27 10" stroke="#FFF" stroke-width="1.2" fill="none"/>
+      <rect x="36" y="2" width="18" height="9" rx="2.5" fill="none" stroke="#FFF" stroke-width="1.2"/>
+      <rect x="38" y="4" width="12" height="5" rx="1.5" fill="#2ECC71"/>
+      <rect x="55" y="5" width="1.5" height="3" rx="0.5"/>
+    </g>
+
+    <rect x="202" y="65" width="96" height="26" rx="13" fill="#000000"/>
+    <circle cx="280" cy="78" r="4.5" fill="#15171C"/>
+    <circle cx="280" cy="78" r="2" fill="#2A3B5C"/>
+    <circle cx="225" cy="78" r="3.5" fill="#0C0D10"/>
+
+    <text x="250" y="210" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="54" font-weight="700" letter-spacing="-1" text-anchor="middle" opacity="0.95">09:41</text>
+    <text x="250" y="235" fill="#C2C0BA" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="500" text-anchor="middle" opacity="0.9">Thứ Hai, 12 tháng 10</text>
+
+    <path d="M 105 60 L 390 60 L 290 620 L 105 620 Z" fill="white" opacity="0.03"/>
+    <rect x="195" y="612" width="110" height="4" rx="2" fill="#FFFFFF" opacity="0.8"/>
+  </g>
+
+  <rect x="88" y="145" width="2" height="24" rx="1" fill="#8E8D8A"/>
+  <rect x="88" y="185" width="2" height="44" rx="1" fill="#8E8D8A"/>
+  <rect x="88" y="238" width="2" height="44" rx="1" fill="#8E8D8A"/>
+  <rect x="410" y="195" width="2" height="65" rx="1" fill="#8E8D8A"/>
+  <rect x="410" y="440" width="2.5" height="42" rx="1.2" fill="#C2C0BA" stroke="#7B7975" stroke-width="0.5"/>
+</svg>
