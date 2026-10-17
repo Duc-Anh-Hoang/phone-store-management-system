@@ -4,20 +4,25 @@
    ========================================================================== */
 
 :root {
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
-  --color-navy: #0f172a;
-  --color-background: #f8fafc;
+  --color-primary: #80ffbf;
+  --color-primary-hover: #66e6a5;
+  --color-primary-deep: #064e29;
+  --color-primary-light: #eafff5;
+  --color-primary-pale: #dcffed;
+  --color-accent: #80ffbf;
+  --color-navy: #061a0f;
+  --color-background: #f4f7f5;
   --color-surface: #ffffff;
-  --color-text: #0f172a;
-  --color-text-muted: #64748b;
+  --color-text: #111827;
+  --color-text-muted: #6b7280;
   --color-border: #e2e8f0;
-  --color-success: #16a34a;
+  --color-success: #80ffbf;
   --color-warning: #f59e0b;
   --color-danger: #dc2626;
+  --color-info: #2563eb;
 
   /* Custom Glows */
-  --glow-primary: rgba(37, 99, 235, 0.25);
+  --glow-primary: rgba(128, 255, 191, 0.35);
   --glow-desert: rgba(197, 168, 142, 0.3);
 }
 
@@ -55,7 +60,7 @@ body {
 
 /* Hiệu ứng nền Titanium Glow và Gradient */
 .hero-radial-bg {
-  background: radial-gradient(circle at 75% 45%, rgba(221, 196, 173, 0.28) 0%, rgba(37, 99, 235, 0.08) 35%, rgba(248, 250, 252, 0) 70%);
+  background: radial-gradient(circle at 75% 45%, rgba(221, 196, 173, 0.28) 0%, rgba(22, 163, 74, 0.08) 35%, rgba(243, 244, 246, 0) 70%);
 }
 
 .dark-titan-card {
@@ -96,23 +101,23 @@ body {
 /* Lựa chọn màu sắc (Color Swatches) */
 .color-choice-input:checked + .color-choice-label {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 0 0 3px rgba(51, 255, 102, 0.45);
   transform: translateY(-2px);
 }
 
 /* Lựa chọn dung lượng */
 .storage-choice-input:checked + .storage-choice-label {
   border-color: var(--color-primary);
-  background-color: #eff6ff;
-  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-deep);
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 2px 8px rgba(51, 255, 102, 0.25);
 }
 
 /* Phương thức thanh toán */
 .payment-choice-input:checked + .payment-choice-label {
   border-color: var(--color-primary);
-  background-color: #eff6ff;
+  background-color: var(--color-primary-light);
 }
 
 /* Card hover animation */
@@ -290,3 +295,82 @@ body {
   border-radius: 9999px;
   opacity: 1;
 }
+
+/* ==========================================================================
+   TITAN STORE - CELLPHONES STYLE EXTENSIONS
+   ========================================================================== */
+
+/* Marquee / Dải chữ chạy Top Bar ngang mượt mà */
+@keyframes marqueeScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee,
+.marquee-track {
+  display: flex !important;
+  width: max-content !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+  animation: marqueeScroll 28s linear infinite !important;
+  will-change: transform;
+}
+
+.animate-marquee:hover,
+.marquee-track:hover {
+  animation-play-state: paused !important;
+}
+
+.marquee-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+}
+
+/* Hiệu ứng lửa Flash Sale */
+@keyframes flamePulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.6)); }
+  50% { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.8)); }
+}
+
+.flame-pulse {
+  animation: flamePulse 1.8s infinite ease-in-out;
+}
+
+/* Thẻ sản phẩm hover zoom & elevation */
+.product-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Right Drawer Cart transition */
+#cart-drawer {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Mega Menu Flyout */
+.mega-menu-content {
+  box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.15);
+}
+
+/* Modal animation */
+.modal-fade-in {
+  animation: modalFade 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalFade {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Mobile Bottom Bar offset */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 70px;
+  }
+}
+

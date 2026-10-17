@@ -202,24 +202,43 @@
       const customerBadge = document.getElementById('header-customer-menu');
 
       if (!user) {
-        if (loginBtn) loginBtn.classList.remove('hidden');
-        if (staffBadge) staffBadge.classList.add('hidden');
-        if (customerBadge) customerBadge.classList.add('hidden');
+        if (loginBtn) {
+          loginBtn.classList.remove('hidden');
+          loginBtn.style.display = 'inline-flex';
+        }
+        if (staffBadge) {
+          staffBadge.classList.add('hidden');
+          staffBadge.style.display = 'none';
+        }
+        if (customerBadge) {
+          customerBadge.classList.add('hidden');
+          customerBadge.style.display = 'none';
+        }
         return;
       }
 
-      if (loginBtn) loginBtn.classList.add('hidden');
+      if (loginBtn) {
+        loginBtn.classList.add('hidden');
+        loginBtn.style.display = 'none';
+      }
 
       if (user.type === 'staff') {
         // Giao diện khi Nhân viên / Admin đăng nhập
-        if (customerBadge) customerBadge.classList.add('hidden');
+        if (customerBadge) {
+          customerBadge.classList.add('hidden');
+          customerBadge.style.display = 'none';
+        }
         if (staffBadge) {
           staffBadge.classList.remove('hidden');
+          staffBadge.style.display = 'inline-flex';
+          staffBadge.style.alignItems = 'center';
+          staffBadge.style.flexWrap = 'nowrap';
           const nameEl = document.getElementById('staff-header-name');
           const roleEl = document.getElementById('staff-header-role');
           const isEn = window.TitanI18n && window.TitanI18n.getLang() === 'en';
           if (nameEl) nameEl.textContent = isEn ? 'Admin Portal' : 'Vào Quản Trị';
-          if (roleEl) roleEl.textContent = user.username || user.tenQuyen || 'Admin';
+          // Bỏ hoàn toàn phần hiển thị role (banhang) trong nút theo yêu cầu của người dùng
+          if (roleEl) roleEl.remove();
           const linkEl = staffBadge.querySelector('a');
           if (linkEl) {
             const fullName = user.tenNhanVien ? (user.tenNhanVien + ' (' + (user.tenQuyen || user.username) + ')') : user.username;
@@ -228,9 +247,15 @@
         }
       } else if (user.type === 'customer') {
         // Giao diện khi Khách hàng (Người dùng) đăng nhập
-        if (staffBadge) staffBadge.classList.add('hidden');
+        if (staffBadge) {
+          staffBadge.classList.add('hidden');
+          staffBadge.style.display = 'none';
+        }
         if (customerBadge) {
           customerBadge.classList.remove('hidden');
+          customerBadge.style.display = 'inline-flex';
+          customerBadge.style.alignItems = 'center';
+          customerBadge.style.flexWrap = 'nowrap';
           const nameEl = document.getElementById('customer-header-name');
           const phoneEl = document.getElementById('customer-header-phone');
           if (nameEl) nameEl.textContent = user.hoTen || 'Khách Hàng';
@@ -267,7 +292,7 @@
           <div class="modal-content-box bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
             <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20">
+                <div class="w-10 h-10 rounded-xl bg-[#16A34A] text-white flex items-center justify-center shadow-md shadow-green-600/20">
                   <i class="fa-solid fa-shield-halved text-lg"></i>
                 </div>
                 <div>
@@ -296,11 +321,11 @@
                 <div class="pt-2 border-t text-xs text-slate-500">
                   <span class="font-bold">Đăng nhập nhanh mẫu:</span>
                   <div class="grid grid-cols-3 gap-1.5 mt-2">
-                    <button type="button" onclick="window.quickStaffLogin('admin')" class="px-2 py-1 bg-slate-100 hover:bg-blue-50 text-[11px] font-bold rounded-lg border">admin</button>
-                    <button type="button" onclick="window.quickStaffLogin('banhang')" class="px-2 py-1 bg-slate-100 hover:bg-blue-50 text-[11px] font-bold rounded-lg border">banhang</button>
-                    <button type="button" onclick="window.quickStaffLogin('thungan')" class="px-2 py-1 bg-slate-100 hover:bg-blue-50 text-[11px] font-bold rounded-lg border">thungan</button>
-                    <button type="button" onclick="window.quickStaffLogin('kho')" class="px-2 py-1 bg-slate-100 hover:bg-blue-50 text-[11px] font-bold rounded-lg border">kho</button>
-                    <button type="button" onclick="window.quickStaffLogin('kythuat')" class="px-2 py-1 bg-slate-100 hover:bg-blue-50 text-[11px] font-bold rounded-lg border">kythuat</button>
+                    <button type="button" onclick="window.quickStaffLogin('admin')" class="px-2 py-1 bg-slate-100 hover:bg-[#F0FDF4] text-[11px] font-bold rounded-lg border">admin</button>
+                    <button type="button" onclick="window.quickStaffLogin('banhang')" class="px-2 py-1 bg-slate-100 hover:bg-[#F0FDF4] text-[11px] font-bold rounded-lg border">banhang</button>
+                    <button type="button" onclick="window.quickStaffLogin('thungan')" class="px-2 py-1 bg-slate-100 hover:bg-[#F0FDF4] text-[11px] font-bold rounded-lg border">thungan</button>
+                    <button type="button" onclick="window.quickStaffLogin('kho')" class="px-2 py-1 bg-slate-100 hover:bg-[#F0FDF4] text-[11px] font-bold rounded-lg border">kho</button>
+                    <button type="button" onclick="window.quickStaffLogin('kythuat')" class="px-2 py-1 bg-slate-100 hover:bg-[#F0FDF4] text-[11px] font-bold rounded-lg border">kythuat</button>
                   </div>
                 </div>
               </form>
@@ -331,10 +356,10 @@
       const tabPanes = document.querySelectorAll('.auth-tab-pane');
       tabBtns.forEach(b => {
         if (b.dataset.authTab === tabId) {
-          b.classList.add('border-blue-600', 'text-blue-600');
+          b.classList.add('border-[#16A34A]', 'text-[#16A34A]');
           b.classList.remove('border-transparent', 'text-slate-500');
         } else {
-          b.classList.remove('border-blue-600', 'text-blue-600');
+          b.classList.remove('border-[#16A34A]', 'text-[#16A34A]');
           b.classList.add('border-transparent', 'text-slate-500');
         }
       });
@@ -476,10 +501,10 @@
       btn.addEventListener('click', () => {
         const target = btn.dataset.authTab;
         tabBtns.forEach(b => {
-          b.classList.remove('border-blue-600', 'text-blue-600');
+          b.classList.remove('border-[#16A34A]', 'text-[#16A34A]');
           b.classList.add('border-transparent', 'text-slate-500');
         });
-        btn.classList.add('border-blue-600', 'text-blue-600');
+        btn.classList.add('border-[#16A34A]', 'text-[#16A34A]');
         btn.classList.remove('border-transparent', 'text-slate-500');
 
         tabPanes.forEach(pane => {
@@ -633,8 +658,8 @@
             lookupResults.innerHTML = orders.map(ord => `
               <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 space-y-1.5 text-xs">
                 <div class="flex items-center justify-between">
-                  <span class="font-bold text-blue-600 font-mono">#${ord.maDH}</span>
-                  <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-bold text-[10px]">${ord.trangThai || 'Đang xử lý'}</span>
+                  <span class="font-bold text-[#16A34A] font-mono">#${ord.maDH}</span>
+                  <span class="px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#166534] font-bold text-[10px]">${ord.trangThai || 'Đang xử lý'}</span>
                 </div>
                 <div class="text-slate-600 space-y-0.5">
                   <div><strong>Người nhận:</strong> ${ord.tenNguoiNhan} (${ord.sdtNguoiNhan})</div>
@@ -702,3 +727,4 @@
     initAuthListeners();
   }
 })();
+

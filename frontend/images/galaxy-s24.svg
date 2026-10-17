@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 700" width="100%" height="100%">
+  <defs>
+    <!-- Frame Titan Gradient -->
+    <linearGradient id="s24Frame" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4B5563"/>
+      <stop offset="30%" stop-color="#9CA3AF"/>
+      <stop offset="70%" stop-color="#374151"/>
+      <stop offset="100%" stop-color="#1F2937"/>
+    </linearGradient>
+
+    <!-- Screen Gradient -->
+    <linearGradient id="s24Screen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="40%" stop-color="#1E1B4B"/>
+      <stop offset="75%" stop-color="#311042"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+
+    <radialGradient id="s24Wallpaper" cx="60%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#818CF8" stop-opacity="0.9"/>
+      <stop offset="35%" stop-color="#4F46E5" stop-opacity="0.6"/>
+      <stop offset="70%" stop-color="#6366F1" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- S-Pen Gradient -->
+    <linearGradient id="spenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="50%" stop-color="#475569"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+
+    <!-- Camera Lens Gradients -->
+    <radialGradient id="s24Lens" cx="35%" cy="35%" r="55%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="40%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#030712"/>
+    </radialGradient>
+
+    <filter id="s24Shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="25" stdDeviation="25" flood-color="#020617" flood-opacity="0.5"/>
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#4F46E5" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Shadow -->
+  <ellipse cx="250" cy="650" rx="170" ry="22" fill="#000000" opacity="0.35" filter="blur(14px)"/>
+
+  <!-- Phone Body (Boxy Titan Frame) -->
+  <g filter="url(#s24Shadow)">
+    <rect x="110" y="70" width="280" height="540" rx="18" fill="url(#s24Frame)" stroke="#9CA3AF" stroke-width="2"/>
+    <rect x="116" y="76" width="268" height="528" rx="14" fill="#030712"/>
+
+    <!-- Display Screen -->
+    <rect x="120" y="80" width="260" height="520" rx="10" fill="url(#s24Screen)"/>
+    <rect x="120" y="80" width="260" height="520" rx="10" fill="url(#s24Wallpaper)"/>
+
+    <!-- Dynamic AI Glow Curve on Screen -->
+    <path d="M120 400 Q200 280 280 340 T380 200 L380 600 L120 600 Z" fill="#6366F1" opacity="0.18"/>
+    <circle cx="280" cy="260" r="80" fill="#A855F7" opacity="0.2" filter="blur(20px)"/>
+
+    <!-- Punch Hole Camera -->
+    <circle cx="250" cy="98" r="5" fill="#020617"/>
+    <circle cx="250" cy="98" r="2.5" fill="#1E293B"/>
+    <circle cx="249" cy="97" r="0.8" fill="#38BDF8"/>
+
+    <!-- Lockscreen UI Mock -->
+    <text x="250" y="180" font-family="'Plus Jakarta Sans', sans-serif" font-size="44" font-weight="900" fill="#FFFFFF" text-anchor="middle" opacity="0.9">09:41</text>
+    <text x="250" y="208" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600" fill="#E0E7FF" text-anchor="middle" opacity="0.8">Thứ Ba, 24 Tháng 10</text>
+    
+    <!-- Galaxy AI Widget badge -->
+    <rect x="190" y="235" width="120" height="26" rx="13" fill="#FFFFFF" fill-opacity="0.12" stroke="#FFFFFF" stroke-opacity="0.2"/>
+    <circle cx="205" cy="248" r="4" fill="#818CF8"/>
+    <text x="255" y="252" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="700" fill="#FFFFFF" text-anchor="middle">✨ Galaxy AI 2.0</text>
+
+    <!-- Glass reflections -->
+    <path d="M120 80 L320 80 L200 600 L120 600 Z" fill="#FFFFFF" opacity="0.04"/>
+  </g>
+
+  <!-- S-Pen Leaning Next to Phone -->
+  <g transform="rotate(18 390 400)">
+    <rect x="382" y="160" width="16" height="380" rx="8" fill="url(#spenGrad)" stroke="#64748B" stroke-width="1.5"/>
+    <!-- Pen Tip -->
+    <path d="M382 540 L390 565 L398 540 Z" fill="#0F172A"/>
+    <!-- Button on Pen -->
+    <rect x="386" y="320" width="8" height="40" rx="4" fill="#94A3B8"/>
+    <!-- Pen Clicker Top -->
+    <rect x="384" y="150" width="12" height="12" rx="3" fill="#CBD5E1"/>
+  </g>
+</svg>

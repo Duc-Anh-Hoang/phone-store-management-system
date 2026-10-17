@@ -1,0 +1,246 @@
+{
+  "storeInfo": {
+    "name": "TITAN STORE",
+    "slogan": "Apple & Smartphone Premium Store - Hàng Chính Hãng 100%",
+    "hotline": "1800 6868",
+    "hotlineComplain": "1800 6869",
+    "hotlineWarranty": "1800 6870",
+    "email": "contact@titanstore.vn",
+    "vatPercent": 10,
+    "returnDays": 30,
+    "warrantyMonthsDefault": 12
+  },
+  "banners": {
+    "heroSlides": [
+      {
+        "id": "slide-1",
+        "title": "iPhone 18 Pro Max",
+        "subtitle": "ĐỈNH CAO TITAN SA MẠC - CHIP A18 PRO 3NM",
+        "desc": "Màn hình 6.9 inch viền siêu mỏng, Camera 48MP Zoom 5x, Phím Camera Control thế hệ mới.",
+        "badge": "Mở Bán Siêu Phẩm 2026",
+        "priceText": "Từ 31.490.000 đ",
+        "oldPriceText": "34.990.000 đ",
+        "discountText": "Giảm 3.500.000 đ",
+        "image": "images/phone-desert.svg",
+        "targetMaHang": "MH001",
+        "btnText": "Mua Ngay Giảm 10%",
+        "bgGradient": "from-[#061a0f] via-[#092b19] to-[#04120a]",
+        "themeColor": "#80ffbf"
+      },
+      {
+        "id": "slide-2",
+        "title": "Galaxy S24 Ultra 5G",
+        "subtitle": "QUYỀN NĂNG GALAXY AI - KHUNG VIỀN TITAN",
+        "desc": "Bút S-Pen quyền năng, Camera 200MP Mắt Thần Bóng Đêm, Màn hình Dynamic AMOLED 2X 2600 nits.",
+        "badge": "Xả Kho Đón Hè",
+        "priceText": "28.490.000 đ",
+        "oldPriceText": "33.990.000 đ",
+        "discountText": "Giảm 5.500.000 đ",
+        "image": "images/galaxy-s24.svg",
+        "targetMaHang": "MH005",
+        "btnText": "Xem Chi Tiết",
+        "bgGradient": "from-slate-950 via-indigo-950 to-slate-900",
+        "themeColor": "#6366F1"
+      },
+      {
+        "id": "slide-3",
+        "title": "Đại Tiệc Flash Sale Phụ Kiện",
+        "subtitle": "CHÍNH HÃNG APPLE & ANKER GIẢM ĐẾN 40%",
+        "desc": "Củ sạc 20W USB-C, Ốp lưng MagSafe, Cáp sạc bọc dù chống đứt, Pin sạc dự phòng tốc độ cao.",
+        "badge": "Flash Sale Cuối Tuần",
+        "priceText": "Chỉ từ 450.000 đ",
+        "oldPriceText": "650.000 đ",
+        "discountText": "Mua 1 Tặng 1",
+        "image": "images/accessories-pack.svg",
+        "targetMaHang": "MH006",
+        "btnText": "Săn Deal Ngay",
+        "bgGradient": "from-amber-950 via-rose-950 to-slate-950",
+        "themeColor": "#F59E0B"
+      },
+      {
+        "id": "slide-4",
+        "title": "Thu Cũ Đổi Mới Lên Đời",
+        "subtitle": "TRỢ GIÁ ĐẾN 2.500.000 Đ - KHÔNG LO BÙ TIỀN",
+        "desc": "Thu mua máy cũ giá cao nhất thị trường. Kiểm tra định giá nhanh trong 5 phút. Trả góp 0%.",
+        "badge": "Thu Cũ Trợ Giá Cao",
+        "priceText": "Thu đổi mọi thương hiệu",
+        "oldPriceText": "",
+        "discountText": "Trợ giá tới 2.5TR",
+        "image": "images/trade-in.svg",
+        "targetMaHang": "MH001",
+        "btnText": "Định Giá Máy Cũ",
+        "bgGradient": "from-emerald-950 via-teal-950 to-slate-900",
+        "themeColor": "#80ffbf"
+      },
+      {
+        "id": "slide-5",
+        "title": "iPad Pro M4 Tandem OLED",
+        "subtitle": "MỎNG NHẤT LỊCH SỬ APPLE - HIỆU NĂNG M4 ĐỘT PHÁ",
+        "desc": "Màn hình Ultra Retina XDR đỉnh cao, thiết kế siêu mỏng nhẹ chỉ 5.1mm, hỗ trợ Apple Pencil Pro thế hệ mới.",
+        "badge": "Mới Về Hàng",
+        "priceText": "Từ 26.990.000 đ",
+        "oldPriceText": "28.990.000 đ",
+        "discountText": "Giảm 2.000.000 đ",
+        "image": "images/ipad-pro.svg",
+        "targetMaHang": "MH011",
+        "btnText": "Khám Phá Ngay",
+        "bgGradient": "from-slate-950 via-teal-950 to-slate-900",
+        "themeColor": "#38BDF8"
+      }
+    ],
+    "subBanners": [
+      {
+        "id": "sub-1",
+        "title": "Voucher Thành Viên 500K",
+        "subtitle": "Đăng ký TitanMember nhận ngay",
+        "badge": "Smember Hot",
+        "image": "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400&auto=format&fit=crop&q=80",
+        "tag": "Đăng ký nhận quà"
+      },
+      {
+        "id": "sub-2",
+        "title": "Học Sinh Sinh Viên",
+        "subtitle": "Giảm thêm 5% tối đa 500.000 đ",
+        "badge": "Ưu đãi HSSV",
+        "image": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&auto=format&fit=crop&q=80",
+        "tag": "Xuất trình thẻ SV"
+      },
+      {
+        "id": "sub-3",
+        "title": "Trả Góp 0% Lãi Suất",
+        "subtitle": "Qua thẻ tín dụng & Home Credit",
+        "badge": "0% Lãi suất",
+        "image": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=400&auto=format&fit=crop&q=80",
+        "tag": "Duyệt nhanh 5 phút"
+      }
+    ]
+  },
+  "flashSale": {
+    "title": "FLASH SALE HÔM NAY",
+    "badge": "ĐANG DIỄN RA",
+    "endTime": "2026-10-31T23:59:59",
+    "items": [
+      {
+        "maHang": "MH001",
+        "tenHang": "iPhone 18 Pro Max 256GB Titan Sa Mạc",
+        "donGia": 31490000,
+        "giaGoc": 34990000,
+        "giamPhanTram": 10,
+        "daBan": 88,
+        "tongSo": 100,
+        "traGop0": true,
+        "image": "images/phone-desert.svg",
+        "nhanHieu": "Apple"
+      },
+      {
+        "maHang": "MH005",
+        "tenHang": "Samsung Galaxy S24 Ultra 256GB",
+        "donGia": 28490000,
+        "giaGoc": 33990000,
+        "giamPhanTram": 16,
+        "daBan": 42,
+        "tongSo": 50,
+        "traGop0": true,
+        "image": "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=500&auto=format&fit=crop&q=80",
+        "nhanHieu": "Samsung"
+      },
+      {
+        "maHang": "MH004",
+        "tenHang": "iPhone 18 Pro 128GB Titan Tự Nhiên",
+        "donGia": 27990000,
+        "giaGoc": 30990000,
+        "giamPhanTram": 10,
+        "daBan": 64,
+        "tongSo": 70,
+        "traGop0": true,
+        "image": "images/phone-natural.svg",
+        "nhanHieu": "Apple"
+      },
+      {
+        "maHang": "MH006",
+        "tenHang": "Củ sạc nhanh Apple 20W Type-C",
+        "donGia": 550000,
+        "giaGoc": 690000,
+        "giamPhanTram": 20,
+        "daBan": 190,
+        "tongSo": 200,
+        "traGop0": false,
+        "image": "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=500&auto=format&fit=crop&q=80",
+        "nhanHieu": "Apple"
+      },
+      {
+        "maHang": "MH007",
+        "tenHang": "Ốp lưng MagSafe iPhone 18 Pro Max",
+        "donGia": 450000,
+        "giaGoc": 590000,
+        "giamPhanTram": 24,
+        "daBan": 145,
+        "tongSo": 160,
+        "traGop0": false,
+        "image": "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=500&auto=format&fit=crop&q=80",
+        "nhanHieu": "Apple"
+      }
+    ]
+  },
+  "promotions": [
+    {
+      "maKM": "KM01",
+      "tenKM": "Mở bán siêu phẩm iPhone 18",
+      "phanTramGiam": 10,
+      "moTa": "Giảm ngay 10% trên tổng giá trị đơn hàng khi mua online",
+      "ngayBD": "2026-10-01",
+      "ngayKT": "2026-10-31",
+      "trangThai": "dang_ap_dung"
+    },
+    {
+      "maKM": "KM02",
+      "tenKM": "Ưu đãi thanh toán Napas / VietQR",
+      "phanTramGiam": 2,
+      "moTa": "Giảm thêm 2% tối đa 500.000đ khi thanh toán chuyển khoản VietQR",
+      "ngayBD": "2026-09-15",
+      "ngayKT": "2026-11-15",
+      "trangThai": "dang_ap_dung"
+    },
+    {
+      "maKM": "TITAN15",
+      "tenKM": "Tri ân khách hàng thân thiết TitanMember",
+      "phanTramGiam": 15,
+      "moTa": "Ưu đãi đặc biệt giảm 15% cho hóa đơn phụ kiện và máy mới",
+      "ngayBD": "2026-10-10",
+      "ngayKT": "2026-10-25",
+      "trangThai": "dang_ap_dung"
+    }
+  ],
+  "showrooms": [
+    {
+      "city": "Hà Nội",
+      "address": "128 Trần Duy Hưng, Phường Trung Hòa, Quận Cầu Giấy",
+      "phone": "024 7300 6868",
+      "time": "08:00 - 22:00 (Cả CN & Lễ)"
+    },
+    {
+      "city": "Hà Nội",
+      "address": "214 Phố Huế, Phường Phố Huế, Quận Hai Bà Trưng",
+      "phone": "024 7300 6869",
+      "time": "08:00 - 22:00 (Cả CN & Lễ)"
+    },
+    {
+      "city": "TP. Hồ Chí Minh",
+      "address": "45 Lê Duẩn, Phường Bến Nghé, Quận 1",
+      "phone": "028 7300 6868",
+      "time": "08:00 - 22:00 (Cả CN & Lễ)"
+    },
+    {
+      "city": "TP. Hồ Chí Minh",
+      "address": "377 Võ Văn Ngân, Phường Linh Chiểu, TP. Thủ Đức",
+      "phone": "028 7300 6869",
+      "time": "08:00 - 22:00 (Cả CN & Lễ)"
+    },
+    {
+      "city": "Đà Nẵng",
+      "address": "23 Nguyễn Văn Linh, Quận Hải Châu",
+      "phone": "0236 730 6868",
+      "time": "08:00 - 21:30 (Cả CN & Lễ)"
+    }
+  ]
+}

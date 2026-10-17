@@ -630,11 +630,14 @@
       });
 
       // Cập nhật trạng thái hiển thị của các nút chuyển ngôn ngữ nếu có
+      const VN_FLAG_SVG = '<svg class="w-4 h-4 rounded-full flex-shrink-0 shadow-xs border border-slate-200/60" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#DA251D"/><polygon fill="#FFFF00" points="16,6.5 18.9,15.5 28.4,15.5 20.7,21 23.6,30 16,24.5 8.4,30 11.3,21 3.6,15.5 13.1,15.5"/></svg>';
+      const UK_FLAG_SVG = '<svg class="w-4 h-4 rounded-full flex-shrink-0 shadow-xs border border-slate-200/60" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#012169"/><path d="M0,0 L32,32 M32,0 L0,32" stroke="#FFFFFF" stroke-width="4"/><path d="M0,0 L32,32 M32,0 L0,32" stroke="#C8102E" stroke-width="2"/><path d="M16,0 V32 M0,16 H32" stroke="#FFFFFF" stroke-width="6"/><path d="M16,0 V32 M0,16 H32" stroke="#C8102E" stroke-width="3.5"/></svg>';
+
       document.querySelectorAll('#btn-i18n-toggle, .btn-i18n-toggle').forEach(toggleBtn => {
         const isVi = this.currentLang === 'vi';
         const flagEl = toggleBtn.querySelector('.i18n-flag');
         const textEl = toggleBtn.querySelector('.i18n-label');
-        if (flagEl) flagEl.textContent = isVi ? '🇻🇳' : '🇬🇧';
+        if (flagEl) flagEl.innerHTML = isVi ? VN_FLAG_SVG : UK_FLAG_SVG;
         if (textEl) textEl.textContent = isVi ? 'Tiếng Việt' : 'English';
       });
 

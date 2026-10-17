@@ -44,6 +44,10 @@ const OrderModal = {
   },
 
   open(isInstallment = false) {
+    if (window.TitanProductModal) {
+      window.TitanProductModal.open('MH001');
+      return;
+    }
     if (!this.modalEl) {
       this.modalEl = document.getElementById('shared-order-modal');
     }

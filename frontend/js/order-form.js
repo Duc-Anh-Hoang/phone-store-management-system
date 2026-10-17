@@ -1,4 +1,4 @@
-/**
+﻿/**
  * XỬ LÝ VALIDATE FORM VÀ GỬI ĐƠN HÀNG (CẢ Ở SECTION 4 VÀ TRONG MODAL)
  */
 
@@ -236,7 +236,7 @@ function showOrderSuccessModal(orderData) {
       backendStatusEl.className = "mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
       backendStatusText.textContent = "✓ Đã lưu đơn hàng vào CSDL SQL Server (QuanLyCuaHangDienThoai)";
     } else {
-      backendStatusEl.className = "mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200";
+      backendStatusEl.className = "mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-[#F0FDF4] text-[#15803D] border border-[#DCFCE7]";
       backendStatusText.textContent = "Đã cấu hình API Spring Boot (POST /api/orders) • Đang chạy chế độ Demo giao diện";
     }
   }
@@ -262,3 +262,4 @@ function showOrderSuccessModal(orderData) {
 
 window.initOrderForms = initOrderForms;
 window.showOrderSuccessModal = showOrderSuccessModal;
+

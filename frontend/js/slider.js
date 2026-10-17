@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SLIDER & GALLERY ẢNH SẢN PHẨM HERO SECTION
  */
 
@@ -26,10 +26,10 @@ function initHeroSlider() {
     // Cập nhật viền active cho thumbnail
     thumbs.forEach(thumb => {
       if (thumb.dataset.color === colorKey) {
-        thumb.classList.add('border-blue-600', 'ring-2', 'ring-blue-400');
+        thumb.classList.add('border-[#16A34A]', 'ring-2', 'ring-emerald-400');
         thumb.classList.remove('border-transparent');
       } else {
-        thumb.classList.remove('border-blue-600', 'ring-2', 'ring-blue-400');
+        thumb.classList.remove('border-[#16A34A]', 'ring-2', 'ring-emerald-400');
         thumb.classList.add('border-transparent');
       }
     });
@@ -94,10 +94,10 @@ function initHeroSlider() {
       currentIndex = idx;
       thumbs.forEach(thumb => {
         if (thumb.dataset.color === newColor) {
-          thumb.classList.add('border-blue-600', 'ring-2', 'ring-blue-400');
+          thumb.classList.add('border-[#16A34A]', 'ring-2', 'ring-emerald-400');
           thumb.classList.remove('border-transparent');
         } else {
-          thumb.classList.remove('border-blue-600', 'ring-2', 'ring-blue-400');
+          thumb.classList.remove('border-[#16A34A]', 'ring-2', 'ring-emerald-400');
           thumb.classList.add('border-transparent');
         }
       });
@@ -109,3 +109,4 @@ function initHeroSlider() {
 }
 
 window.initHeroSlider = initHeroSlider;
+

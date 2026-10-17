@@ -259,7 +259,7 @@ const Format = {
     const isEn = window.TitanI18n && window.TitanI18n.getLang() === 'en';
     const dict = {
       cho_xac_nhan: { labelVi: 'Chờ xác nhận', labelEn: 'Pending', cls: 'bg-amber-50 text-amber-700 border-amber-200' },
-      da_xac_nhan:  { labelVi: 'Đã xác nhận', labelEn: 'Confirmed', cls: 'bg-blue-50 text-blue-700 border-blue-200' },
+      da_xac_nhan:  { labelVi: 'Đã xác nhận', labelEn: 'Confirmed', cls: 'bg-blue-50 text-[#166534] border-blue-200' },
       dang_giao:    { labelVi: 'Đang giao', labelEn: 'Shipping', cls: 'bg-purple-50 text-purple-700 border-purple-200' },
       hoan_thanh:   { labelVi: 'Hoàn thành', labelEn: 'Completed', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
       da_huy:       { labelVi: 'Đã hủy', labelEn: 'Cancelled', cls: 'bg-rose-50 text-rose-700 border-rose-200' },
@@ -269,12 +269,12 @@ const Format = {
       da_ban:       { labelVi: 'Đã xuất bán', labelEn: 'Sold', cls: 'bg-slate-100 text-slate-600 border-slate-200' },
       dang_sua:     { labelVi: 'Đang sửa chữa', labelEn: 'In Repair', cls: 'bg-amber-50 text-amber-700 border-amber-200' },
       da_tra_may:   { labelVi: 'Đã trả máy', labelEn: 'Returned', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-      doi_hang:     { labelVi: 'Đổi máy 1-1', labelEn: 'Exchange 1-1', cls: 'bg-blue-50 text-blue-700 border-blue-200' },
+      doi_hang:     { labelVi: 'Đổi máy 1-1', labelEn: 'Exchange 1-1', cls: 'bg-blue-50 text-[#166534] border-blue-200' },
       tien_mat:     { labelVi: 'Hoàn tiền mặt', labelEn: 'Cash Refund', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
       chuyen_khoan: { labelVi: 'Chuyển khoản', labelEn: 'Transfer', cls: 'bg-purple-50 text-purple-700 border-purple-200' },
       the:          { labelVi: 'Thẻ POS', labelEn: 'Card POS', cls: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
       cod:          { labelVi: 'Thu hộ COD', labelEn: 'COD', cls: 'bg-slate-100 text-slate-700 border-slate-200' },
-      tai_quay:     { labelVi: 'Tại quầy', labelEn: 'At POS', cls: 'bg-blue-50 text-blue-700 border-blue-200' },
+      tai_quay:     { labelVi: 'Tại quầy', labelEn: 'At POS', cls: 'bg-blue-50 text-[#166534] border-blue-200' },
       online:       { labelVi: 'Online', labelEn: 'Online', cls: 'bg-purple-50 text-purple-700 border-purple-200' },
       hoat_dong:    { labelVi: 'Hoạt động', labelEn: 'Active', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
       bi_khoa:      { labelVi: 'Bị khóa', labelEn: 'Locked', cls: 'bg-rose-50 text-rose-700 border-rose-200' },
@@ -347,15 +347,24 @@ function renderSection(sectionId) {
     currentActiveSection = 'view-dashboard';
   }
 
-  // Cập nhật trạng thái active sidebar
+  // Cập nhật trạng thái active sidebar (Phong cách #80ffbf: nền #eafff5, viền #80ffbf, chữ #064e29)
   document.querySelectorAll('.admin-nav-link').forEach(link => {
     const isTarget = link.getAttribute('data-target') === sectionId || link.getAttribute('data-target') === currentActiveSection;
+    const icon = link.querySelector('i');
     if (isTarget) {
-      link.classList.add('bg-blue-600', 'text-white');
-      link.classList.remove('text-slate-300', 'hover:bg-slate-800', 'hover:text-white');
+      link.classList.add('bg-[#eafff5]', 'text-[#064e29]', 'font-bold', 'border-l-4', 'border-[#80ffbf]');
+      link.classList.remove('text-slate-600', 'hover:bg-[#F9FAFB]', 'hover:text-slate-900', 'text-slate-300', 'hover:bg-slate-800', 'hover:text-white', 'bg-blue-600', 'text-white', 'bg-[#F0FDF4]', 'text-[#15803D]', 'bg-[#dbf9eb]', 'text-[#00483d]');
+      if (icon) {
+        icon.classList.remove('text-slate-400');
+        icon.classList.add('text-[#064e29]');
+      }
     } else {
-      link.classList.remove('bg-blue-600', 'text-white');
-      link.classList.add('text-slate-300', 'hover:bg-slate-800', 'hover:text-white');
+      link.classList.remove('bg-[#eafff5]', 'text-[#064e29]', 'font-bold', 'border-l-4', 'border-[#80ffbf]', 'bg-[#dbf9eb]', 'text-[#00483d]', 'bg-blue-600', 'text-white', 'bg-[#F0FDF4]', 'text-[#15803D]');
+      link.classList.add('text-slate-600', 'hover:bg-[#F9FAFB]', 'hover:text-slate-900');
+      if (icon) {
+        icon.classList.remove('text-[#064e29]', 'text-[#0a4a1f]', 'text-[#00483d]', 'text-[#15803D]');
+        icon.classList.add('text-slate-400');
+      }
     }
   });
 
@@ -449,7 +458,7 @@ function renderDashboard() {
   if (tbody) {
     tbody.innerHTML = d.donHangOnline.slice(0, 5).map(o => `
       <tr class="border-b border-slate-100 hover:bg-slate-50">
-        <td class="p-3 font-mono font-bold text-blue-600 text-xs whitespace-nowrap">${o.maDH}</td>
+        <td class="p-3 font-mono font-bold text-[#15803D] text-xs whitespace-nowrap">${o.maDH}</td>
         <td class="p-3 font-semibold text-xs text-navy whitespace-nowrap">${o.tenNguoiNhan}</td>
         <td class="p-3 text-xs text-slate-600 min-w-[200px] truncate">${o.tenHang}</td>
         <td class="p-3 font-bold text-xs text-navy text-right whitespace-nowrap">${Format.currency(o.tongTien)}</td>
@@ -458,7 +467,7 @@ function renderDashboard() {
           ${o.trangThai === 'hoan_thanh' ? `
             <button onclick="renderSection('view-donhang')" class="px-2.5 py-1 bg-slate-100 text-slate-600 hover:bg-slate-200 font-bold rounded-lg text-xs whitespace-nowrap transition-colors">${isEn ? 'View' : 'Xem'}</button>
           ` : `
-            <button onclick="quickApproveOrder('${o.maDH}')" class="px-2.5 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold rounded-lg text-xs whitespace-nowrap transition-colors">${isEn ? 'Process' : 'Xử lý'}</button>
+            <button onclick="quickApproveOrder('${o.maDH}')" class="px-2.5 py-1 bg-blue-50 text-[#166534] hover:bg-blue-100 font-bold rounded-lg text-xs whitespace-nowrap transition-colors">${isEn ? 'Process' : 'Xử lý'}</button>
           `}
         </td>
       </tr>
@@ -476,13 +485,13 @@ function renderDashboard() {
   const channelStatsEl = document.getElementById('dash-channel-stats');
   if (channelStatsEl) {
     channelStatsEl.innerHTML = `
-      <div class="p-3 bg-blue-50/60 rounded-xl border border-blue-100 flex items-center justify-between">
+      <div class="p-3 bg-[#F0FDF4] rounded-xl border border-blue-100 flex items-center justify-between">
         <div>
           <div class="font-bold text-navy flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>${isEn ? 'POS In-Store Sales' : 'Bán Tại Quầy (POS)'}</div>
           <div class="text-[11px] text-slate-500 mt-0.5">${posCount} ${isEn ? 'invoices' : 'hóa đơn'} (${posPercent}%)</div>
         </div>
         <div class="text-right">
-          <div class="font-extrabold text-blue-700 text-sm font-mono">${Format.currency(posRevenue)}</div>
+          <div class="font-extrabold text-[#166534] text-sm font-mono">${Format.currency(posRevenue)}</div>
           <div class="text-[10px] text-emerald-600 font-bold">${isEn ? 'Paid' : 'Đã thu tiền'}</div>
         </div>
       </div>
@@ -505,12 +514,12 @@ function renderDashboard() {
     catStatsEl.innerHTML = `
       <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
         <div>
-          <div class="font-bold text-navy flex items-center gap-1.5"><i class="fa-solid fa-mobile-screen text-blue-600"></i> ${isEn ? 'Mobile Phones (NH01)' : 'Điện thoại di động (NH01)'}</div>
+          <div class="font-bold text-navy flex items-center gap-1.5"><i class="fa-solid fa-mobile-screen text-[#15803D]"></i> ${isEn ? 'Mobile Phones (NH01)' : 'Điện thoại di động (NH01)'}</div>
           <div class="text-[11px] text-slate-500 mt-0.5">${d.danhSachImei.filter(i => i.trangThai === 'da_ban').length} ${isEn ? 'devices sold' : 'máy đã xuất bán'}</div>
         </div>
         <div class="text-right">
           <div class="font-extrabold text-slate-800 text-sm font-mono">${Format.currency(totalRevenue * 0.94)}</div>
-          <div class="text-[10px] text-blue-600 font-bold">94% ${isEn ? 'share' : 'tổng số'}</div>
+          <div class="text-[10px] text-[#15803D] font-bold">94% ${isEn ? 'share' : 'tổng số'}</div>
         </div>
       </div>
       <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
@@ -556,7 +565,7 @@ function renderMatHangTable(keyword = '') {
       <td class="p-3.5 text-xs text-center text-slate-600 whitespace-nowrap">${m.thoiHanBaoHanh} ${isEn ? 'mo.' : 'tháng'}</td>
       <td class="p-3.5 text-xs font-bold ${m.tonKho > 10 ? 'text-slate-700' : 'text-amber-600'} text-center whitespace-nowrap">${m.tonKho}</td>
       <td class="p-3.5 text-xs text-right whitespace-nowrap space-x-1.5">
-        <button onclick="editMatHang('${m.maHang}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 hover:border-blue-600 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="${isEn ? 'Edit product' : 'Chỉnh sửa mặt hàng'}">
+        <button onclick="editMatHang('${m.maHang}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-[#166534] hover:text-white border border-blue-200 hover:border-blue-600 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="${isEn ? 'Edit product' : 'Chỉnh sửa mặt hàng'}">
           <i class="fa-solid fa-pen-to-square text-[11px]"></i>
           <span>${isEn ? 'Edit' : 'Sửa'}</span>
         </button>
@@ -670,7 +679,7 @@ function renderDonHangTable(filter = 'all') {
 
   tbody.innerHTML = orders.map(o => `
     <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
-      <td class="p-3.5 font-mono font-bold text-xs text-blue-600 whitespace-nowrap">${o.maDH}</td>
+      <td class="p-3.5 font-mono font-bold text-xs text-[#15803D] whitespace-nowrap">${o.maDH}</td>
       <td class="p-3.5 text-xs text-slate-500 whitespace-nowrap">${o.ngayDat}</td>
       <td class="p-3.5 whitespace-nowrap">
         <div class="font-bold text-sm text-navy">${o.tenNguoiNhan}</div>
@@ -683,7 +692,7 @@ function renderDonHangTable(filter = 'all') {
       <td class="p-3.5 text-xs text-center whitespace-nowrap">${Format.statusBadge(o.trangThai)}</td>
       <td class="p-3.5 text-xs text-right whitespace-nowrap">
         ${o.trangThai === 'cho_xac_nhan' ? `
-          <button onclick="approveOrder('${o.maDH}')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-colors shadow-sm">
+          <button onclick="approveOrder('${o.maDH}')" class="px-3 py-1.5 bg-[#80ffbf] hover:bg-[#66e6a5] text-[#061a0f] font-black rounded-xl text-xs transition-colors shadow-sm">
             ${isEn ? 'Approve & POS' : 'Duyệt & Xuất HĐ'}
           </button>
         ` : o.trangThai === 'da_xac_nhan' ? `
@@ -786,14 +795,14 @@ function renderHoaDonTable() {
 
   tbody.innerHTML = store.data.hoaDon.map(h => `
     <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
-      <td class="p-3.5 font-mono font-bold text-xs text-blue-600 whitespace-nowrap">${h.soHD}</td>
+      <td class="p-3.5 font-mono font-bold text-xs text-[#15803D] whitespace-nowrap">${h.soHD}</td>
       <td class="p-3.5 text-xs text-slate-500 whitespace-nowrap">${h.ngayLap}</td>
       <td class="p-3.5 font-bold text-sm text-navy whitespace-nowrap">${h.tenKH}</td>
       <td class="p-3.5 text-xs text-center whitespace-nowrap">${Format.statusBadge(h.kenhBan)}</td>
       <td class="p-3.5 font-mono font-bold text-xs text-slate-700 whitespace-nowrap">${h.maImei || '-'}</td>
       <td class="p-3.5 font-bold text-sm text-slate-700 text-right whitespace-nowrap">${Format.currency(h.tongTien)}</td>
       <td class="p-3.5 text-xs text-rose-600 text-right whitespace-nowrap">-${Format.currency(h.tienGiamGia)}</td>
-      <td class="p-3.5 font-bold text-sm text-blue-600 text-right whitespace-nowrap">${Format.currency(h.thanhTien)}</td>
+      <td class="p-3.5 font-bold text-sm text-[#15803D] text-right whitespace-nowrap">${Format.currency(h.thanhTien)}</td>
       <td class="p-3.5 text-xs text-center whitespace-nowrap">${Format.statusBadge(h.phuongThuc)}</td>
     </tr>
   `).join('');
@@ -893,14 +902,14 @@ function renderNhapKhoTable() {
 
   tbody.innerHTML = store.data.phieuNhap.map(p => `
     <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
-      <td class="p-3.5 font-mono font-bold text-xs text-blue-600 whitespace-nowrap">${p.soPN}</td>
+      <td class="p-3.5 font-mono font-bold text-xs text-[#15803D] whitespace-nowrap">${p.soPN}</td>
       <td class="p-3.5 text-xs text-slate-500 whitespace-nowrap">${p.ngayNhap}</td>
       <td class="p-3.5 font-bold text-sm text-navy">${p.tenNCC}</td>
       <td class="p-3.5 font-bold text-sm text-slate-800 text-center whitespace-nowrap">${p.slNhap}</td>
-      <td class="p-3.5 font-bold text-sm text-blue-600 text-right whitespace-nowrap">${Format.currency(p.tongTienNhap)}</td>
+      <td class="p-3.5 font-bold text-sm text-[#15803D] text-right whitespace-nowrap">${Format.currency(p.tongTienNhap)}</td>
       <td class="p-3.5 text-xs text-slate-600 whitespace-nowrap">${p.maNV}</td>
       <td class="p-3.5 text-xs text-right whitespace-nowrap">
-        <button onclick="viewChiTietNhapKho('${p.soPN}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 rounded-lg text-xs font-bold transition-all shadow-sm">
+        <button onclick="viewChiTietNhapKho('${p.soPN}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-[#166534] hover:text-white border border-blue-200 rounded-lg text-xs font-bold transition-all shadow-sm">
           <i class="fa-solid fa-barcode text-[11px]"></i>
           <span>Lô IMEI</span>
         </button>
@@ -976,7 +985,7 @@ function renderBaoHanhTable() {
 
   tbody.innerHTML = store.data.tiepNhanBaoHanh.map(t => `
     <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
-      <td class="p-3.5 font-mono font-bold text-xs text-blue-600 whitespace-nowrap">${t.maTN}</td>
+      <td class="p-3.5 font-mono font-bold text-xs text-[#15803D] whitespace-nowrap">${t.maTN}</td>
       <td class="p-3.5 font-mono font-bold text-xs text-slate-800 whitespace-nowrap">${t.soImei || '-'}</td>
       <td class="p-3.5 text-xs text-slate-500 whitespace-nowrap">${t.ngayNhan}</td>
       <td class="p-3.5 text-xs text-slate-700 min-w-[200px]">${t.tinhTrangLoi}</td>
@@ -1060,7 +1069,7 @@ function renderTraHangTable() {
   const isEn = window.TitanI18n && window.TitanI18n.getLang() === 'en';
   tbody.innerHTML = store.data.traHang.map(t => `
     <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
-      <td class="p-3.5 font-mono font-bold text-xs text-blue-600 whitespace-nowrap">${t.maTR}</td>
+      <td class="p-3.5 font-mono font-bold text-xs text-[#15803D] whitespace-nowrap">${t.maTR}</td>
       <td class="p-3.5 font-mono font-bold text-xs text-slate-700 whitespace-nowrap">${t.soHD || '-'}</td>
       <td class="p-3.5 font-mono font-bold text-xs text-slate-800 whitespace-nowrap">${t.maImei}</td>
       <td class="p-3.5 text-xs text-slate-500 whitespace-nowrap">${t.ngayTR}</td>
@@ -1068,7 +1077,7 @@ function renderTraHangTable() {
       <td class="p-3.5 text-xs text-center whitespace-nowrap">${Format.statusBadge(t.hinhThuc)}</td>
       <td class="p-3.5 text-xs text-slate-600 whitespace-nowrap">${t.maNV}</td>
       <td class="p-3.5 text-xs text-right whitespace-nowrap space-x-1.5">
-        <button onclick="editTraHang('${t.maTR}')" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 hover:border-blue-600 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="${isEn ? 'Edit return ticket' : 'Sửa phiếu đổi trả'}">
+        <button onclick="editTraHang('${t.maTR}')" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-600 text-[#166534] hover:text-white border border-blue-200 hover:border-blue-600 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="${isEn ? 'Edit return ticket' : 'Sửa phiếu đổi trả'}">
           <i class="fa-solid fa-pen-to-square text-[11px]"></i>
           <span>${isEn ? 'Edit' : 'Sửa'}</span>
         </button>
@@ -1178,7 +1187,7 @@ function renderKhachHangTable() {
 
     return `
     <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
-      <td class="p-3.5 font-mono font-bold text-xs text-blue-600 whitespace-nowrap">${k.maKH}</td>
+      <td class="p-3.5 font-mono font-bold text-xs text-[#15803D] whitespace-nowrap">${k.maKH}</td>
       <td class="p-3.5 font-bold text-sm text-navy whitespace-nowrap">${k.hoTen}</td>
       <td class="p-3.5 font-bold text-xs text-slate-700 whitespace-nowrap">${k.sdt}</td>
       <td class="p-3.5 text-xs text-slate-500 whitespace-nowrap">${k.email || '-'}</td>
@@ -1193,7 +1202,7 @@ function renderKhachHangTable() {
           <i class="fa-solid fa-clock-rotate-left text-[11px]"></i>
           <span>Lịch sử</span>
         </button>
-        <button onclick="editKhachHang('${k.maKH}')" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 hover:border-blue-600 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="${isEn ? 'Edit customer' : 'Chỉnh sửa khách hàng'}">
+        <button onclick="editKhachHang('${k.maKH}')" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-600 text-[#166534] hover:text-white border border-blue-200 hover:border-blue-600 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="${isEn ? 'Edit customer' : 'Chỉnh sửa khách hàng'}">
           <i class="fa-solid fa-pen-to-square text-[11px]"></i>
           <span>${isEn ? 'Edit' : 'Sửa'}</span>
         </button>
@@ -1243,7 +1252,7 @@ function openKhachHangModal(cust = null) {
           </div>
           <div class="pt-3 border-t flex justify-end gap-2">
             <button type="button" onclick="closeModal('modal-khachhang')" class="px-4 py-2 bg-slate-100 rounded-xl">Hủy</button>
-            <button type="submit" class="px-5 py-2 bg-blue-600 text-white font-bold rounded-xl">Lưu Dữ Liệu</button>
+            <button type="submit" class="px-5 py-2 bg-[#80ffbf] hover:bg-[#66e6a5] text-[#061a0f] font-black rounded-xl shadow-md transition-all">Lưu Dữ Liệu</button>
           </div>
         </form>
       </div>
@@ -1332,7 +1341,7 @@ function renderNhanVienTable() {
       <td class="p-3.5 text-xs text-slate-500 whitespace-nowrap">${n.email}</td>
       <td class="p-3.5 text-xs text-center whitespace-nowrap">${Format.statusBadge(n.trangThai)}</td>
       <td class="p-3.5 text-xs text-right whitespace-nowrap space-x-1.5">
-        <button onclick="editNhanVien('${n.maNV}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 hover:border-blue-600 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="${isEn ? 'Edit staff' : 'Sửa nhân viên'}">
+        <button onclick="editNhanVien('${n.maNV}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-[#166534] hover:text-white border border-blue-200 hover:border-blue-600 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="${isEn ? 'Edit staff' : 'Sửa nhân viên'}">
           <i class="fa-solid fa-pen-to-square text-[11px]"></i>
           <span>${isEn ? 'Edit' : 'Sửa'}</span>
         </button>
@@ -1396,7 +1405,7 @@ function openNhanVienModal(nv = null) {
           </div>
           <div class="pt-3 border-t flex justify-end gap-2">
             <button type="button" onclick="closeModal('modal-nhanvien')" class="px-4 py-2 bg-slate-100 rounded-xl">Hủy</button>
-            <button type="submit" class="px-5 py-2 bg-blue-600 text-white font-bold rounded-xl">Lưu Nhân Viên</button>
+            <button type="submit" class="px-5 py-2 bg-[#80ffbf] hover:bg-[#66e6a5] text-[#061a0f] font-black rounded-xl shadow-md transition-all">Lưu Nhân Viên</button>
           </div>
         </form>
       </div>
@@ -1483,13 +1492,13 @@ function renderNhaCungCapTable() {
   const isEn = window.TitanI18n && window.TitanI18n.getLang() === 'en';
   tbody.innerHTML = store.data.nhaCungCap.map(c => `
     <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
-      <td class="p-3.5 font-mono font-bold text-xs text-blue-600 whitespace-nowrap">${c.maNCC}</td>
+      <td class="p-3.5 font-mono font-bold text-xs text-[#15803D] whitespace-nowrap">${c.maNCC}</td>
       <td class="p-3.5 font-bold text-sm text-navy">${c.tenNCC}</td>
       <td class="p-3.5 text-xs text-slate-700 whitespace-nowrap">${c.sdt}</td>
       <td class="p-3.5 text-xs text-slate-500 whitespace-nowrap">${c.email}</td>
       <td class="p-3.5 text-xs text-slate-600">${c.diaChi}</td>
       <td class="p-3.5 text-xs text-right whitespace-nowrap space-x-1.5">
-        <button onclick="editNhaCungCap('${c.maNCC}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 hover:border-blue-600 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="${isEn ? 'Edit supplier' : 'Sửa nhà cung cấp'}">
+        <button onclick="editNhaCungCap('${c.maNCC}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-[#166534] hover:text-white border border-blue-200 hover:border-blue-600 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="${isEn ? 'Edit supplier' : 'Sửa nhà cung cấp'}">
           <i class="fa-solid fa-pen-to-square text-[11px]"></i>
           <span>${isEn ? 'Edit' : 'Sửa'}</span>
         </button>
@@ -1539,7 +1548,7 @@ function openNhaCungCapModal(ncc = null) {
           </div>
           <div class="pt-3 border-t flex justify-end gap-2">
             <button type="button" onclick="closeModal('modal-nhacungcap')" class="px-4 py-2 bg-slate-100 rounded-xl">Hủy</button>
-            <button type="submit" class="px-5 py-2 bg-blue-600 text-white font-bold rounded-xl">Lưu Nhà Cung Cấp</button>
+            <button type="submit" class="px-5 py-2 bg-[#80ffbf] hover:bg-[#66e6a5] text-[#061a0f] font-black rounded-xl shadow-md transition-all">Lưu Nhà Cung Cấp</button>
           </div>
         </form>
       </div>
@@ -1631,7 +1640,7 @@ function renderKhuyenMaiTable() {
       <td class="p-3.5 text-xs text-slate-500 text-center whitespace-nowrap">${k.ngayBD} → ${k.ngayKT}</td>
       <td class="p-3.5 text-xs text-center whitespace-nowrap">${kmBadge}</td>
       <td class="p-3.5 text-xs text-right whitespace-nowrap space-x-1.5">
-        <button onclick="editKhuyenMai('${k.maKM}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 hover:border-blue-600 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="${isEn ? 'Edit promotion' : 'Sửa khuyến mãi'}">
+        <button onclick="editKhuyenMai('${k.maKM}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-[#166534] hover:text-white border border-blue-200 hover:border-blue-600 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="${isEn ? 'Edit promotion' : 'Sửa khuyến mãi'}">
           <i class="fa-solid fa-pen-to-square text-[11px]"></i>
           <span>${isEn ? 'Edit' : 'Sửa'}</span>
         </button>
@@ -1682,12 +1691,12 @@ function openKhuyenMaiModal(km = null) {
             </div>
           </div>
           <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-700">
-            <input type="checkbox" name="tamDung" class="w-4 h-4 text-blue-600 rounded">
+            <input type="checkbox" name="tamDung" class="w-4 h-4 text-[#15803D] rounded">
             <span>Tạm dừng áp dụng chương trình này</span>
           </label>
           <div class="pt-3 border-t flex justify-end gap-2">
             <button type="button" onclick="closeModal('modal-khuyenmai')" class="px-4 py-2 bg-slate-100 rounded-xl">Hủy</button>
-            <button type="submit" class="px-5 py-2 bg-blue-600 text-white font-bold rounded-xl">Lưu Khuyến Mãi</button>
+            <button type="submit" class="px-5 py-2 bg-[#80ffbf] hover:bg-[#66e6a5] text-[#061a0f] font-black rounded-xl shadow-md transition-all">Lưu Khuyến Mãi</button>
           </div>
         </form>
       </div>
@@ -1767,11 +1776,11 @@ function renderThamSoTable() {
   const isEn = window.TitanI18n && window.TitanI18n.getLang() === 'en';
   tbody.innerHTML = store.data.thamSo.map(s => `
     <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
-      <td class="p-3.5 font-mono font-bold text-xs text-blue-600 whitespace-nowrap">${s.maThamSo}</td>
+      <td class="p-3.5 font-mono font-bold text-xs text-[#15803D] whitespace-nowrap">${s.maThamSo}</td>
       <td class="p-3.5 text-xs text-slate-800 font-semibold">${s.tenThamSo}</td>
       <td class="p-3.5 font-mono font-bold text-sm text-slate-800 text-right whitespace-nowrap">${s.giaTri} ${s.donVi}</td>
       <td class="p-3.5 text-xs text-right whitespace-nowrap">
-        <button onclick="editThamSo('${s.maThamSo}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 hover:border-blue-600 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="${isEn ? 'Edit parameter' : 'Sửa tham số'}">
+        <button onclick="editThamSo('${s.maThamSo}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-[#166534] hover:text-white border border-blue-200 hover:border-blue-600 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95" title="${isEn ? 'Edit parameter' : 'Sửa tham số'}">
           <i class="fa-solid fa-pen-to-square text-[11px]"></i>
           <span>${isEn ? 'Edit' : 'Sửa'}</span>
         </button>
@@ -1813,7 +1822,7 @@ function openThamSoModal(ts) {
           </div>
           <div class="pt-3 border-t flex justify-end gap-2">
             <button type="button" onclick="closeModal('modal-thamso')" class="px-4 py-2 bg-slate-100 rounded-xl font-semibold">Hủy</button>
-            <button type="submit" class="px-5 py-2 bg-blue-600 text-white font-bold rounded-xl shadow-md">Lưu Tham Số</button>
+            <button type="submit" class="px-5 py-2 bg-[#80ffbf] hover:bg-[#66e6a5] text-[#061a0f] font-black rounded-xl shadow-md transition-all">Lưu Tham Số</button>
           </div>
         </form>
       </div>
@@ -1886,7 +1895,7 @@ function renderImeiTable(keyword = '') {
   tbody.innerHTML = list.map(i => `
     <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
       <td class="p-3.5 font-mono font-bold text-xs text-slate-600 whitespace-nowrap">${i.maImei}</td>
-      <td class="p-3.5 font-mono font-bold text-xs text-blue-600 whitespace-nowrap">${i.soImei}</td>
+      <td class="p-3.5 font-mono font-bold text-xs text-[#15803D] whitespace-nowrap">${i.soImei}</td>
       <td class="p-3.5 font-semibold text-sm text-navy">${i.tenHang}</td>
       <td class="p-3.5 font-mono text-xs text-slate-600 whitespace-nowrap">${i.soPN}</td>
       <td class="p-3.5 text-xs text-center whitespace-nowrap">${Format.statusBadge(i.trangThai)}</td>
@@ -1914,17 +1923,17 @@ function renderHoaDonListTable(keyword = '') {
 
   tbody.innerHTML = list.map(h => `
     <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
-      <td class="p-3.5 font-mono font-bold text-xs text-blue-600 whitespace-nowrap">${h.soHD}</td>
+      <td class="p-3.5 font-mono font-bold text-xs text-[#15803D] whitespace-nowrap">${h.soHD}</td>
       <td class="p-3.5 text-xs text-slate-500 whitespace-nowrap">${h.ngayLap}</td>
       <td class="p-3.5 font-bold text-sm text-navy whitespace-nowrap">${h.tenKH}</td>
       <td class="p-3.5 text-xs text-center whitespace-nowrap">${Format.statusBadge(h.kenhBan)}</td>
       <td class="p-3.5 font-mono font-bold text-xs text-slate-700 whitespace-nowrap">${h.maImei || '-'}</td>
       <td class="p-3.5 font-bold text-sm text-slate-700 text-right whitespace-nowrap">${Format.currency(h.tongTien)}</td>
       <td class="p-3.5 text-xs text-rose-600 text-right whitespace-nowrap">-${Format.currency(h.tienGiamGia)}</td>
-      <td class="p-3.5 font-bold text-sm text-blue-600 text-right whitespace-nowrap">${Format.currency(h.thanhTien)}</td>
+      <td class="p-3.5 font-bold text-sm text-[#15803D] text-right whitespace-nowrap">${Format.currency(h.thanhTien)}</td>
       <td class="p-3.5 text-xs text-center whitespace-nowrap">${Format.statusBadge(h.phuongThuc)}</td>
       <td class="p-3.5 text-xs text-right whitespace-nowrap">
-        <button onclick="viewHoaDonDetail('${h.soHD}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95">
+        <button onclick="viewHoaDonDetail('${h.soHD}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-[#166534] hover:text-white border border-blue-200 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95">
           <i class="fa-solid fa-print text-[11px]"></i>
           <span>Xem & In HĐ</span>
         </button>
@@ -1952,7 +1961,7 @@ function viewHoaDonDetail(soHD) {
         <div class="text-[11px] text-slate-500">Hotline: 1900 8888 | Website: https://titanstore.vn</div>
       </div>
       <div class="text-right">
-        <div class="font-mono font-extrabold text-blue-600 text-base">${h.soHD}</div>
+        <div class="font-mono font-extrabold text-[#15803D] text-base">${h.soHD}</div>
         <div class="text-[11px] text-slate-500 mt-0.5">Ngày lập: ${h.ngayLap}</div>
         <div class="text-[11px] text-slate-500">Kênh bán: <strong class="uppercase">${h.kenhBan === 'tai_quay' ? 'Tại Quầy (POS)' : 'Trực Tuyến (Online)'}</strong></div>
       </div>
@@ -1985,7 +1994,7 @@ function viewHoaDonDetail(soHD) {
           <tr class="border-b border-slate-100">
             <td class="py-2.5">
               <div class="font-bold text-slate-900">${bh ? bh.tenHang : 'Thiết bị di động'}</div>
-              ${h.maImei ? `<div class="font-mono text-blue-600 text-[11px]">IMEI: ${h.maImei}</div>` : ''}
+              ${h.maImei ? `<div class="font-mono text-[#15803D] text-[11px]">IMEI: ${h.maImei}</div>` : ''}
             </td>
             <td class="py-2.5 text-center font-bold">1</td>
             <td class="py-2.5 text-right font-mono">${Format.currency(h.tongTien)}</td>
@@ -2008,7 +2017,7 @@ function viewHoaDonDetail(soHD) {
         <span>Chiết khấu khuyến mãi (BR11):</span>
         <span class="font-mono font-bold">-${Format.currency(h.tienGiamGia)}</span>
       </div>
-      <div class="flex justify-between border-t border-slate-300 pt-2 text-sm font-extrabold text-blue-700">
+      <div class="flex justify-between border-t border-slate-300 pt-2 text-sm font-extrabold text-[#166534]">
         <span>TỔNG TIỀN THANH TOÁN:</span>
         <span class="font-mono text-base">${Format.currency(h.thanhTien)}</span>
       </div>
@@ -2017,12 +2026,12 @@ function viewHoaDonDetail(soHD) {
     ${bh ? `
       <div class="p-3.5 bg-blue-50/80 rounded-xl border border-blue-200 text-xs text-blue-900 mt-4 space-y-1">
         <div class="font-bold text-blue-950 flex items-center gap-1.5">
-          <i class="fa-solid fa-shield-halved text-blue-600"></i>
+          <i class="fa-solid fa-shield-halved text-[#15803D]"></i>
           <span>PHIẾU BẢO HÀNH ĐIỆN TỬ CHÍNH HÃNG (${bh.maBH})</span>
         </div>
         <div>Thiết bị: <strong>${bh.tenHang}</strong> | Số IMEI: <strong class="font-mono">${bh.maImei}</strong></div>
         <div>Hiệu lực bảo hành: Từ ngày <strong>${bh.ngayBD}</strong> đến ngày <strong>${bh.ngayKT}</strong> (12 Tháng chính hãng - BR12)</div>
-        <div class="text-[11px] text-blue-700 italic">Đổi mới 1-1 trong vòng 30 ngày đầu tiên nếu phát sinh lỗi phần cứng từ nhà sản xuất (BR14).</div>
+        <div class="text-[11px] text-[#166534] italic">Đổi mới 1-1 trong vòng 30 ngày đầu tiên nếu phát sinh lỗi phần cứng từ nhà sản xuất (BR14).</div>
       </div>
     ` : ''}
 
@@ -2099,9 +2108,9 @@ function traCuuBaoHanhAction(e) {
     <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-6 space-y-5 animate-in fade-in duration-200">
       <div class="flex items-start justify-between border-b border-slate-200 pb-4">
         <div>
-          <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-100 px-2.5 py-1 rounded-full">Phiếu: ${bh.maBH}</span>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#15803D] bg-blue-100 px-2.5 py-1 rounded-full">Phiếu: ${bh.maBH}</span>
           <h3 class="font-extrabold text-navy text-base mt-2">${bh.tenHang}</h3>
-          <div class="text-xs font-mono text-slate-500 mt-0.5">Số IMEI: <strong class="text-blue-700 font-bold">${bh.maImei}</strong></div>
+          <div class="text-xs font-mono text-slate-500 mt-0.5">Số IMEI: <strong class="text-[#166534] font-bold">${bh.maImei}</strong></div>
         </div>
         <div>
           ${isStillValid ? `
@@ -2176,14 +2185,14 @@ function viewImeiTimeline(soImei) {
       
       <!-- Giai đoạn 1: Nhập kho -->
       <div class="relative">
-        <span class="absolute -left-6 top-0 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px]"><i class="fa-solid fa-box"></i></span>
+        <span class="absolute -left-6 top-0 w-5 h-5 rounded-full bg-[#16A34A] text-white flex items-center justify-center text-[10px]"><i class="fa-solid fa-box"></i></span>
         <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
           <div class="flex justify-between items-center text-xs">
             <span class="font-bold text-navy">1. Nhập kho từ Nhà cung cấp</span>
             <span class="text-slate-400 font-mono">${pn ? pn.ngayNhap : '2026-10-01'}</span>
           </div>
           <div class="text-[11px] text-slate-600 mt-1">
-            Số phiếu nhập: <strong class="font-mono text-blue-600">${imeiObj.soPN}</strong><br>
+            Số phiếu nhập: <strong class="font-mono text-[#15803D]">${imeiObj.soPN}</strong><br>
             Nhà cung cấp: <strong>${pn ? pn.tenNCC : 'Apple Việt Nam'}</strong><br>
             Thiết bị: <strong>${imeiObj.tenHang}</strong>
           </div>
@@ -2200,9 +2209,9 @@ function viewImeiTimeline(soImei) {
           </div>
           ${hd ? `
             <div class="text-[11px] text-slate-600 mt-1">
-              Số hóa đơn: <strong class="font-mono text-blue-600">${hd.soHD}</strong> (${hd.kenhBan === 'tai_quay' ? 'Tại Quầy' : 'Online'})<br>
+              Số hóa đơn: <strong class="font-mono text-[#15803D]">${hd.soHD}</strong> (${hd.kenhBan === 'tai_quay' ? 'Tại Quầy' : 'Online'})<br>
               Khách hàng: <strong>${hd.tenKH}</strong><br>
-              Tổng thanh toán: <strong class="text-blue-700">${Format.currency(hd.thanhTien)}</strong> (${hd.phuongThuc})
+              Tổng thanh toán: <strong class="text-[#166534]">${Format.currency(hd.thanhTien)}</strong> (${hd.phuongThuc})
             </div>
           ` : `
             <div class="text-[11px] text-emerald-600 font-bold mt-1">Thiết bị hiện còn trong kho (trạng thái: con_hang).</div>
@@ -2287,7 +2296,7 @@ function viewChiTietNhapKho(soPN) {
         <span class="text-slate-500">Ngày nhập: ${pn ? pn.ngayNhap : '-'}</span>
       </div>
       <div class="text-right">
-        <span class="text-slate-500">Tổng tiền:</span> <strong class="font-mono text-blue-700">${pn ? Format.currency(pn.tongTienNhap) : '-'}</strong>
+        <span class="text-slate-500">Tổng tiền:</span> <strong class="font-mono text-[#166534]">${pn ? Format.currency(pn.tongTienNhap) : '-'}</strong>
       </div>
     </div>
     <div class="border rounded-xl overflow-hidden">
@@ -2304,7 +2313,7 @@ function viewChiTietNhapKho(soPN) {
           ${imeis.map((im, idx) => `
             <tr class="border-b border-slate-100 hover:bg-slate-50">
               <td class="p-2.5 text-slate-400 font-mono">${idx + 1}</td>
-              <td class="p-2.5 font-mono font-bold text-blue-600">${im.soImei}</td>
+              <td class="p-2.5 font-mono font-bold text-[#15803D]">${im.soImei}</td>
               <td class="p-2.5 font-semibold text-slate-800">${im.tenHang}</td>
               <td class="p-2.5 text-center">${Format.statusBadge(im.trangThai)}</td>
             </tr>
@@ -2337,7 +2346,7 @@ function viewKhachHangHistory(maKH) {
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-200">
       <div>
         <span class="text-slate-400 uppercase text-[10px] font-bold block">Tổng Chi Tiêu</span>
-        <div class="font-extrabold text-blue-700 text-sm font-mono mt-0.5">${Format.currency(totalSpent)}</div>
+        <div class="font-extrabold text-[#166534] text-sm font-mono mt-0.5">${Format.currency(totalSpent)}</div>
       </div>
       <div>
         <span class="text-slate-400 uppercase text-[10px] font-bold block">Điểm Thưởng Tích Lũy (BR21)</span>
@@ -2364,7 +2373,7 @@ function viewKhachHangHistory(maKH) {
         <tbody>
           ${orders.length > 0 ? orders.map(o => `
             <tr class="border-b border-slate-100 hover:bg-slate-50">
-              <td class="p-2.5 font-mono font-bold text-blue-600">${o.soHD}</td>
+              <td class="p-2.5 font-mono font-bold text-[#15803D]">${o.soHD}</td>
               <td class="p-2.5 text-slate-500">${o.ngayLap}</td>
               <td class="p-2.5 font-mono text-slate-700">${o.maImei || '-'}</td>
               <td class="p-2.5 text-right font-bold text-slate-800 font-mono">${Format.currency(o.thanhTien)}</td>
@@ -2394,11 +2403,11 @@ function renderNhomLoai() {
       const modelCount = store.data.matHang.filter(m => m.maNhom === n.maNhom).length;
       return `
         <tr class="border-b border-slate-100 hover:bg-slate-50">
-          <td class="p-3 font-mono font-bold text-blue-600">${n.maNhom}</td>
+          <td class="p-3 font-mono font-bold text-[#15803D]">${n.maNhom}</td>
           <td class="p-3 font-bold text-slate-800">${n.tenNhom}</td>
           <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold">${modelCount} model</span></td>
           <td class="p-3 text-right space-x-1">
-            <button onclick="openNhomHangModal('${n.maNhom}')" class="px-2.5 py-1 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-lg text-xs font-bold transition-colors">Sửa</button>
+            <button onclick="openNhomHangModal('${n.maNhom}')" class="px-2.5 py-1 bg-[#F0FDF4] text-[#15803D] hover:bg-[#16A34A] hover:text-white rounded-lg text-xs font-bold transition-colors">Sửa</button>
             <button onclick="deleteNhomHang('${n.maNhom}')" class="px-2.5 py-1 bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white rounded-lg text-xs font-bold transition-colors">Xóa</button>
           </td>
         </tr>
@@ -2542,10 +2551,10 @@ function renderThuocTinh() {
   if (tbodyTT) {
     tbodyTT.innerHTML = store.data.thuocTinh.map(tt => `
       <tr class="border-b border-slate-100 hover:bg-slate-50">
-        <td class="p-3 font-mono font-bold text-blue-600">${tt.maThuocTinh}</td>
+        <td class="p-3 font-mono font-bold text-[#15803D]">${tt.maThuocTinh}</td>
         <td class="p-3 font-semibold text-slate-800">${tt.tenThuocTinh}</td>
         <td class="p-3 text-right space-x-1">
-          <button onclick="openThuocTinhModal('${tt.maThuocTinh}')" class="px-2 py-1 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-lg text-xs font-bold transition-colors">Sửa</button>
+          <button onclick="openThuocTinhModal('${tt.maThuocTinh}')" class="px-2 py-1 bg-[#F0FDF4] text-[#15803D] hover:bg-[#16A34A] hover:text-white rounded-lg text-xs font-bold transition-colors">Sửa</button>
           <button onclick="deleteThuocTinh('${tt.maThuocTinh}')" class="px-2 py-1 bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white rounded-lg text-xs font-bold transition-colors">Xóa</button>
         </td>
       </tr>
@@ -2697,7 +2706,7 @@ function renderTaiKhoan() {
       const nv = store.data.nhanVien.find(n => n.maNV === tk.maNV);
       return `
         <tr class="border-b border-slate-100 hover:bg-slate-50">
-          <td class="p-3 font-mono font-bold text-blue-600">${tk.tenDangNhap}</td>
+          <td class="p-3 font-mono font-bold text-[#15803D]">${tk.tenDangNhap}</td>
           <td class="p-3 font-bold text-slate-800">${nv ? nv.hoTen : tk.maNV}</td>
           <td class="p-3 text-slate-600">${nv ? nv.chucVu : 'Nhân viên'}</td>
           <td class="p-3 text-center">${Format.statusBadge(tk.trangThai)}</td>
@@ -2712,7 +2721,7 @@ function renderTaiKhoan() {
                 <i class="fa-solid fa-lock-open mr-1"></i>Mở Khóa
               </button>
             `}
-            <button onclick="resetMatKhauTaiKhoan('${tk.tenDangNhap}')" class="px-2.5 py-1 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-lg text-xs font-bold transition-colors">
+            <button onclick="resetMatKhauTaiKhoan('${tk.tenDangNhap}')" class="px-2.5 py-1 bg-[#F0FDF4] text-[#15803D] hover:bg-[#16A34A] hover:text-white rounded-lg text-xs font-bold transition-colors">
               <i class="fa-solid fa-key mr-1"></i>Đặt Lại MK
             </button>
           </td>
@@ -2982,7 +2991,7 @@ function initAdminDashboard() {
             <h3 class="text-lg font-bold text-slate-800">Khu Vực Quản Trị Hệ Thống</h3>
             <p class="text-xs text-slate-600">Bạn đang đăng nhập bằng tài khoản Khách hàng <strong>(${curUser.hoTen || curUser.sdt})</strong>.<br>Khu vực này chỉ dành cho Nhân viên & Quản lý cửa hàng.</p>
             <div class="flex gap-2 pt-2">
-              <a href="/home" class="flex-1 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition-colors">Về Trang Người Dùng</a>
+              <a href="/home" class="flex-1 py-2.5 rounded-xl bg-[#16A34A] text-white font-bold text-xs hover:bg-blue-700 transition-colors">Về Trang Người Dùng</a>
               <button onclick="window.TitanAuth.logout();" class="flex-1 py-2.5 rounded-xl border border-slate-300 bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 transition-colors">Đổi Tài Khoản</button>
             </div>
           </div>
@@ -3066,3 +3075,4 @@ if (document.readyState === 'loading') {
 } else {
   initAdminDashboard();
 }
+
