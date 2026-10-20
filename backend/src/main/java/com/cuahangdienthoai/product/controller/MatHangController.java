@@ -1,6 +1,7 @@
 package com.cuahangdienthoai.product.controller;
 
 import com.cuahangdienthoai.product.dto.MatHangDTO;
+import com.cuahangdienthoai.product.dto.ThongSoDTO;
 import com.cuahangdienthoai.product.service.MatHangService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,11 @@ public class MatHangController {
 
     @GetMapping("/nhom/{maNhom}")
     public List<MatHangDTO> getByNhom(@PathVariable String maNhom) { return matHangService.getByNhomHang(maNhom); }
+
+    @GetMapping("/{maHang}/thongso")
+    public ResponseEntity<List<ThongSoDTO>> getThongSo(@PathVariable String maHang) {
+        return ResponseEntity.ok(matHangService.getThongSo(maHang));
+    }
 
     @PostMapping
     public MatHangDTO create(@RequestBody MatHangDTO dto) { return matHangService.create(dto); }

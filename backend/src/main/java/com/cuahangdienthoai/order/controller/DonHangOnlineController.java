@@ -27,12 +27,17 @@ public class DonHangOnlineController {
         return donHangOnlineService.getByTrangThai(trangThai);
     }
 
+    @GetMapping("/khachhang/{maKH}")
+    public List<DonHangOnlineDTO> getByKhachHang(@PathVariable String maKH) {
+        return donHangOnlineService.getByKhachHang(maKH);
+    }
+
     @PostMapping
     public DonHangOnlineDTO create(@RequestBody DonHangOnlineDTO dto) { return donHangOnlineService.create(dto); }
 
     @PutMapping("/{maDH}/trangthai")
     public DonHangOnlineDTO updateTrangThai(@PathVariable String maDH, @RequestBody Map<String, String> body) {
-        return donHangOnlineService.updateTrangThai(maDH, body.get("trangThai"));
+        return donHangOnlineService.updateTrangThai(maDH, body.get("trangThai"), body.get("maNV"), body.get("soHD"));
     }
 
     @DeleteMapping("/{maDH}")

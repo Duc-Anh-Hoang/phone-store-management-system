@@ -16,6 +16,8 @@ import com.cuahangdienthoai.product.entity.MatHang;
 import com.cuahangdienthoai.product.repository.MatHangRepository;
 import com.cuahangdienthoai.supplier.entity.Imei;
 import com.cuahangdienthoai.supplier.repository.ImeiRepository;
+import com.cuahangdienthoai.warranty.entity.BaoHanh;
+import com.cuahangdienthoai.warranty.repository.BaoHanhRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,7 @@ public class HoaDonService {
     private final KhuyenMaiRepository khuyenMaiRepository;
     private final MatHangRepository matHangRepository;
     private final ImeiRepository imeiRepository;
+    private final BaoHanhRepository baoHanhRepository;
 
     public List<HoaDonDTO> getAll() {
         return hoaDonRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
@@ -58,23 +61,53 @@ public class HoaDonService {
             kh = khachHangRepository.findById(dto.getMaKH()).orElse(null);
         }
 
-        NhanVien nv = nhanVienRepository.findById(dto.getMaNV())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên: " + dto.getMaNV()));
+        NhanVien nv = null;
+        if (dto.getMaNV() != null && !dto.getMaNV().trim().isEmpty()) {
+            nv = nhanVienRepository.findById(dto.getMaNV()).orElse(null);
+        }
+        if (nv == null) {
+            // Default to first employee if not provided
+            nv = nhanVienRepository.findAll().stream().findFirst()
+                    .orElseThrow(() -> new RuntimeException("Chưa có nhân viên nào trong hệ thống"));
+        }
 
         KhuyenMai km = null;
         if (dto.getMaKM() != null && !dto.getMaKM().trim().isEmpty()) {
             km = khuyenMaiRepository.findById(dto.getMaKM()).orElse(null);
         }
 
+        String soHD = dto.getSoHD();
+        if (soHD == null || soHD.trim().isEmpty()) {
+            soHD = "HD" + String.format("%06d", (int) (System.currentTimeMillis() % 1000000));
+        }
+
+        // Calculate total if not set or zero
+        BigDecimal calculatedTotal = BigDecimal.ZERO;
+        if (dto.getChiTiet() != null) {
+            for (var ct : dto.getChiTiet()) {
+                BigDecimal gia = ct.getDonGiaBan() != null ? ct.getDonGiaBan() : BigDecimal.ZERO;
+                int sl = ct.getSlBan() > 0 ? ct.getSlBan() : 1;
+                calculatedTotal = calculatedTotal.add(gia.multiply(BigDecimal.valueOf(sl)));
+            }
+        }
+
+        BigDecimal tongTien = (dto.getTongTien() != null && dto.getTongTien().compareTo(BigDecimal.ZERO) > 0)
+                ? dto.getTongTien() : calculatedTotal;
+
+        BigDecimal tienGiamGia = dto.getTienGiamGia() != null ? dto.getTienGiamGia() : BigDecimal.ZERO;
+        if (km != null && (tienGiamGia.compareTo(BigDecimal.ZERO) == 0) && km.getPhanTramGiam() != null) {
+            tienGiamGia = tongTien.multiply(km.getPhanTramGiam()).divide(new BigDecimal("100"));
+        }
+
         HoaDon hoaDon = HoaDon.builder()
-                .soHD(dto.getSoHD())
+                .soHD(soHD)
                 .ngayLap(LocalDateTime.now())
                 .khachHang(kh)
                 .nhanVien(nv)
                 .khuyenMai(km)
                 .kenhBan(dto.getKenhBan() != null ? dto.getKenhBan() : "tai_quay")
-                .tongTien(dto.getTongTien() != null ? dto.getTongTien() : BigDecimal.ZERO)
-                .tienGiamGia(dto.getTienGiamGia() != null ? dto.getTienGiamGia() : BigDecimal.ZERO)
+                .tongTien(tongTien)
+                .tienGiamGia(tienGiamGia)
                 .phuongThucThanhToan(dto.getPhuongThucThanhToan() != null ? dto.getPhuongThucThanhToan() : "tien_mat")
                 .build();
 
@@ -82,27 +115,43 @@ public class HoaDonService {
 
         if (dto.getChiTiet() != null && !dto.getChiTiet().isEmpty()) {
             final HoaDon savedHd = hoaDon;
-            List<ChiTietHoaDon> details = dto.getChiTiet().stream().map(ct -> {
+            for (var ct : dto.getChiTiet()) {
                 MatHang mh = matHangRepository.findById(ct.getMaHang())
                         .orElseThrow(() -> new RuntimeException("Không tìm thấy mặt hàng: " + ct.getMaHang()));
                 Imei imei = null;
                 if (ct.getMaIMEI() != null && !ct.getMaIMEI().trim().isEmpty()) {
                     imei = imeiRepository.findById(ct.getMaIMEI()).orElse(null);
-                    if (imei != null) {
-                        imei.setTrangThai("da_ban");
-                        imeiRepository.save(imei);
-                    }
+                } else if (ct.getSoIMEI() != null && !ct.getSoIMEI().trim().isEmpty()) {
+                    imei = imeiRepository.findBySoIMEI(ct.getSoIMEI()).orElse(null);
                 }
-                return ChiTietHoaDon.builder()
+
+                BigDecimal donGiaBan = ct.getDonGiaBan() != null ? ct.getDonGiaBan() : mh.getDonGia();
+                int slBan = ct.getSlBan() > 0 ? ct.getSlBan() : 1;
+
+                ChiTietHoaDon cthd = ChiTietHoaDon.builder()
                         .hoaDon(savedHd)
                         .matHang(mh)
                         .imei(imei)
-                        .slBan(ct.getSlBan() > 0 ? ct.getSlBan() : 1)
-                        .donGiaBan(ct.getDonGiaBan())
+                        .slBan(slBan)
+                        .donGiaBan(donGiaBan)
                         .build();
-            }).collect(Collectors.toList());
+                chiTietHoaDonRepository.save(cthd);
 
-            chiTietHoaDonRepository.saveAll(details);
+                // Tự động sinh sổ bảo hành cho máy có IMEI và thời hạn bảo hành > 0
+                if (imei != null && mh.getThoiHanBaoHanh() > 0) {
+                    if (baoHanhRepository.findByImeiMaIMEI(imei.getMaIMEI()).isEmpty()) {
+                        String maBH = "BH" + String.format("%06d", (int) (System.currentTimeMillis() % 900000 + 100000));
+                        baoHanhRepository.save(BaoHanh.builder()
+                                .maBH(maBH)
+                                .hoaDon(savedHd)
+                                .imei(imei)
+                                .ngayBD(LocalDateTime.now())
+                                .thoiHanThang(mh.getThoiHanBaoHanh())
+                                .dieuKien("Bảo hành chính hãng " + mh.getThoiHanBaoHanh() + " tháng")
+                                .build());
+                    }
+                }
+            }
         }
 
         return toDTO(hoaDon);

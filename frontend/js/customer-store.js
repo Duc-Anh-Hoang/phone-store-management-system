@@ -1,5 +1,5 @@
 /**
- * TITAN STORE - MAIN CUSTOMER INTERFACE CONTROLLER
+ * CellphoneS - 241 Lê Văn Việt - MAIN CUSTOMER INTERFACE CONTROLLER
  * Điều khiển giao diện khách hàng tham khảo phong cách CellphoneS:
  * - Mega menu 3 tầng (NhomHang -> LoaiHang -> MatHang)
  * - Hero Banner Slider & Quick Tags
@@ -12,41 +12,51 @@
 (function () {
   'use strict';
 
+  console.log('>>> [CUSTOMER STORE] IIFE is running! readyState:', document.readyState);
+
   let heroCurrentSlide = 0;
   let heroSlideInterval = null;
 
-  document.addEventListener('DOMContentLoaded', async () => {
+  async function initApp() {
+    console.log('>>> [CUSTOMER STORE] initApp started');
     // 1. Khởi tạo dữ liệu
-    if (window.TitanStoreData) {
-      await window.TitanStoreData.init();
+    if ((window.CellphoneSData || window.StoreData)) {
+      await (window.CellphoneSData || window.StoreData).init();
+      console.log('>>> [CUSTOMER STORE] StoreData inited, products:', (window.CellphoneSData || window.StoreData).products.length);
     }
 
     // 2. Khởi tạo UI Giỏ hàng
-    if (window.TitanCart) {
-      window.TitanCart.updateUI();
+    if ((window.CellphoneSCart || window.Cart)) {
+      (window.CellphoneSCart || window.Cart).updateUI();
     }
 
     // 3. Render các thành phần
+    renderMegaMenu();
     renderHeroSlider();
     renderShelves();
+    console.log('>>> [CUSTOMER STORE] renderShelves completed');
     initSearchAutocomplete();
-    initCountdownTimers();
-    initWelcomePopup();
     initScrollToTop();
     updateAuthHeader();
 
     // Lắng nghe đăng nhập thay đổi
     window.addEventListener('storage', () => {
       updateAuthHeader();
-      if (window.TitanCart) window.TitanCart.updateUI();
+      if ((window.CellphoneSCart || window.Cart)) (window.CellphoneSCart || window.Cart).updateUI();
     });
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
 
   /**
    * Cập nhật Header theo trạng thái Đăng nhập khách hàng / Quản trị
    */
   function updateAuthHeader() {
-    const user = window.TitanAuth ? window.TitanAuth.getUser() : null;
+    const user = (window.CellphoneSAuth || window.Auth) ? (window.CellphoneSAuth || window.Auth).getUser() : null;
     const btnLogin = document.getElementById('btn-header-login');
     const menuStaff = document.getElementById('header-staff-menu');
     const menuCustomer = document.getElementById('header-customer-menu');
@@ -115,10 +125,10 @@
   function renderHeroSlider() {
     const slidesContainer = document.getElementById('hero-slider-container');
     const dotsContainer = document.getElementById('hero-slider-dots');
-    if (!slidesContainer || !window.TitanStoreData) return;
+    if (!slidesContainer || !(window.CellphoneSData || window.StoreData)) return;
 
-    const slides = (window.TitanStoreData.config && window.TitanStoreData.config.banners)
-      ? window.TitanStoreData.config.banners.heroSlides
+    const slides = ((window.CellphoneSData || window.StoreData).config && (window.CellphoneSData || window.StoreData).config.banners)
+      ? (window.CellphoneSData || window.StoreData).config.banners.heroSlides
       : [];
 
     if (slides.length === 0) return;
@@ -141,17 +151,17 @@
               </div>
 
               <div class="pt-2 flex flex-wrap gap-3">
-                <button type="button" onclick="window.TitanProductModal.open('${s.targetMaHang}')" class="px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-black text-xs sm:text-sm shadow-xl hover:shadow-2xl transition-all active:scale-95 flex items-center gap-2 cursor-pointer border border-white">
+                <button type="button" onclick="(window.CellphoneSProductModal || window.ProductModal).open('${s.targetMaHang}')" class="px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-black text-xs sm:text-sm shadow-xl hover:shadow-2xl transition-all active:scale-95 flex items-center gap-2 cursor-pointer border border-white">
                   <i class="fa-solid fa-cart-shopping text-emerald-600"></i> ${s.btnText}
                 </button>
-                <button type="button" onclick="window.TitanLookup.openTradeInModal()" class="px-4 py-2.5 rounded-xl bg-white/95 hover:bg-white text-slate-900 font-extrabold text-xs sm:text-sm shadow-md transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer border border-white/80">
+                <button type="button" onclick="(window.CellphoneSLookup || window.Lookup).openTradeInModal()" class="px-4 py-2.5 rounded-xl bg-white/95 hover:bg-white text-slate-900 font-extrabold text-xs sm:text-sm shadow-md transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer border border-white/80">
                   <i class="fa-solid fa-arrows-rotate text-emerald-600"></i> Thu cũ đổi mới
                 </button>
               </div>
             </div>
 
             <div class="md:col-span-5 flex justify-center">
-              <div class="relative w-48 h-48 sm:w-64 sm:h-64 group cursor-pointer" onclick="window.TitanProductModal.open('${s.targetMaHang}')">
+              <div class="relative w-48 h-48 sm:w-64 sm:h-64 group cursor-pointer" onclick="(window.CellphoneSProductModal || window.ProductModal).open('${s.targetMaHang}')">
                 <div class="absolute inset-0 bg-[#80ffbf]/20 rounded-full blur-2xl transform group-hover:scale-110 transition-transform"></div>
                 <img src="${s.image}" alt="${s.title}" class="relative w-full h-full object-contain filter drop-shadow-2xl transition-all duration-700 ease-out group-hover:scale-105" style="${idx === 0 ? 'transform: scale(1); opacity: 1;' : 'transform: scale(0.92); opacity: 0.7;'}">
               </div>
@@ -237,7 +247,7 @@
    * Render các dải sản phẩm (Shelves)
    */
   function renderShelves() {
-    renderFlashSaleShelf();
+    renderPromotionsShelf();
     renderFeaturedPhonesShelf('all');
     renderNewArrivalsShelf();
     renderBestSellersShelf();
@@ -245,19 +255,53 @@
     renderRecentlyViewedShelf();
   }
 
-  function renderFlashSaleShelf() {
-    const container = document.getElementById('shelf-flash-sale-items');
-    if (!container || !window.TitanStoreData) return;
+  function renderPromotionsShelf() {
+    const container = document.getElementById('promotions-list');
+    if (!container || !(window.CellphoneSData || window.StoreData)) return;
 
-    const items = window.TitanStoreData.getFlashSaleProducts();
-    container.innerHTML = items.map(p => createProductCardHtml(p, { isFlashSale: true })).join('');
+    const promos = (window.CellphoneSData || window.StoreData).promotions || [];
+    const section = document.getElementById('shelf-promotions');
+    if (promos.length === 0) {
+      if (section) section.classList.add('hidden');
+      return;
+    }
+    if (section) section.classList.remove('hidden');
+
+    container.innerHTML = promos.map(km => {
+      const phanTram = Number(km.phanTramGiam) || 0;
+      const ngayKT = km.ngayKT ? String(km.ngayKT).substring(0, 10) : '';
+      return `
+        <div class="bg-white rounded-2xl border border-rose-200 p-4 shadow-sm flex items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-md bg-[#d70018] text-white font-mono font-black text-xs">${km.maKM}</span>
+              <span class="text-xs font-black text-[#d70018]">GIẢM ${phanTram}%</span>
+            </div>
+            <h4 class="font-bold text-xs text-navy line-clamp-1">${km.tenKM}</h4>
+            <p class="text-[10px] text-slate-400">Hiệu lực đến: ${ngayKT || 'Đang diễn ra'}</p>
+          </div>
+          <button type="button" onclick="window.applyPromoCodeFromShelf('${km.maKM}')" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-[#d70018] font-bold text-xs whitespace-nowrap transition-colors border border-rose-200 cursor-pointer">
+            Lưu mã
+          </button>
+        </div>
+      `;
+    }).join('');
   }
+
+  window.applyPromoCodeFromShelf = function (code) {
+    if (window.CellphoneSCart || window.Cart) {
+      const res = (window.CellphoneSCart || window.Cart).applyPromoCode(code);
+      if (res && res.success) {
+        (window.CellphoneSCart || window.Cart).openDrawer();
+      }
+    }
+  };
 
   function renderFeaturedPhonesShelf(brand = 'all', shouldScroll = false) {
     const container = document.getElementById('shelf-phones-items');
-    if (!container || !window.TitanStoreData) return;
+    if (!container || !(window.CellphoneSData || window.StoreData)) return;
 
-    const items = window.TitanStoreData.getFeaturedPhones(brand);
+    const items = (window.CellphoneSData || window.StoreData).getFeaturedPhones(brand);
     container.innerHTML = items.map(p => createProductCardHtml(p)).join('');
 
     // Cập nhật tab active trên dải sản phẩm
@@ -298,7 +342,7 @@
     }
     if (viewAllBtn) {
       if (brand !== 'all') {
-        const brandCount = window.TitanStoreData.getProductsByBrand ? window.TitanStoreData.getProductsByBrand(brand).length : items.length;
+        const brandCount = (window.CellphoneSData || window.StoreData).getProductsByBrand ? (window.CellphoneSData || window.StoreData).getProductsByBrand(brand).length : items.length;
         viewAllBtn.innerHTML = `Xem tất cả ${brand} (${brandCount}) <i class="fa-solid fa-arrow-right text-[10px] ml-1"></i>`;
         viewAllBtn.classList.remove('hidden');
         viewAllBtn.onclick = () => window.openSearchModal('', brand);
@@ -327,31 +371,31 @@
 
   function renderNewArrivalsShelf() {
     const container = document.getElementById('shelf-new-items');
-    if (!container || !window.TitanStoreData) return;
-    const items = window.TitanStoreData.getNewArrivals();
+    if (!container || !(window.CellphoneSData || window.StoreData)) return;
+    const items = (window.CellphoneSData || window.StoreData).getNewArrivals();
     container.innerHTML = items.map(p => createProductCardHtml(p)).join('');
   }
 
   function renderBestSellersShelf() {
     const container = document.getElementById('shelf-bestseller-items');
-    if (!container || !window.TitanStoreData) return;
-    const items = window.TitanStoreData.getBestSellers();
+    if (!container || !(window.CellphoneSData || window.StoreData)) return;
+    const items = (window.CellphoneSData || window.StoreData).getBestSellers();
     container.innerHTML = items.map(p => createProductCardHtml(p)).join('');
   }
 
   function renderAccessoriesShelf() {
     const container = document.getElementById('shelf-accessories-items');
-    if (!container || !window.TitanStoreData) return;
-    const items = window.TitanStoreData.getAccessories();
+    if (!container || !(window.CellphoneSData || window.StoreData)) return;
+    const items = (window.CellphoneSData || window.StoreData).getAccessories();
     container.innerHTML = items.map(p => createProductCardHtml(p)).join('');
   }
 
   function renderRecentlyViewedShelf() {
     const container = document.getElementById('shelf-recent-items');
     const section = document.getElementById('section-recently-viewed');
-    if (!container || !window.TitanStoreData) return;
+    if (!container || !(window.CellphoneSData || window.StoreData)) return;
 
-    const items = window.TitanStoreData.getRecentlyViewed();
+    const items = (window.CellphoneSData || window.StoreData).getRecentlyViewed();
     if (items.length === 0) {
       if (section) section.classList.add('hidden');
     } else {
@@ -369,13 +413,21 @@
       ? Math.round((1 - p.donGia / p.giaGoc) * 100) 
       : 0;
 
+    const tonKho = p.tonKho !== undefined ? Number(p.tonKho) : 0;
+    const stockHtml = tonKho > 0
+      ? `<span class="text-emerald-600 font-semibold"><i class="fa-solid fa-circle-check text-[10px] mr-1"></i>Còn ${tonKho} máy</span>`
+      : `<span class="text-rose-500 font-semibold"><i class="fa-solid fa-circle-xmark text-[10px] mr-1"></i>Tạm hết hàng</span>`;
+
+    const bhHtml = (p.thoiHanBaoHanh && p.thoiHanBaoHanh > 0)
+      ? `<span class="text-slate-500 text-[11px]"><i class="fa-solid fa-shield text-[10px] mr-0.5 text-blue-600"></i>Bảo hành ${p.thoiHanBaoHanh} tháng</span>`
+      : '';
+
     return `
       <div class="product-card group relative flex flex-col justify-between bg-white rounded-2xl border border-slate-200/80 p-3.5 sm:p-4 hover:border-[#80ffbf] hover:shadow-xl transition-all duration-300">
         <!-- Badges góc trên -->
         <div class="flex items-center justify-between gap-1 mb-2 z-10">
           <div class="flex flex-wrap gap-1">
-            ${p.traGop0 ? `<span class="px-2 py-0.5 rounded-md bg-[#eafff5] text-[#064e29] text-[10px] font-extrabold uppercase border border-[#80ffbf]/40">Trả góp 0%</span>` : ''}
-            ${p.isNew ? `<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[10px] font-extrabold uppercase border border-emerald-200/60">Mới 2026</span>` : ''}
+            ${p.tenLoai ? `<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-bold uppercase">${p.tenLoai}</span>` : ''}
           </div>
           ${discountPercent > 0 ? `
             <span class="px-2 py-0.5 rounded-md bg-rose-600 text-white text-[10px] font-extrabold uppercase tracking-tight">
@@ -384,41 +436,59 @@
         </div>
 
         <!-- Ảnh sản phẩm -->
-        <div class="relative w-full h-40 sm:h-48 my-2 flex items-center justify-center p-2 cursor-pointer overflow-hidden" onclick="window.TitanProductModal.open('${p.maHang}')">
-          <img src="${p.anhChinh}" alt="${p.tenHang}" class="max-w-full max-h-full object-contain group-hover:scale-108 transition-transform duration-300">
+        <div class="relative w-full h-40 sm:h-48 my-2 flex items-center justify-center p-2 cursor-pointer overflow-hidden" onclick="(window.CellphoneSProductModal || window.ProductModal).open('${p.maHang}')">
+          <img src="${p.anhChinh}" alt="${p.tenHang}" class="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300">
         </div>
 
         <!-- Tên sản phẩm -->
-        <div class="mt-2">
-          <h3 class="text-xs sm:text-sm font-bold text-navy hover:text-[#064e29] line-clamp-2 cursor-pointer transition-colors" onclick="window.TitanProductModal.open('${p.maHang}')" title="${p.tenHang}">
+        <div class="mt-2 flex-1">
+          <h3 class="text-xs sm:text-sm font-bold text-navy hover:text-[#064e29] line-clamp-2 cursor-pointer transition-colors" onclick="(window.CellphoneSProductModal || window.ProductModal).open('${p.maHang}')" title="${p.tenHang}">
             ${p.tenHang}
           </h3>
 
-          <!-- Giá bán chuẩn TMĐT -->
+          <!-- Giá bán -->
           <div class="flex flex-wrap items-baseline gap-2 mt-2">
-            <span class="text-sm sm:text-base font-extrabold text-[#e11b1e]">${window.TitanCart ? window.TitanCart.formatMoney(p.donGia) : p.donGia}</span>
-            ${p.giaGoc > p.donGia ? `<span class="text-[11px] text-slate-400 line-through">${window.TitanCart.formatMoney(p.giaGoc)}</span>` : ''}
+            <span class="text-sm sm:text-base font-extrabold text-[#e11b1e]">${(window.CellphoneSCart || window.Cart) ? (window.CellphoneSCart || window.Cart).formatMoney(p.donGia) : p.donGia}</span>
+            ${p.giaGoc > p.donGia ? `<span class="text-[11px] text-slate-400 line-through">${(window.CellphoneSCart || window.Cart).formatMoney(p.giaGoc)}</span>` : ''}
           </div>
 
-          <!-- Tình trạng hàng (Chỉ hiển thị Còn hàng hoặc Tạm hết hàng, không hiển thị số lượng cụ thể và không hiển thị đã bán) -->
-          <div class="mt-2 text-[11px] text-slate-500 flex items-center justify-between">
-            <span>${p.tonKho > 0 ? `<span class="text-emerald-600 font-semibold"><i class="fa-solid fa-circle-check text-[10px] mr-1"></i>Còn hàng</span>` : '<span class="text-rose-500 font-semibold"><i class="fa-solid fa-circle-xmark text-[10px] mr-1"></i>Tạm hết hàng</span>'}</span>
-            ${p.thoiHanBaoHanh ? `<span class="text-slate-400"><i class="fa-solid fa-shield text-[10px] mr-0.5"></i>${p.thoiHanBaoHanh}T BH</span>` : ''}
+          <!-- Tình trạng tồn kho & bảo hành -->
+          <div class="mt-2 text-[11px] flex items-center justify-between gap-1">
+            ${stockHtml}
+            ${bhHtml}
           </div>
         </div>
 
-        <!-- Nút hành động nhanh -->
+        <!-- Nút hành động chuẩn W5: "Xem cấu hình" và "Mua ngay" -->
         <div class="mt-3.5 pt-3 border-t border-slate-100 flex items-center gap-2">
-          <button type="button" onclick="window.TitanProductModal.open('${p.maHang}')" class="flex-1 py-2 px-3 rounded-xl bg-slate-100 hover:bg-[#eafff5] hover:text-[#064e29] text-slate-700 font-bold text-xs transition-colors text-center cursor-pointer">
-            Chi tiết
+          <button type="button" onclick="(window.CellphoneSProductModal || window.ProductModal).open('${p.maHang}')" class="flex-1 py-2 px-2 rounded-xl border border-blue-600 text-blue-600 hover:bg-blue-50 font-bold text-xs transition-colors text-center cursor-pointer">
+            Xem cấu hình
           </button>
-          <button type="button" onclick="window.TitanCart.addItem(window.TitanStoreData.getProductById('${p.maHang}'), null, null, 1)" class="w-9 h-9 rounded-xl bg-[#eafff5] hover:bg-[#80ffbf] text-[#064e29] hover:text-[#061a0f] flex items-center justify-center transition-colors cursor-pointer shadow-sm" title="Thêm nhanh vào giỏ">
-            <i class="fa-solid fa-cart-plus text-xs"></i>
+          <button type="button" ${tonKho <= 0 ? 'disabled' : ''} onclick="window.quickBuy('${p.maHang}')" class="flex-1 py-2 px-2 rounded-xl ${tonKho > 0 ? 'bg-[#d70018] hover:bg-[#b80014] text-white cursor-pointer shadow-sm' : 'bg-slate-200 text-slate-400 cursor-not-allowed'} font-bold text-xs transition-colors text-center">
+            ${tonKho > 0 ? 'Mua ngay' : 'Hết hàng'}
           </button>
         </div>
       </div>
     `;
   }
+
+  window.quickBuy = function (maHang) {
+    if (!(window.CellphoneSData || window.StoreData)) return;
+    const p = (window.CellphoneSData || window.StoreData).getProductById(maHang);
+    if (!p) return;
+    if (p.tonKho <= 0) {
+      if (window.CellphoneSCart || window.Cart) {
+        (window.CellphoneSCart || window.Cart).showToast('Sản phẩm hiện đang tạm hết hàng!', 'warning');
+      }
+      return;
+    }
+    if (window.CellphoneSCart || window.Cart) {
+      (window.CellphoneSCart || window.Cart).addItem(p, null, null, 1);
+    }
+    if (window.CellphoneSCheckout || window.Checkout) {
+      (window.CellphoneSCheckout || window.Checkout).openCheckout();
+    }
+  };
 
   /**
    * Autocomplete Tìm Kiếm & Bộ lọc
@@ -442,7 +512,7 @@
         return;
       }
 
-      const results = window.TitanStoreData ? window.TitanStoreData.search(q).slice(0, 5) : [];
+      const results = (window.CellphoneSData || window.StoreData) ? (window.CellphoneSData || window.StoreData).search(q).slice(0, 5) : [];
       if (results.length === 0) {
         dropdown.innerHTML = `
           <div class="p-4 text-center text-xs text-slate-500">
@@ -457,13 +527,13 @@
           </div>
           <div class="divide-y divide-slate-100">
             ${results.map(p => `
-              <div class="p-2.5 flex items-center gap-3 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors" onclick="window.TitanProductModal.open('${p.maHang}'); document.getElementById('search-autocomplete-dropdown').classList.add('hidden');">
+              <div class="p-2.5 flex items-center gap-3 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors" onclick="(window.CellphoneSProductModal || window.ProductModal).open('${p.maHang}'); document.getElementById('search-autocomplete-dropdown').classList.add('hidden');">
                 <img src="${p.anhChinh}" class="w-10 h-10 object-contain p-1 rounded-lg bg-slate-50 border border-slate-100 flex-shrink-0" alt="${p.tenHang}">
                 <div class="flex-1 min-w-0">
                   <h4 class="text-xs font-bold text-navy truncate">${p.tenHang}</h4>
                   <div class="flex items-center gap-2 mt-0.5">
-                    <span class="text-xs font-bold text-rose-600">${window.TitanCart.formatMoney(p.donGia)}</span>
-                    ${p.giaGoc > p.donGia ? `<span class="text-[10px] text-slate-400 line-through">${window.TitanCart.formatMoney(p.giaGoc)}</span>` : ''}
+                    <span class="text-xs font-bold text-rose-600">${(window.CellphoneSCart || window.Cart).formatMoney(p.donGia)}</span>
+                    ${p.giaGoc > p.donGia ? `<span class="text-[10px] text-slate-400 line-through">${(window.CellphoneSCart || window.Cart).formatMoney(p.giaGoc)}</span>` : ''}
                   </div>
                 </div>
                 <i class="fa-solid fa-chevron-right text-[10px] text-slate-300"></i>
@@ -545,9 +615,9 @@
     const inStock = document.getElementById('filter-instock')?.checked || false;
     const sortBy = document.getElementById('filter-sort')?.value || 'best_seller';
 
-    if (!window.TitanStoreData) return;
+    if (!(window.CellphoneSData || window.StoreData)) return;
 
-    const results = window.TitanStoreData.search(query, {
+    const results = (window.CellphoneSData || window.StoreData).search(query, {
       brand: brand,
       priceRange: priceRange,
       inStockOnly: inStock,
@@ -613,7 +683,7 @@
     const popup = document.getElementById('welcome-flash-popup');
     if (!popup) return;
 
-    const dismissed = sessionStorage.getItem('titan_welcome_popup_dismissed');
+    const dismissed = sessionStorage.getItem('cellphones_welcome_popup_dismissed');
     if (!dismissed) {
       setTimeout(() => {
         popup.classList.remove('hidden');
@@ -625,7 +695,7 @@
     const popup = document.getElementById('welcome-flash-popup');
     if (popup) {
       popup.classList.add('hidden');
-      sessionStorage.setItem('titan_welcome_popup_dismissed', 'true');
+      sessionStorage.setItem('cellphones_welcome_popup_dismissed', 'true');
     }
   };
 
@@ -648,6 +718,102 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
+
+  /**
+   * Render Mega Menu từ API NhomHang và LoaiHang
+   */
+  function renderMegaMenu() {
+    const container = document.getElementById('mega-menu-flyout');
+    if (!container || !(window.CellphoneSData || window.StoreData)) return;
+
+    const store = (window.CellphoneSData || window.StoreData);
+    const nhomList = store.nhomHang || [];
+    const loaiList = store.loaiHang || [];
+
+    let html = `
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-xs">
+    `;
+
+    nhomList.forEach(nh => {
+      const loaiOfNhom = loaiList.filter(l => l.maNhom === nh.maNhom || !l.maNhom);
+      const icon = nh.maNhom === 'NH01' ? 'fa-mobile-screen' : 'fa-plug';
+      const color = nh.maNhom === 'NH01' ? 'text-[#16A34A]' : 'text-amber-600';
+
+      html += `
+        <div class="space-y-3">
+          <div class="font-bold text-navy text-sm flex items-center gap-2 ${color} border-b border-slate-100 pb-2">
+            <i class="fa-solid ${icon}"></i>
+            <span>${nh.tenNhom}</span>
+          </div>
+          <ul class="space-y-2 text-slate-600">
+            ${loaiOfNhom.map(l => `
+              <li>
+                <button type="button" onclick="window.filterByLoaiHang('${l.tenLoai}'); window.toggleMegaMenu();" class="hover:text-[#16A34A] font-semibold text-left">
+                  ${l.tenLoai}
+                </button>
+              </li>
+            `).join('')}
+            <li>
+              <button type="button" onclick="window.filterByNhomHang('${nh.maNhom}'); window.toggleMegaMenu();" class="hover:text-[#16A34A] text-[#16A34A] font-bold">
+                Xem tất cả ${nh.tenNhom} &rarr;
+              </button>
+            </li>
+          </ul>
+        </div>
+      `;
+    });
+
+    // Cột Tra cứu & Hỗ trợ
+    html += `
+      <div class="space-y-3">
+        <div class="font-bold text-navy text-sm flex items-center gap-2 text-blue-600 border-b border-slate-100 pb-2">
+          <i class="fa-solid fa-circle-question"></i>
+          <span>Tra Cứu & Hỗ Trợ</span>
+        </div>
+        <ul class="space-y-2 text-slate-600">
+          <li>
+            <button type="button" onclick="window.CellphoneSLookup.openModal('order'); window.toggleMegaMenu();" class="hover:text-blue-600 font-semibold text-left">
+              <i class="fa-solid fa-truck mr-1 text-slate-400"></i> Tra cứu đơn hàng online
+            </button>
+          </li>
+          <li>
+            <button type="button" onclick="window.CellphoneSLookup.openModal('warranty'); window.toggleMegaMenu();" class="hover:text-blue-600 font-semibold text-left">
+              <i class="fa-solid fa-shield-halved mr-1 text-slate-400"></i> Tra cứu bảo hành IMEI
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Cột S-Member -->
+      <div class="space-y-3 bg-gradient-to-br from-[#F0FDF4] to-indigo-50 p-4 rounded-2xl border border-[#DCFCE7]">
+        <div class="font-extrabold text-[#15803D] text-xs uppercase flex items-center gap-1.5">
+          <i class="fa-solid fa-award text-amber-500"></i>
+          <span>Thành Viên S-Member</span>
+        </div>
+        <p class="text-[11px] text-slate-600">Tích điểm đổi quà, tra cứu lịch sử mua sắm và bảo hành thiết bị.</p>
+        <button type="button" onclick="window.CellphoneSCustomerPortal.openLoginModal(); window.toggleMegaMenu();" class="w-full py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-extrabold text-xs text-center shadow-md border border-slate-200">
+          Đăng Nhập S-Member
+        </button>
+      </div>
+    `;
+
+    html += `</div>`;
+    container.innerHTML = html;
+  }
+
+  window.filterByLoaiHang = function (tenLoai) {
+    window.openSearchModal(tenLoai, tenLoai);
+  };
+
+  window.filterByNhomHang = function (maNhom) {
+    if (maNhom === 'NH01') {
+      const shelf = document.getElementById('shelf-phones');
+      if (shelf) shelf.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      const shelf = document.getElementById('shelf-accessories');
+      if (shelf) shelf.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   /**
    * Mega Menu Toggle (Mobile & Desktop)

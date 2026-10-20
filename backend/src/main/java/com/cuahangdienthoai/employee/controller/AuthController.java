@@ -1,5 +1,6 @@
 package com.cuahangdienthoai.employee.controller;
 
+import com.cuahangdienthoai.common.security.TokenService;
 import com.cuahangdienthoai.customer.dto.KhachHangDTO;
 import com.cuahangdienthoai.customer.service.KhachHangService;
 import com.cuahangdienthoai.employee.dto.TaiKhoanDTO;
@@ -17,16 +18,19 @@ public class AuthController {
 
     private final TaiKhoanService taiKhoanService;
     private final KhachHangService khachHangService;
+    private final TokenService tokenService;
 
     /**
      * API Đăng nhập chung: Tự động phân luồng:
-     * - Nhân viên/Admin -> chuyển đến admin.html
+     * - Nhân viên/Admin -> chuyển đến admin.html (kèm token xác thực)
      * - Khách hàng (User) -> ở lại index.html
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("username");
+        if (username == null) username = credentials.get("tenDangNhap");
         String password = credentials.get("password");
+        if (password == null) password = credentials.get("matKhau");
 
         if (username == null || username.trim().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Vui lòng nhập tên đăng nhập hoặc số điện thoại"));
@@ -37,10 +41,14 @@ public class AuthController {
         // 1. Thử xác thực với tài khoản Nhân viên / Quản trị viên
         try {
             TaiKhoanDTO tk = taiKhoanService.login(username, password != null ? password : "");
+            String role = tk.getMaQuyen() != null ? tk.getMaQuyen().toUpperCase() : "STAFF";
+            String token = tokenService.createToken(username, role);
+
             return ResponseEntity.ok(Map.of(
                     "success", true,
+                    "token", token,
                     "type", "staff",
-                    "role", tk.getMaQuyen() != null ? tk.getMaQuyen() : "STAFF",
+                    "role", role,
                     "redirect", "admin.html",
                     "message", "Đăng nhập Quản trị viên thành công!",
                     "user", tk

@@ -1,10 +1,9 @@
 /**
- * TITAN STORE - CUSTOMER PORTAL & ACCOUNT CENTER
- * Quản lý tài khoản khách hàng (Phần A10 & B1):
- * - Đăng nhập bằng Số điện thoại + mã OTP (không dùng TaiKhoan của nhân viên)
- * - Tra cứu Đơn hàng của tôi (trạng thái: chờ xác nhận -> đã xác nhận -> đang giao -> hoàn thành)
- * - Tra cứu Bảo hành thiết bị của tôi (theo vw_BaoHanhTrangThai)
- * - Quản lý Điểm thân thiết (vw_KhachHangThanThiet.DIEMTICHLUY) và hồ sơ cá nhân
+ * CellphoneS - 241 Lê Văn Việt - CUSTOMER PORTAL & ACCOUNT CENTER
+ * Quản lý tài khoản khách hàng (S-Member)
+ * - Đăng nhập bằng Số điện thoại (POST /api/auth/customer-login)
+ * - Tra cứu Đơn hàng qua API /api/orders/phone/{sdt}
+ * - Điểm thân thiết từ vw_KhachHangThanThiet (DIEMTICHLUY, TONGCHITIEU)
  */
 
 (function (root, factory) {
@@ -13,12 +12,12 @@
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory();
   } else {
-    root.TitanCustomerPortal = factory();
+    root.CellphoneSCustomerPortal = root.CustomerPortal = factory();
   }
 }(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  const API_BASE = (window.location.protocol === 'file:' || window.location.port === '5500') 
+  var API_BASE = window.API_BASE || (window.location.protocol === 'file:' || window.location.port === '5500') 
     ? 'http://localhost:8080/api' 
     : '/api';
 
@@ -27,13 +26,11 @@
   class CustomerPortalManager {
     constructor() {
       this.pendingPhone = '';
-      this.mockOtp = '';
     }
 
     openPortal() {
-      const user = window.TitanAuth ? window.TitanAuth.getUser() : null;
+      const user = (window.CellphoneSAuth || window.Auth) ? (window.CellphoneSAuth || window.Auth).getUser() : null;
       if (!user || user.type !== 'customer') {
-        // Chưa đăng nhập: Mở modal Đăng nhập khách hàng
         this.openLoginModal();
         return;
       }
@@ -72,25 +69,19 @@
     }
 
     resetLoginForm() {
-      const step1 = document.getElementById('customer-login-step-phone');
-      const step2 = document.getElementById('customer-login-step-otp');
       const phoneInput = document.getElementById('customer-login-phone');
-      const otpInput = document.getElementById('customer-login-otp');
       const errorMsg = document.getElementById('customer-login-error');
-
-      if (step1) step1.classList.remove('hidden');
-      if (step2) step2.classList.add('hidden');
       if (phoneInput) phoneInput.value = '';
-      if (otpInput) otpInput.value = '';
       if (errorMsg) errorMsg.classList.add('hidden');
     }
 
     /**
-     * Bước 1: Khách nhập Số điện thoại -> Gửi mã OTP
+     * Đăng nhập khách hàng bằng SĐT trực tiếp
      */
-    sendOtp() {
+    async loginWithPhone() {
       const phoneInput = document.getElementById('customer-login-phone');
       const errorMsg = document.getElementById('customer-login-error');
+      const submitBtn = document.getElementById('btn-customer-do-login');
       const phone = (phoneInput ? phoneInput.value : '').trim().replace(/\s/g, '');
 
       if (!PHONE_REGEX.test(phone)) {
@@ -102,101 +93,82 @@
       }
 
       if (errorMsg) errorMsg.classList.add('hidden');
-      this.pendingPhone = phone;
-
-      // Giả lập mã OTP 6 số
-      this.mockOtp = String(Math.floor(100000 + Math.random() * 900000));
-
-      const step1 = document.getElementById('customer-login-step-phone');
-      const step2 = document.getElementById('customer-login-step-otp');
-      const displayPhone = document.getElementById('customer-login-display-phone');
-      const otpHint = document.getElementById('customer-login-otp-hint');
-
-      if (step1) step1.classList.add('hidden');
-      if (step2) step2.classList.remove('hidden');
-      if (displayPhone) displayPhone.textContent = phone;
-      if (otpHint) {
-        otpHint.textContent = `Mã xác thực OTP gửi đến ${phone} là: ${this.mockOtp} (Hết hạn sau 5 phút)`;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang đăng nhập...';
       }
 
-      if (window.TitanCart) {
-        window.TitanCart.showToast(`Mã OTP của bạn là: ${this.mockOtp}`, 'info');
-      }
-    }
-
-    /**
-     * Bước 2: Xác thực mã OTP và cấp phiên đăng nhập
-     */
-    async verifyOtp() {
-      const otpInput = document.getElementById('customer-login-otp');
-      const errorMsg = document.getElementById('customer-login-error');
-      const enteredOtp = (otpInput ? otpInput.value : '').trim();
-
-      if (enteredOtp !== this.mockOtp && enteredOtp !== '123456') {
-        if (errorMsg) {
-          errorMsg.textContent = 'Mã OTP không chính xác. Vui lòng thử lại!';
-          errorMsg.classList.remove('hidden');
-        }
-        return;
-      }
-
-      // Tra cứu hoặc tạo mới Khách hàng theo SĐT (Phần B1)
-      let customerData = {
-        type: 'customer',
-        sdt: this.pendingPhone,
-        hoTen: 'Khách Hàng ' + this.pendingPhone.slice(-4),
-        maKH: 'KH' + this.pendingPhone.slice(-4),
-        email: `${this.pendingPhone}@gmail.com`,
-        diaChi: 'Hà Nội, Việt Nam',
-        diemTichLuy: 150,
-        tongChiTieu: 31490000
-      };
-
-      // Thử gọi backend /api/khachhang/sdt/{sdt}
       try {
-        const resp = await fetch(`${API_BASE}/khachhang/sdt/${this.pendingPhone}`);
+        let customerData = {
+          type: 'customer',
+          sdt: phone,
+          hoTen: 'Khách Hàng',
+          maKH: '',
+          email: `${phone}@gmail.com`,
+          diaChi: 'TP. Hồ Chí Minh',
+          diemTichLuy: 0,
+          tongChiTieu: 0
+        };
+
+        // 1. Gọi API backend POST /api/auth/customer-login
+        const resp = await fetch(`${API_BASE}/auth/customer-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone })
+        });
+
         if (resp.ok) {
-          const dbCustomer = await resp.json();
-          if (dbCustomer && dbCustomer.maKH) {
-            customerData.maKH = dbCustomer.maKH;
-            customerData.hoTen = dbCustomer.hoTen || customerData.hoTen;
-            customerData.email = dbCustomer.email || customerData.email;
-            customerData.diaChi = dbCustomer.diaChi || customerData.diaChi;
+          const resJson = await resp.json();
+          if (resJson && resJson.customer) {
+            customerData.maKH = resJson.customer.maKH || '';
+            customerData.hoTen = resJson.customer.hoTen || customerData.hoTen;
+            customerData.email = resJson.customer.email || customerData.email;
+            customerData.diaChi = resJson.customer.diaChi || customerData.diaChi;
           }
         }
-      } catch (e) {}
 
-      // Kiểm tra trong tài khoản mẫu demo
-      const demoUsers = {
-        '0987654321': { hoTen: 'Nguyễn Hoàng Long', maKH: 'KH001', email: 'long.nh@gmail.com', diaChi: '128 Trần Duy Hưng, Cầu Giấy, Hà Nội', diemTichLuy: 320, tongChiTieu: 68480000 },
-        '0912345678': { hoTen: 'Lê Thị Ngọc Mai', maKH: 'KH002', email: 'mai.le@yahoo.com', diaChi: '45 Lê Duẩn, Quận 1, TP. Hồ Chí Minh', diemTichLuy: 210, tongChiTieu: 36990000 },
-        '0903888999': { hoTen: 'Trần Minh Đức', maKH: 'KH003', email: 'duc.tran@outlook.com', diaChi: '23 Nguyễn Văn Linh, Đà Nẵng', diemTichLuy: 140, tongChiTieu: 31490000 }
-      };
+        // 2. Tải thông tin điểm tích lũy & chi tiêu từ view vw_KhachHangThanThiet
+        try {
+          const khResp = await fetch(`${API_BASE}/khachhang/sdt/${phone}`);
+          if (khResp.ok) {
+            const kh = await khResp.json();
+            if (kh) {
+              if (kh.maKH) customerData.maKH = kh.maKH;
+              if (kh.hoTen) customerData.hoTen = kh.hoTen;
+              if (kh.diemTichLuy !== undefined) customerData.diemTichLuy = kh.diemTichLuy;
+              if (kh.tongChiTieu !== undefined) customerData.tongChiTieu = kh.tongChiTieu;
+            }
+          }
+        } catch (e) {}
 
-      if (demoUsers[this.pendingPhone]) {
-        customerData = { ...customerData, ...demoUsers[this.pendingPhone] };
+        // Lưu thông tin đăng nhập
+        if ((window.CellphoneSAuth || window.Auth)) {
+          (window.CellphoneSAuth || window.Auth).setUser(customerData);
+        }
+
+        this.closeLoginModal();
+        if ((window.CellphoneSCart || window.Cart) && typeof (window.CellphoneSCart || window.Cart).showToast === 'function') {
+          (window.CellphoneSCart || window.Cart).showToast(`Chào mừng ${customerData.hoTen} đã đăng nhập!`, 'success');
+        }
+
+        this.openPortal();
+      } catch (err) {
+        if (errorMsg) {
+          errorMsg.textContent = 'Lỗi kết nối máy chủ: ' + err.message;
+          errorMsg.classList.remove('hidden');
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Đăng Nhập S-Member &rarr;';
+        }
       }
-
-      // Lưu phiên
-      if (window.TitanAuth) {
-        window.TitanAuth.setUser(customerData);
-      } else {
-        localStorage.setItem('titan_auth_user', JSON.stringify(customerData));
-      }
-
-      this.closeLoginModal();
-      if (window.TitanCart) {
-        window.TitanCart.showToast(`Chào mừng ${customerData.hoTen} đã đăng nhập!`, 'success');
-      }
-
-      this.openPortal();
     }
 
     /**
      * Render toàn bộ dữ liệu trong Customer Portal
      */
     async renderPortalData(user) {
-      // 1. Header info
       const elName = document.getElementById('portal-user-name');
       const elPhone = document.getElementById('portal-user-phone');
       const elPoints = document.getElementById('portal-user-points');
@@ -204,21 +176,32 @@
 
       if (elName) elName.textContent = user.hoTen || 'Khách hàng';
       if (elPhone) elPhone.textContent = user.sdt || '';
-      if (elPoints) elPoints.textContent = (user.diemTichLuy || 150) + ' Điểm';
 
-      const points = user.diemTichLuy || 150;
-      let rank = 'Titan Member';
-      if (points >= 300) rank = 'Titan Gold VIP';
-      else if (points >= 100) rank = 'Titan Silver';
+      // Tải điểm mới nhất từ backend
+      let points = user.diemTichLuy || 0;
+      try {
+        const khResp = await fetch(`${API_BASE}/khachhang/sdt/${user.sdt}`);
+        if (khResp.ok) {
+          const kh = await khResp.json();
+          if (kh && kh.diemTichLuy !== undefined) {
+            points = kh.diemTichLuy;
+            user.diemTichLuy = points;
+            if ((window.CellphoneSAuth || window.Auth)) (window.CellphoneSAuth || window.Auth).setUser(user);
+          }
+        }
+      } catch (e) {}
+
+      if (elPoints) elPoints.textContent = points + ' Điểm';
+
+      let rank = 'S-Member';
+      if (points >= 300) rank = 'S-VIP Gold';
+      else if (points >= 100) rank = 'S-Member Silver';
       if (elRank) elRank.textContent = rank;
 
-      // 2. Tab Đơn hàng của tôi
+      // Tab Đơn hàng của tôi
       await this.renderOrders(user.sdt);
 
-      // 3. Tab Bảo hành của tôi
-      this.renderWarranties(user);
-
-      // 4. Tab Hồ sơ cá nhân
+      // Tab Hồ sơ cá nhân
       const profileName = document.getElementById('portal-profile-name');
       const profilePhone = document.getElementById('portal-profile-phone');
       const profileEmail = document.getElementById('portal-profile-email');
@@ -238,54 +221,19 @@
 
       let orders = [];
 
-      // 1. Thử lấy từ Backend API
       try {
         const resp = await fetch(`${API_BASE}/orders/phone/${phone}`);
         if (resp.ok) {
           const data = await resp.json();
           if (Array.isArray(data)) orders = data;
         }
-      } catch (e) {}
+      } catch (e) {
+        console.warn('Lỗi tải đơn hàng của khách:', e);
+      }
 
-      // 2. Lấy thêm từ titan_admin_db_v3 (nếu có đơn khớp SĐT)
-      try {
-        const adminRaw = localStorage.getItem('titan_admin_db_v3');
-        if (adminRaw) {
-          const adminDb = JSON.parse(adminRaw);
-          if (Array.isArray(adminDb.donHangOnline)) {
-            const matched = adminDb.donHangOnline.filter(o => o.sdtNguoiNhan === phone);
-            matched.forEach(m => {
-              if (!orders.some(o => o.maDH === m.maDH)) {
-                orders.push(m);
-              }
-            });
-          }
-        }
-      } catch (e) {}
-
-      // 3. Lấy từ LocalStorage đơn của khách
-      try {
-        const local = JSON.parse(localStorage.getItem(`titan_orders_${phone}`) || '[]');
-        local.forEach(l => {
-          if (!orders.some(o => o.maDH === l.maDH)) {
-            orders.unshift(l);
-          }
-        });
-      } catch (e) {}
-
-      // Fallback mẫu nếu chưa có đơn nào
       if (orders.length === 0) {
-        orders = [
-          {
-            maDH: 'DH100234',
-            ngayDat: '2026-10-12 08:15',
-            tongTien: 31490000,
-            trangThai: 'cho_xac_nhan',
-            tenHang: 'iPhone 18 Pro Max 256GB (Titan Sa Mạc)',
-            diaChiGiao: '128 Trần Duy Hưng, Cầu Giấy, Hà Nội',
-            phuongThucThanhToan: 'cod'
-          }
-        ];
+        container.innerHTML = '<div class="text-center py-8 text-slate-400 text-xs font-semibold">Bạn chưa có đơn hàng nào tại CellphoneS - 241 Lê Văn Việt.</div>';
+        return;
       }
 
       const statusMap = {
@@ -298,104 +246,34 @@
 
       container.innerHTML = orders.map(order => {
         const st = statusMap[order.trangThai] || statusMap.cho_xac_nhan;
+        const price = Number(order.tongTien || 0).toLocaleString('vi-VN') + ' đ';
         return `
-          <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-[#16A34A] transition-all">
+          <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-rose-500 transition-all">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5 mb-2.5">
               <div class="flex items-center gap-2">
                 <span class="font-extrabold text-navy font-mono text-xs sm:text-sm">#${order.maDH}</span>
-                <span class="text-[11px] text-slate-400"><i class="fa-regular fa-clock mr-1"></i>${order.ngayDat || 'Hôm nay'}</span>
+                <span class="text-[11px] text-slate-400"><i class="fa-regular fa-clock mr-1"></i>${order.ngayDat ? new Date(order.ngayDat).toLocaleDateString('vi-VN') : 'Hôm nay'}</span>
               </div>
               <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border ${st.color}">${st.label}</span>
             </div>
 
             <div class="text-xs space-y-1.5 text-slate-600">
               <div class="flex justify-between">
-                <span>Sản phẩm:</span>
-                <strong class="text-navy text-right">${order.tenHang || 'iPhone 18 Pro Max 256GB'}</strong>
+                <span>Người nhận:</span>
+                <strong class="text-navy text-right">${order.tenNguoiNhan || phone}</strong>
               </div>
               <div class="flex justify-between">
                 <span>Nơi nhận:</span>
-                <span class="text-slate-500 text-right max-w-xs truncate">${order.diaChiGiao}</span>
+                <span class="text-slate-500 text-right max-w-xs truncate">${order.diaChiGiao || 'Nhận tại cửa hàng 241 Lê Văn Việt'}</span>
               </div>
               <div class="flex justify-between pt-1 border-t border-slate-50">
                 <span>Tổng thanh toán:</span>
-                <strong class="text-sm font-bold text-rose-600">${window.TitanCart.formatMoney(order.tongTien)}</strong>
+                <strong class="text-sm font-bold text-rose-600">${price}</strong>
               </div>
             </div>
           </div>
         `;
       }).join('');
-    }
-
-    renderWarranties(user) {
-      const container = document.getElementById('portal-warranty-list');
-      if (!container) return;
-
-      // Danh sách thiết bị bảo hành mẫu từ vw_BaoHanhTrangThai
-      const warranties = [
-        {
-          maBH: 'BH001',
-          tenMay: 'iPhone 18 Pro Max 256GB (Titan Sa Mạc)',
-          soImei: '356789123456781',
-          ngayBD: '11/10/2026',
-          ngayKT: '11/10/2027',
-          conLaiNgay: 363,
-          trangThai: 'Còn bảo hành chính hãng Apple VN/A',
-          tinhTrangSua: 'Không có lỗi'
-        }
-      ];
-
-      container.innerHTML = warranties.map(w => `
-        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-2 mb-2">
-            <h4 class="font-bold text-xs sm:text-sm text-navy">${w.tenMay}</h4>
-            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <i class="fa-solid fa-shield-halved mr-1"></i> Còn ${w.conLaiNgay} ngày
-            </span>
-          </div>
-          <div class="text-xs space-y-1 text-slate-600">
-            <div>Số IMEI: <strong class="font-mono text-navy select-all">${w.soImei}</strong></div>
-            <div>Thời hạn: <strong>${w.ngayBD}</strong> đến <strong>${w.ngayKT}</strong></div>
-            <div class="text-emerald-600 font-medium pt-1"><i class="fa-solid fa-circle-check mr-1"></i>${w.trangThai}</div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    saveProfile() {
-      const name = (document.getElementById('portal-profile-name')?.value || '').trim();
-      const email = (document.getElementById('portal-profile-email')?.value || '').trim();
-      const address = (document.getElementById('portal-profile-address')?.value || '').trim();
-
-      const user = window.TitanAuth ? window.TitanAuth.getUser() : null;
-      if (!user) return;
-
-      user.hoTen = name || user.hoTen;
-      user.email = email || user.email;
-      user.diaChi = address || user.diaChi;
-
-      if (window.TitanAuth) {
-        window.TitanAuth.setUser(user);
-      }
-
-      if (window.TitanCart) {
-        window.TitanCart.showToast('Cập nhật hồ sơ thành công!', 'success');
-      }
-    }
-
-    switchTab(tabId) {
-      const tabs = ['orders', 'warranty', 'rewards', 'profile'];
-      tabs.forEach(t => {
-        const btn = document.getElementById(`btn-portal-tab-${t}`);
-        const content = document.getElementById(`portal-tab-${t}`);
-        if (t === tabId) {
-          if (btn) btn.className = 'py-3 px-4 text-xs font-bold border-b-2 border-[#16A34A] text-[#16A34A] flex items-center gap-2 cursor-pointer';
-          if (content) content.classList.remove('hidden');
-        } else {
-          if (btn) btn.className = 'py-3 px-4 text-xs font-semibold text-slate-500 hover:text-navy border-b-2 border-transparent flex items-center gap-2 cursor-pointer';
-          if (content) content.classList.add('hidden');
-        }
-      });
     }
   }
 

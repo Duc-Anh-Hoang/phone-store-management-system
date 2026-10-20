@@ -1,5 +1,5 @@
 /**
- * TITAN STORE - CART & CART DRAWER HANDLER
+ * CellphoneS - 241 Lê Văn Việt - CART & CART DRAWER HANDLER
  * Quản lý giỏ hàng phía Client theo Phần B1 của bản kế hoạch:
  * - Lưu trữ trong LocalStorage (khách vãng lai và thành viên)
  * - Kiểm tra số lượng tồn kho (khớp mã lỗi 50503 của sp_DatHangOnline)
@@ -13,13 +13,13 @@
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory();
   } else {
-    root.TitanCart = factory();
+    root.CellphoneSCart = root.Cart = factory();
   }
 }(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  const STORAGE_KEY = 'titan_customer_cart_v1';
-  const PROMO_STORAGE_KEY = 'titan_applied_promo_v1';
+  const STORAGE_KEY = 'cellphones_cart';
+  const PROMO_STORAGE_KEY = 'cellphones_applied_promo';
 
   class CartManager {
     constructor() {
@@ -64,7 +64,7 @@
 
     /**
      * Thêm sản phẩm vào giỏ hàng
-     * @param {Object} product Thông tin sản phẩm từ TitanStoreData
+     * @param {Object} product Thông tin sản phẩm từ CellphoneSData
      * @param {Object} variant Phiên bản (dung lượng, ram)
      * @param {Object} color Màu sắc đã chọn
      * @param {Number} qty Số lượng muốn thêm
@@ -174,13 +174,13 @@
      * Áp dụng mã khuyến mãi
      */
     applyPromoCode(code) {
-      if (!window.TitanStoreData) return { success: false, message: 'Dữ liệu chưa sẵn sàng' };
+      if (!(window.CellphoneSData || window.StoreData)) return { success: false, message: 'Dữ liệu chưa sẵn sàng' };
       if (!code || !code.trim()) {
         this.savePromo(null);
         return { success: false, message: 'Vui lòng nhập mã khuyến mãi' };
       }
 
-      const promo = window.TitanStoreData.verifyPromotion(code);
+      const promo = (window.CellphoneSData || window.StoreData).verifyPromotion(code);
       if (!promo) {
         this.savePromo(null);
         return {
@@ -292,7 +292,7 @@
                       </span>` : ''}
                   </div>
                 </div>
-                <button type="button" onclick="window.TitanCart.removeItem('${item.id}')" class="text-slate-400 hover:text-rose-600 p-1 transition-colors" title="Xóa món">
+                <button type="button" onclick="window.CellphoneSCart.removeItem('${item.id}')" class="text-slate-400 hover:text-rose-600 p-1 transition-colors" title="Xóa món">
                   <i class="fa-regular fa-trash-can text-sm"></i>
                 </button>
               </div>
@@ -303,9 +303,9 @@
                   ${item.oldPrice > item.price ? `<span class="text-[10px] text-slate-400 line-through">${this.formatMoney(item.oldPrice)}</span>` : ''}
                 </div>
                 <div class="inline-flex items-center rounded-lg border border-slate-200 bg-slate-50 p-0.5">
-                  <button type="button" onclick="window.TitanCart.updateQty('${item.id}', ${item.qty - 1})" class="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-white rounded font-bold text-xs transition-colors">-</button>
+                  <button type="button" onclick="window.CellphoneSCart.updateQty('${item.id}', ${item.qty - 1})" class="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-white rounded font-bold text-xs transition-colors">-</button>
                   <span class="w-7 text-center font-bold text-xs text-navy">${item.qty}</span>
-                  <button type="button" onclick="window.TitanCart.updateQty('${item.id}', ${item.qty + 1})" class="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-white rounded font-bold text-xs transition-colors">+</button>
+                  <button type="button" onclick="window.CellphoneSCart.updateQty('${item.id}', ${item.qty + 1})" class="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-white rounded font-bold text-xs transition-colors">+</button>
                 </div>
               </div>
             </div>
@@ -330,7 +330,7 @@
           promoTag.innerHTML = `
             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
               <i class="fa-solid fa-tag"></i> Mã: ${this.appliedPromo.maKM} (-${this.appliedPromo.phanTramGiam}%)
-              <button type="button" onclick="window.TitanCart.removePromo()" class="ml-1 text-emerald-800 hover:text-rose-600"><i class="fa-solid fa-xmark"></i></button>
+              <button type="button" onclick="window.CellphoneSCart.removePromo()" class="ml-1 text-emerald-800 hover:text-rose-600"><i class="fa-solid fa-xmark"></i></button>
             </span>
           `;
           promoTag.classList.remove('hidden');
@@ -346,10 +346,10 @@
     }
 
     showToast(message, type = 'info') {
-      let toastContainer = document.getElementById('titan-toast-container');
+      let toastContainer = document.getElementById('cellphones-toast-container');
       if (!toastContainer) {
         toastContainer = document.createElement('div');
-        toastContainer.id = 'titan-toast-container';
+        toastContainer.id = 'cellphones-toast-container';
         toastContainer.className = 'fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none';
         document.body.appendChild(toastContainer);
       }

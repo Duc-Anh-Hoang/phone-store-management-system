@@ -8,6 +8,8 @@ import com.cuahangdienthoai.employee.repository.NhanVienRepository;
 import com.cuahangdienthoai.employee.repository.PhanQuyenRepository;
 import com.cuahangdienthoai.employee.repository.TaiKhoanRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ public class TaiKhoanService {
     private final TaiKhoanRepository taiKhoanRepository;
     private final NhanVienRepository nhanVienRepository;
     private final PhanQuyenRepository phanQuyenRepository;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public List<TaiKhoanDTO> getAll() {
         return taiKhoanRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
@@ -33,14 +36,19 @@ public class TaiKhoanService {
     }
 
     @Transactional
-    public TaiKhoanDTO create(String maNV, String maQuyen, String username, String passwordHash) {
+    public TaiKhoanDTO create(String maNV, String maQuyen, String username, String password) {
         NhanVien nv = nhanVienRepository.findById(maNV)
                 .orElseThrow(() -> new RuntimeException("Nhân viên không tồn tại: " + maNV));
         PhanQuyen pq = phanQuyenRepository.findById(maQuyen)
                 .orElseThrow(() -> new RuntimeException("Phân quyền không tồn tại: " + maQuyen));
+
+        String encodedPassword = (password != null && password.startsWith("$2a$"))
+                ? password
+                : passwordEncoder.encode(password != null ? password : "123");
+
         TaiKhoan tk = TaiKhoan.builder()
                 .username(username)
-                .passwordHash(passwordHash)
+                .passwordHash(encodedPassword)
                 .nhanVien(nv)
                 .phanQuyen(pq)
                 .trangThai("hoat_dong")
@@ -59,7 +67,23 @@ public class TaiKhoanService {
     public TaiKhoanDTO login(String username, String password) {
         TaiKhoan tk = taiKhoanRepository.findById(username)
                 .orElseThrow(() -> new RuntimeException("Tên đăng nhập không tồn tại: " + username));
-        if (!tk.getPasswordHash().equals(password)) {
+
+        boolean matched = false;
+        String currentHash = tk.getPasswordHash();
+        if (currentHash != null) {
+            if (currentHash.startsWith("$2a$") || currentHash.startsWith("$2b$")) {
+                matched = passwordEncoder.matches(password, currentHash);
+            } else {
+                // Hỗ trợ đăng nhập mật khẩu thô và tự động nâng cấp sang BCrypt (B2)
+                matched = currentHash.equals(password);
+                if (matched) {
+                    tk.setPasswordHash(passwordEncoder.encode(password));
+                    taiKhoanRepository.save(tk);
+                }
+            }
+        }
+
+        if (!matched) {
             throw new RuntimeException("Mật khẩu không chính xác");
         }
         if (!"hoat_dong".equalsIgnoreCase(tk.getTrangThai())) {

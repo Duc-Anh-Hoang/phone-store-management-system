@@ -15,4 +15,5 @@ public class MatHangDTO {
     private String tenLoai;
     private boolean quanLyIMEI;
     private int thoiHanBaoHanh;
+    private Integer tonKho;
 }

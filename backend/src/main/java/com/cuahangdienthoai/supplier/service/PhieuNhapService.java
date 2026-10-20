@@ -11,6 +11,7 @@ import com.cuahangdienthoai.supplier.entity.ChiTietPhieuNhapId;
 import com.cuahangdienthoai.supplier.entity.NhaCungCap;
 import com.cuahangdienthoai.supplier.entity.PhieuNhap;
 import com.cuahangdienthoai.supplier.repository.ChiTietPhieuNhapRepository;
+import com.cuahangdienthoai.supplier.repository.ImeiRepository;
 import com.cuahangdienthoai.supplier.repository.NhaCungCapRepository;
 import com.cuahangdienthoai.supplier.repository.PhieuNhapRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class PhieuNhapService {
     private final NhaCungCapRepository nhaCungCapRepository;
     private final NhanVienRepository nhanVienRepository;
     private final MatHangRepository matHangRepository;
+    private final ImeiRepository imeiRepository;
 
     public List<PhieuNhapDTO> getAll() {
         return phieuNhapRepository.findAll().stream()
@@ -60,11 +62,22 @@ public class PhieuNhapService {
     public PhieuNhapDTO create(PhieuNhapDTO dto) {
         NhaCungCap ncc = nhaCungCapRepository.findById(dto.getMaNCC())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy nhà cung cấp: " + dto.getMaNCC()));
-        NhanVien nv = nhanVienRepository.findById(dto.getMaNV())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên: " + dto.getMaNV()));
+        NhanVien nv = null;
+        if (dto.getMaNV() != null && !dto.getMaNV().trim().isEmpty()) {
+            nv = nhanVienRepository.findById(dto.getMaNV()).orElse(null);
+        }
+        if (nv == null) {
+            nv = nhanVienRepository.findAll().stream().findFirst()
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên nhập kho"));
+        }
+
+        String soPN = dto.getSoPNhap();
+        if (soPN == null || soPN.trim().isEmpty()) {
+            soPN = "PN" + String.format("%03d", phieuNhapRepository.count() + 1);
+        }
 
         PhieuNhap phieuNhap = PhieuNhap.builder()
-                .soPNhap(dto.getSoPNhap())
+                .soPNhap(soPN)
                 .ngayNhap(LocalDateTime.now())
                 .nhaCungCap(ncc)
                 .nhanVien(nv)
@@ -73,19 +86,39 @@ public class PhieuNhapService {
 
         if (dto.getChiTiet() != null && !dto.getChiTiet().isEmpty()) {
             final PhieuNhap savedPn = phieuNhap;
-            List<ChiTietPhieuNhap> details = dto.getChiTiet().stream().map(ct -> {
+            for (var ct : dto.getChiTiet()) {
                 MatHang mh = matHangRepository.findById(ct.getMaHang())
                         .orElseThrow(() -> new RuntimeException("Không tìm thấy mặt hàng: " + ct.getMaHang()));
                 ChiTietPhieuNhapId id = new ChiTietPhieuNhapId(savedPn.getSoPNhap(), mh.getMaHang());
-                return ChiTietPhieuNhap.builder()
+                ChiTietPhieuNhap detail = ChiTietPhieuNhap.builder()
                         .id(id)
                         .phieuNhap(savedPn)
                         .matHang(mh)
                         .slNhap(ct.getSlNhap())
                         .donGiaNhap(ct.getDonGiaNhap())
                         .build();
-            }).collect(Collectors.toList());
-            chiTietPhieuNhapRepository.saveAll(details);
+                detail = chiTietPhieuNhapRepository.save(detail);
+
+                // Nếu mặt hàng quản lý IMEI thì sinh danh sách mã IMEI (15 chữ số)
+                if (mh.isQuanLyImei()) {
+                    int sl = ct.getSlNhap() > 0 ? ct.getSlNhap() : 1;
+                    for (int k = 0; k < sl; k++) {
+                        long countImei = imeiRepository.count() + 1 + k;
+                        String maImei = "IMEI" + String.format("%03d", countImei);
+                        // Sinh 15 chữ số duy nhất bắt đầu bằng 35
+                        long randomPart = (long) (Math.random() * 9000000000000L) + 1000000000000L;
+                        String soImei = "35" + String.valueOf(randomPart).substring(0, 13);
+
+                        com.cuahangdienthoai.supplier.entity.Imei imeiObj = com.cuahangdienthoai.supplier.entity.Imei.builder()
+                                .maIMEI(maImei)
+                                .chiTietPhieuNhap(detail)
+                                .soIMEI(soImei)
+                                .trangThai("con_hang")
+                                .build();
+                        imeiRepository.save(imeiObj);
+                    }
+                }
+            }
         }
 
         return toDTO(phieuNhap);

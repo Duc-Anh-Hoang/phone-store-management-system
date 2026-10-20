@@ -10,7 +10,7 @@
     ? 'http://localhost:8080/api' 
     : '/api';
 
-  const AUTH_STORAGE_KEY = 'titan_auth_user';
+  const AUTH_STORAGE_KEY = 'cellphones_auth_user';
 
   // Danh mục tài khoản mẫu (Offline Demo / Fallback)
   const DEMO_STAFF = {
@@ -64,48 +64,37 @@
     async loginStaff(username, password) {
       username = (username || '').trim().toLowerCase();
 
-      // 1. Thử gọi API Backend Spring Boot
+      // 1. Gọi API Backend Spring Boot
       try {
         const resp = await fetch(`${API_BASE}/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password })
         });
-        if (resp.ok) {
-          const data = await resp.json();
-          if (data.user) {
-            const userObj = {
-              type: data.type || 'staff',
-              username: data.user.username || username,
-              tenNhanVien: data.user.tenNhanVien || username,
-              tenQuyen: data.user.tenQuyen || 'Quản trị viên',
-              maNV: data.user.maNV || 'NV001'
-            };
-            this.setUser(userObj);
-            return { success: true, redirect: data.redirect || 'admin.html', user: userObj };
+        const data = await resp.json().catch(() => ({}));
+        if (resp.ok && (data.user || data.success)) {
+          const u = data.user || {};
+          const role = (data.role || u.maQuyen || 'ADMIN').toUpperCase();
+          const userObj = {
+            type: data.type || 'staff',
+            username: u.username || username,
+            tenNhanVien: u.tenNhanVien || username,
+            tenQuyen: u.tenQuyen || role,
+            maNV: u.maNV || 'NV001',
+            role: role,
+            token: data.token
+          };
+          if (data.token) {
+            localStorage.setItem('admin_token', data.token);
           }
+          this.setUser(userObj);
+          return { success: true, redirect: data.redirect || 'admin.html', user: userObj };
+        } else {
+          throw new Error(data.error || 'Tên đăng nhập hoặc mật khẩu không chính xác');
         }
       } catch (err) {
-        console.warn('Backend API auth offline, checking demo fallback...', err.message);
+        throw new Error(err.message || 'Lỗi kết nối máy chủ xác thực');
       }
-
-      // 2. Chế độ Fallback / Demo Offline cho các tài khoản mẫu
-      if (DEMO_STAFF[username]) {
-        const user = DEMO_STAFF[username];
-        this.setUser(user);
-        return { success: true, redirect: 'admin.html', user };
-      }
-
-      // 3. Cho phép tài khoản bất kỳ trong chế độ Demo
-      const defaultUser = DEMO_STAFF['admin'] || {
-        type: 'staff',
-        username: username,
-        tenNhanVien: 'Quản trị viên (' + username + ')',
-        tenQuyen: 'Quản trị viên',
-        maNV: 'NV001'
-      };
-      this.setUser(defaultUser);
-      return { success: true, redirect: 'admin.html', user: defaultUser };
     },
 
     /**
@@ -117,49 +106,31 @@
         throw new Error('Vui lòng nhập số điện thoại khách hàng');
       }
 
-      // 1. Thử gọi API Backend Spring Boot
+      // 1. Gọi API Backend Spring Boot
       try {
         const resp = await fetch(`${API_BASE}/auth/customer-login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ phone })
         });
-        if (resp.ok) {
-          const data = await resp.json();
-          if (data.user) {
-            const userObj = {
-              type: 'customer',
-              maKH: data.user.maKH,
-              hoTen: data.user.hoTen,
-              sdt: data.user.sdt,
-              email: data.user.email,
-              diaChi: data.user.diaChi
-            };
-            this.setUser(userObj);
-            return { success: true, redirect: 'index.html', user: userObj };
-          }
+        const data = await resp.json().catch(() => ({}));
+        if (resp.ok && data.user) {
+          const userObj = {
+            type: 'customer',
+            maKH: data.user.maKH,
+            hoTen: data.user.hoTen,
+            sdt: data.user.sdt,
+            email: data.user.email,
+            diaChi: data.user.diaChi
+          };
+          this.setUser(userObj);
+          return { success: true, redirect: 'index.html', user: userObj };
+        } else {
+          throw new Error(data.error || 'Số điện thoại chưa có trên hệ thống. Quý khách vui lòng đặt hàng để đăng ký!');
         }
       } catch (err) {
-        console.warn('Backend customer login offline, using demo data...', err.message);
+        throw new Error(err.message || 'Lỗi kết nối máy chủ');
       }
-
-      // 2. Fallback Demo Khách hàng
-      if (DEMO_CUSTOMERS[phone]) {
-        const user = DEMO_CUSTOMERS[phone];
-        this.setUser(user);
-        return { success: true, redirect: 'index.html', user };
-      }
-
-      // Nếu số điện thoại mới, tạo tài khoản khách hàng tạm
-      const tempUser = {
-        type: 'customer',
-        maKH: 'KH_MOI',
-        hoTen: 'Khách hàng (' + phone.slice(-4) + ')',
-        sdt: phone,
-        diaChi: ''
-      };
-      this.setUser(tempUser);
-      return { success: true, redirect: 'index.html', user: tempUser };
     },
 
     logout() {
@@ -235,7 +206,7 @@
           staffBadge.style.flexWrap = 'nowrap';
           const nameEl = document.getElementById('staff-header-name');
           const roleEl = document.getElementById('staff-header-role');
-          const isEn = window.TitanI18n && window.TitanI18n.getLang() === 'en';
+          const isEn = false && false.getLang() === 'en';
           if (nameEl) nameEl.textContent = isEn ? 'Admin Portal' : 'Vào Quản Trị';
           // Bỏ hoàn toàn phần hiển thị role (banhang) trong nút theo yêu cầu của người dùng
           if (roleEl) roleEl.remove();
@@ -300,7 +271,7 @@
                   <p class="text-xs text-slate-500">Đăng nhập Quản trị viên & Nhân viên</p>
                 </div>
               </div>
-              <button type="button" onclick="window.TitanAuth.closeModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl">
+              <button type="button" onclick="window.CellphoneSAuth.closeModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl">
                 <i class="fa-solid fa-xmark text-lg"></i>
               </button>
             </div>
@@ -373,7 +344,7 @@
     }
   };
 
-  window.TitanAuth = Auth;
+  window.CellphoneSAuth = window.cellphonesAuth = window.Auth = Auth;
   window.openLoginModal = function(preferredUser = '') {
     let modal = document.getElementById('auth-modal');
     if (!modal) {

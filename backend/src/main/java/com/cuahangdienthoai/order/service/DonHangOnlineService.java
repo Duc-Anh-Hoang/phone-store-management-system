@@ -2,7 +2,9 @@ package com.cuahangdienthoai.order.service;
 
 import com.cuahangdienthoai.order.dto.DonHangOnlineDTO;
 import com.cuahangdienthoai.order.entity.DonHangOnline;
+import com.cuahangdienthoai.order.entity.HoaDon;
 import com.cuahangdienthoai.order.repository.DonHangOnlineRepository;
+import com.cuahangdienthoai.order.repository.HoaDonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 public class DonHangOnlineService {
 
     private final DonHangOnlineRepository donHangOnlineRepository;
+    private final HoaDonRepository hoaDonRepository;
 
     public List<DonHangOnlineDTO> getAll() {
         return donHangOnlineRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
@@ -48,11 +51,50 @@ public class DonHangOnlineService {
     }
 
     @Transactional
-    public DonHangOnlineDTO updateTrangThai(String maDH, String trangThai) {
+    public DonHangOnlineDTO updateTrangThai(String maDH, String trangThai, String maNV, String soHD) {
         DonHangOnline entity = donHangOnlineRepository.findById(maDH)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng: " + maDH));
+
+        String cu = entity.getTrangThai();
+        boolean validTransition = false;
+        if ("cho_xac_nhan".equals(cu) && ("da_xac_nhan".equals(trangThai) || "da_huy".equals(trangThai))) {
+            validTransition = true;
+        } else if ("da_xac_nhan".equals(cu) && ("dang_giao".equals(trangThai) || "da_huy".equals(trangThai))) {
+            validTransition = true;
+        } else if ("dang_giao".equals(cu) && "hoan_thanh".equals(trangThai)) {
+            validTransition = true;
+        }
+
+        if (!validTransition) {
+            throw new RuntimeException("Không thể chuyển đơn hàng từ trạng thái '" + cu + "' sang '" + trangThai + "'.");
+        }
+
+        if ("hoan_thanh".equals(trangThai)) {
+            String checkSoHD = soHD != null ? soHD : entity.getSoHD();
+            if (checkSoHD == null || checkSoHD.trim().isEmpty()) {
+                throw new RuntimeException("Hoàn thành đơn online cần gắn với hóa đơn bán online.");
+            }
+            HoaDon hd = hoaDonRepository.findById(checkSoHD)
+                    .orElseThrow(() -> new RuntimeException("Hóa đơn '" + checkSoHD + "' không tồn tại."));
+            if (!"online".equalsIgnoreCase(hd.getKenhBan())) {
+                throw new RuntimeException("Hoàn thành đơn online cần gắn với hóa đơn có KENHBAN='online'.");
+            }
+            entity.setSoHD(checkSoHD);
+        } else if (soHD != null) {
+            entity.setSoHD(soHD);
+        }
+
+        if (maNV != null && !maNV.trim().isEmpty()) {
+            entity.setMaNV(maNV);
+        }
+
         entity.setTrangThai(trangThai);
         return toDTO(donHangOnlineRepository.save(entity));
+    }
+
+    @Transactional
+    public DonHangOnlineDTO updateTrangThai(String maDH, String trangThai) {
+        return updateTrangThai(maDH, trangThai, null, null);
     }
 
     @Transactional

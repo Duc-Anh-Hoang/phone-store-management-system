@@ -50,7 +50,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -93,111 +92,199 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initData() {
-        if (phanQuyenRepository.count() > 0) {
-            log.info("Cơ sở dữ liệu đã có dữ liệu, bỏ qua bước khởi tạo mẫu.");
+        if (matHangRepository.existsById("MH006")) {
+            log.info("Cơ sở dữ liệu đã có dữ liệu mẫu đầy đủ, bỏ qua bước khởi tạo.");
             return;
         }
 
-        log.info("Đang khởi tạo dữ liệu mẫu cho hệ thống Quản lý cửa hàng điện thoại...");
+        log.info("Đang khởi tạo dữ liệu mẫu cho hệ thống Quản lý cửa hàng điện thoại CellphoneS...");
 
-        // 1. Phân quyền
+        // 1. Phân quyền (6 quyền theo kế hoạch và DFD)
         PhanQuyen pqAdmin = phanQuyenRepository.save(new PhanQuyen("ADMIN", "Quản trị viên", "Toàn quyền hệ thống"));
-        PhanQuyen pqQuanLy = phanQuyenRepository.save(new PhanQuyen("QUANLY", "Quản lý", "Quản lý cửa hàng"));
-        PhanQuyen pqBanHang = phanQuyenRepository.save(new PhanQuyen("BANHANG", "Bán hàng", "Nhân viên bán hàng"));
-        PhanQuyen pqThuNgan = phanQuyenRepository.save(new PhanQuyen("THUNGAN", "Thu ngân", "Nhân viên thu ngân"));
-        PhanQuyen pqKyThuat = phanQuyenRepository.save(new PhanQuyen("KYTHUAT", "Kỹ thuật & Bảo hành", "Nhân viên kỹ thuật"));
+        PhanQuyen pqQuanLy = phanQuyenRepository.save(new PhanQuyen("QUANLY", "Quản lý cửa hàng", "Quản lý toàn bộ hoạt động"));
+        PhanQuyen pqBanHang = phanQuyenRepository.save(new PhanQuyen("BANHANG", "Nhân viên bán hàng", "Lập đơn, POS, tư vấn"));
+        PhanQuyen pqThuNgan = phanQuyenRepository.save(new PhanQuyen("THUNGAN", "Nhân viên thu ngân", "Xác nhận thu tiền, xuất hóa đơn, chi hoàn trả"));
+        PhanQuyen pqKho = phanQuyenRepository.save(new PhanQuyen("KHO", "Nhân viên kho", "Quản lý nhập kho, IMEI, tồn kho"));
+        PhanQuyen pqKyThuat = phanQuyenRepository.save(new PhanQuyen("KYTHUAT", "Nhân viên kỹ thuật", "Tiếp nhận và sửa chữa bảo hành"));
 
         // 2. Nhân viên
         NhanVien nv1 = nhanVienRepository.save(NhanVien.builder()
                 .maNV("NV001").hoTen("Nguyễn Văn Quản").chucVu("Quản lý")
-                .sdt("0901112233").email("quanly@titanstore.vn").trangThai("dang_lam")
+                .sdt("0901112233").email("quanly@cellphones.vn").trangThai("dang_lam")
                 .ngayVaoLam(LocalDateTime.now().minusMonths(12)).build());
 
         NhanVien nv2 = nhanVienRepository.save(NhanVien.builder()
                 .maNV("NV002").hoTen("Trần Thị Thu Ngân").chucVu("Thu ngân")
-                .sdt("0902223344").email("thungan@titanstore.vn").trangThai("dang_lam")
+                .sdt("0902223344").email("thungan@cellphones.vn").trangThai("dang_lam")
                 .ngayVaoLam(LocalDateTime.now().minusMonths(8)).build());
 
         NhanVien nv3 = nhanVienRepository.save(NhanVien.builder()
                 .maNV("NV003").hoTen("Lê Văn Bán Hàng").chucVu("Bán hàng")
-                .sdt("0903334455").email("banhang@titanstore.vn").trangThai("dang_lam")
+                .sdt("0903334455").email("banhang@cellphones.vn").trangThai("dang_lam")
                 .ngayVaoLam(LocalDateTime.now().minusMonths(6)).build());
 
         NhanVien nv4 = nhanVienRepository.save(NhanVien.builder()
                 .maNV("NV004").hoTen("Phạm Kỹ Thuật").chucVu("Kỹ thuật & Bảo hành")
-                .sdt("0904445566").email("kythuat@titanstore.vn").trangThai("dang_lam")
+                .sdt("0904445566").email("kythuat@cellphones.vn").trangThai("dang_lam")
                 .ngayVaoLam(LocalDateTime.now().minusMonths(4)).build());
 
-        // 3. Tài khoản (mỗi nhân viên chỉ có 1 tài khoản do ràng buộc UQ_TaiKhoan_MaNV)
-        taiKhoanRepository.save(TaiKhoan.builder()
-                .username("admin").passwordHash("123456").nhanVien(nv1).phanQuyen(pqAdmin)
-                .trangThai("hoat_dong").ngayTao(LocalDateTime.now()).build());
-        taiKhoanRepository.save(TaiKhoan.builder()
-                .username("thungan").passwordHash("123456").nhanVien(nv2).phanQuyen(pqThuNgan)
-                .trangThai("hoat_dong").ngayTao(LocalDateTime.now()).build());
-        taiKhoanRepository.save(TaiKhoan.builder()
-                .username("banhang").passwordHash("123456").nhanVien(nv3).phanQuyen(pqBanHang)
-                .trangThai("hoat_dong").ngayTao(LocalDateTime.now()).build());
-        taiKhoanRepository.save(TaiKhoan.builder()
-                .username("kythuat").passwordHash("123456").nhanVien(nv4).phanQuyen(pqKyThuat)
-                .trangThai("hoat_dong").ngayTao(LocalDateTime.now()).build());
+        NhanVien nv5 = nhanVienRepository.save(NhanVien.builder()
+                .maNV("NV005").hoTen("Hoàng Văn Kho").chucVu("Kho")
+                .sdt("0905556677").email("kho@cellphones.vn").trangThai("dang_lam")
+                .ngayVaoLam(LocalDateTime.now().minusMonths(5)).build());
+
+        // 3. Tài khoản tương ứng 6 vai trò (B2: Băm mật khẩu BCrypt)
+        org.springframework.security.crypto.password.PasswordEncoder encoder = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+        String defaultBcrypt = encoder.encode("123456");
+
+        if (!taiKhoanRepository.existsById("admin")) {
+            taiKhoanRepository.save(TaiKhoan.builder()
+                    .username("admin").passwordHash(defaultBcrypt).nhanVien(nv1).phanQuyen(pqAdmin)
+                    .trangThai("hoat_dong").ngayTao(LocalDateTime.now()).build());
+        }
+
+        NhanVien nv6 = nhanVienRepository.findById("NV006").orElseGet(() ->
+                nhanVienRepository.save(NhanVien.builder()
+                        .maNV("NV006").hoTen("Nguyễn Quản Lý").chucVu("Quản lý")
+                        .sdt("0906667788").email("quanly2@cellphones.vn").trangThai("dang_lam")
+                        .ngayVaoLam(LocalDateTime.now().minusMonths(10)).build())
+        );
+
+        if (!taiKhoanRepository.existsById("quanly")) {
+            taiKhoanRepository.save(TaiKhoan.builder()
+                    .username("quanly").passwordHash(defaultBcrypt).nhanVien(nv6).phanQuyen(pqQuanLy)
+                    .trangThai("hoat_dong").ngayTao(LocalDateTime.now()).build());
+        }
+        if (!taiKhoanRepository.existsById("thungan")) {
+            taiKhoanRepository.save(TaiKhoan.builder()
+                    .username("thungan").passwordHash(defaultBcrypt).nhanVien(nv2).phanQuyen(pqThuNgan)
+                    .trangThai("hoat_dong").ngayTao(LocalDateTime.now()).build());
+        }
+        if (!taiKhoanRepository.existsById("banhang")) {
+            taiKhoanRepository.save(TaiKhoan.builder()
+                    .username("banhang").passwordHash(defaultBcrypt).nhanVien(nv3).phanQuyen(pqBanHang)
+                    .trangThai("hoat_dong").ngayTao(LocalDateTime.now()).build());
+        }
+        if (!taiKhoanRepository.existsById("kythuat")) {
+            taiKhoanRepository.save(TaiKhoan.builder()
+                    .username("kythuat").passwordHash(defaultBcrypt).nhanVien(nv4).phanQuyen(pqKyThuat)
+                    .trangThai("hoat_dong").ngayTao(LocalDateTime.now()).build());
+        }
+        if (!taiKhoanRepository.existsById("kho")) {
+            taiKhoanRepository.save(TaiKhoan.builder()
+                    .username("kho").passwordHash(defaultBcrypt).nhanVien(nv5).phanQuyen(pqKho)
+                    .trangThai("hoat_dong").ngayTao(LocalDateTime.now()).build());
+        }
+
+        // Tự động nâng cấp các tài khoản hiện có chưa băm BCrypt
+        taiKhoanRepository.findAll().forEach(tk -> {
+            if (tk.getPasswordHash() != null && !tk.getPasswordHash().startsWith("$2a$") && !tk.getPasswordHash().startsWith("$2b$")) {
+                tk.setPasswordHash(encoder.encode(tk.getPasswordHash()));
+                taiKhoanRepository.save(tk);
+            }
+        });
 
         // 4. Nhóm hàng & Loại hàng
         NhomHang nh1 = nhomHangRepository.save(new NhomHang("NH01", "Điện thoại di động"));
-        NhomHang nh2 = nhomHangRepository.save(new NhomHang("NH02", "Phụ kiện chính hãng"));
-        NhomHang nh3 = nhomHangRepository.save(new NhomHang("NH03", "Thiết bị âm thanh"));
+        NhomHang nh2 = nhomHangRepository.save(new NhomHang("NH02", "Phụ kiện công nghệ"));
 
-        LoaiHang lh1 = loaiHangRepository.save(new LoaiHang("LH01", "Apple iPhone"));
-        LoaiHang lh2 = loaiHangRepository.save(new LoaiHang("LH02", "Samsung Galaxy"));
-        LoaiHang lh3 = loaiHangRepository.save(new LoaiHang("LH03", "Sạc & Cáp"));
+        LoaiHang lhApple = loaiHangRepository.save(new LoaiHang("LH01", "Apple iPhone"));
+        LoaiHang lhSamsung = loaiHangRepository.save(new LoaiHang("LH02", "Samsung Galaxy"));
+        LoaiHang lhXiaomi = loaiHangRepository.save(new LoaiHang("LH03", "Xiaomi"));
+        LoaiHang lhOppo = loaiHangRepository.save(new LoaiHang("LH04", "OPPO"));
+        LoaiHang lhSacCap = loaiHangRepository.save(new LoaiHang("LH05", "Sạc & Cáp"));
+        LoaiHang lhTaiNghe = loaiHangRepository.save(new LoaiHang("LH06", "Tai nghe"));
+        LoaiHang lhOpLung = loaiHangRepository.save(new LoaiHang("LH07", "Ốp lưng & Bao da"));
 
-        // 5. Thuộc tính
-        ThuocTinh ttDungLuong = thuocTinhRepository.save(new ThuocTinh("TT01", "Dung lượng bộ nhớ"));
-        ThuocTinh ttMauSac = thuocTinhRepository.save(new ThuocTinh("TT02", "Màu sắc vỏ máy"));
-        ThuocTinh ttManHinh = thuocTinhRepository.save(new ThuocTinh("TT03", "Kích thước màn hình"));
-        ThuocTinh ttChip = thuocTinhRepository.save(new ThuocTinh("TT04", "Vi xử lý CPU"));
+        // 5. Thuộc tính kỹ thuật
+        ThuocTinh ttRam = thuocTinhRepository.save(new ThuocTinh("TT01", "RAM"));
+        ThuocTinh ttBoNho = thuocTinhRepository.save(new ThuocTinh("TT02", "Bộ nhớ trong"));
+        ThuocTinh ttManHinh = thuocTinhRepository.save(new ThuocTinh("TT03", "Màn hình"));
+        ThuocTinh ttChip = thuocTinhRepository.save(new ThuocTinh("TT04", "Vi xử lý (Chip)"));
+        ThuocTinh ttCamera = thuocTinhRepository.save(new ThuocTinh("TT05", "Camera"));
+        ThuocTinh ttPin = thuocTinhRepository.save(new ThuocTinh("TT06", "Pin & Sạc"));
 
-        // 6. Mặt hàng
+        // 6. Mặt hàng: Máy (QUANLYIMEI=true, THOIHANBAOHANH=12), Phụ kiện (QUANLYIMEI=false, THOIHANBAOHANH=0)
         MatHang mh1 = matHangRepository.save(MatHang.builder()
                 .maHang("MH001").tenHang("iPhone 16 Pro Max 256GB")
                 .donGia(new BigDecimal("31490000")).dvt("Cái")
-                .nhomHang(nh1).loaiHang(lh1).quanLyImei(true).thoiHanBaoHanh(12).build());
+                .nhomHang(nh1).loaiHang(lhApple).quanLyImei(true).thoiHanBaoHanh(12).build());
 
         MatHang mh2 = matHangRepository.save(MatHang.builder()
-                .maHang("MH002").tenHang("iPhone 16 Pro Max 512GB")
-                .donGia(new BigDecimal("36990000")).dvt("Cái")
-                .nhomHang(nh1).loaiHang(lh1).quanLyImei(true).thoiHanBaoHanh(12).build());
+                .maHang("MH002").tenHang("iPhone 16 Pro 128GB")
+                .donGia(new BigDecimal("27990000")).dvt("Cái")
+                .nhomHang(nh1).loaiHang(lhApple).quanLyImei(true).thoiHanBaoHanh(12).build());
 
         MatHang mh3 = matHangRepository.save(MatHang.builder()
-                .maHang("MH003").tenHang("iPhone 16 Pro Max 1TB")
-                .donGia(new BigDecimal("42490000")).dvt("Cái")
-                .nhomHang(nh1).loaiHang(lh1).quanLyImei(true).thoiHanBaoHanh(12).build());
+                .maHang("MH003").tenHang("Samsung Galaxy S24 Ultra 256GB")
+                .donGia(new BigDecimal("28490000")).dvt("Cái")
+                .nhomHang(nh1).loaiHang(lhSamsung).quanLyImei(true).thoiHanBaoHanh(12).build());
 
         MatHang mh4 = matHangRepository.save(MatHang.builder()
-                .maHang("MH004").tenHang("iPhone 16 Pro 128GB")
-                .donGia(new BigDecimal("27990000")).dvt("Cái")
-                .nhomHang(nh1).loaiHang(lh1).quanLyImei(true).thoiHanBaoHanh(12).build());
+                .maHang("MH004").tenHang("Xiaomi 14 256GB")
+                .donGia(new BigDecimal("18990000")).dvt("Cái")
+                .nhomHang(nh1).loaiHang(lhXiaomi).quanLyImei(true).thoiHanBaoHanh(12).build());
 
         MatHang mh5 = matHangRepository.save(MatHang.builder()
-                .maHang("MH005").tenHang("Samsung Galaxy S24 Ultra 256GB")
-                .donGia(new BigDecimal("28490000")).dvt("Cái")
-                .nhomHang(nh1).loaiHang(lh2).quanLyImei(true).thoiHanBaoHanh(12).build());
+                .maHang("MH005").tenHang("OPPO Reno 12 5G")
+                .donGia(new BigDecimal("12990000")).dvt("Cái")
+                .nhomHang(nh1).loaiHang(lhOppo).quanLyImei(true).thoiHanBaoHanh(12).build());
 
         MatHang mh6 = matHangRepository.save(MatHang.builder()
-                .maHang("MH006").tenHang("Củ sạc Apple 20W USB-C")
+                .maHang("MH006").tenHang("Củ sạc Apple 20W Type-C")
                 .donGia(new BigDecimal("550000")).dvt("Cái")
-                .nhomHang(nh2).loaiHang(lh3).quanLyImei(false).thoiHanBaoHanh(6).build());
+                .nhomHang(nh2).loaiHang(lhSacCap).quanLyImei(false).thoiHanBaoHanh(0).build());
 
         MatHang mh7 = matHangRepository.save(MatHang.builder()
-                .maHang("MH007").tenHang("Ốp lưng MagSafe iPhone 16 Pro Max")
-                .donGia(new BigDecimal("450000")).dvt("Cái")
-                .nhomHang(nh2).loaiHang(lh3).quanLyImei(false).thoiHanBaoHanh(0).build());
+                .maHang("MH007").tenHang("Cáp sạc Type-C to Type-C 60W")
+                .donGia(new BigDecimal("290000")).dvt("Cái")
+                .nhomHang(nh2).loaiHang(lhSacCap).quanLyImei(false).thoiHanBaoHanh(0).build());
 
-        // Chi tiết thuộc tính
-        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH001", "TT01"), mh1, ttDungLuong, "256GB"));
-        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH001", "TT02"), mh1, ttMauSac, "Titan Sa Mạc"));
-        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH001", "TT03"), mh1, ttManHinh, "6.9 inch Super Retina XDR"));
+        MatHang mh8 = matHangRepository.save(MatHang.builder()
+                .maHang("MH008").tenHang("Tai nghe Apple AirPods Pro 2")
+                .donGia(new BigDecimal("5990000")).dvt("Cái")
+                .nhomHang(nh2).loaiHang(lhTaiNghe).quanLyImei(false).thoiHanBaoHanh(0).build());
+
+        MatHang mh9 = matHangRepository.save(MatHang.builder()
+                .maHang("MH009").tenHang("Ốp lưng MagSafe iPhone 16 Pro Max")
+                .donGia(new BigDecimal("450000")).dvt("Cái")
+                .nhomHang(nh2).loaiHang(lhOpLung).quanLyImei(false).thoiHanBaoHanh(0).build());
+
+        // Chi tiết thuộc tính cho từng máy
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH001", "TT01"), mh1, ttRam, "8 GB"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH001", "TT02"), mh1, ttBoNho, "256 GB"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH001", "TT03"), mh1, ttManHinh, "6.9 inch OLED Super Retina XDR 120Hz"));
         chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH001", "TT04"), mh1, ttChip, "Apple A18 Pro 3nm"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH001", "TT05"), mh1, ttCamera, "48MP Chính + 48MP Siêu rộng + 12MP Tele 5x"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH001", "TT06"), mh1, ttPin, "4685 mAh, Sạc nhanh 30W"));
+
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH002", "TT01"), mh2, ttRam, "8 GB"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH002", "TT02"), mh2, ttBoNho, "128 GB"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH002", "TT03"), mh2, ttManHinh, "6.3 inch OLED Super Retina XDR 120Hz"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH002", "TT04"), mh2, ttChip, "Apple A18 Pro 3nm"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH002", "TT05"), mh2, ttCamera, "48MP Chính + 48MP Góc rộng + 12MP Tele 5x"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH002", "TT06"), mh2, ttPin, "3582 mAh, Sạc nhanh 25W"));
+
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH003", "TT01"), mh3, ttRam, "12 GB"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH003", "TT02"), mh3, ttBoNho, "256 GB"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH003", "TT03"), mh3, ttManHinh, "6.8 inch Dynamic AMOLED 2X 120Hz QHD+"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH003", "TT04"), mh3, ttChip, "Snapdragon 8 Gen 3 for Galaxy"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH003", "TT05"), mh3, ttCamera, "200MP Chính + 50MP + 12MP + 10MP"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH003", "TT06"), mh3, ttPin, "5000 mAh, Sạc nhanh 45W"));
+
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH004", "TT01"), mh4, ttRam, "12 GB"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH004", "TT02"), mh4, ttBoNho, "256 GB"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH004", "TT03"), mh4, ttManHinh, "6.36 inch AMOLED 1.5K 120Hz LTPO"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH004", "TT04"), mh4, ttChip, "Snapdragon 8 Gen 3"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH004", "TT05"), mh4, ttCamera, "Leica 50MP Chính + 50MP Tele + 50MP Góc rộng"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH004", "TT06"), mh4, ttPin, "4610 mAh, Sạc nhanh HyperCharge 90W"));
+
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH005", "TT01"), mh5, ttRam, "12 GB"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH005", "TT02"), mh5, ttBoNho, "256 GB"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH005", "TT03"), mh5, ttManHinh, "6.7 inch AMOLED 120Hz FHD+"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH005", "TT04"), mh5, ttChip, "MediaTek Dimensity 7300-Energy"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH005", "TT05"), mh5, ttCamera, "50MP Sony LYT-600 OIS + 8MP + 2MP"));
+        chiTietThuocTinhRepository.save(new ChiTietThuocTinh(new ChiTietThuocTinhId("MH005", "TT06"), mh5, ttPin, "5000 mAh, Sạc SUPERVOOC 80W"));
 
         // 7. Nhà cung cấp
         NhaCungCap ncc1 = nhaCungCapRepository.save(NhaCungCap.builder()
@@ -219,22 +306,60 @@ public class DataInitializer implements CommandLineRunner {
 
         ChiTietPhieuNhap ctpn2 = chiTietPhieuNhapRepository.save(ChiTietPhieuNhap.builder()
                 .id(new ChiTietPhieuNhapId("PN001", "MH002"))
-                .phieuNhap(pn1).matHang(mh2).slNhap(20).donGiaNhap(new BigDecimal("33000000")).build());
+                .phieuNhap(pn1).matHang(mh2).slNhap(20).donGiaNhap(new BigDecimal("24500000")).build());
 
         ChiTietPhieuNhap ctpn3 = chiTietPhieuNhapRepository.save(ChiTietPhieuNhap.builder()
                 .id(new ChiTietPhieuNhapId("PN001", "MH003"))
-                .phieuNhap(pn1).matHang(mh3).slNhap(10).donGiaNhap(new BigDecimal("38000000")).build());
+                .phieuNhap(pn1).matHang(mh3).slNhap(15).donGiaNhap(new BigDecimal("25000000")).build());
 
+        ChiTietPhieuNhap ctpn4 = chiTietPhieuNhapRepository.save(ChiTietPhieuNhap.builder()
+                .id(new ChiTietPhieuNhapId("PN001", "MH004"))
+                .phieuNhap(pn1).matHang(mh4).slNhap(20).donGiaNhap(new BigDecimal("16000000")).build());
+
+        ChiTietPhieuNhap ctpn5 = chiTietPhieuNhapRepository.save(ChiTietPhieuNhap.builder()
+                .id(new ChiTietPhieuNhapId("PN001", "MH005"))
+                .phieuNhap(pn1).matHang(mh5).slNhap(25).donGiaNhap(new BigDecimal("10500000")).build());
+
+        ChiTietPhieuNhap ctpn6 = chiTietPhieuNhapRepository.save(ChiTietPhieuNhap.builder()
+                .id(new ChiTietPhieuNhapId("PN001", "MH006"))
+                .phieuNhap(pn1).matHang(mh6).slNhap(50).donGiaNhap(new BigDecimal("400000")).build());
+
+        ChiTietPhieuNhap ctpn7 = chiTietPhieuNhapRepository.save(ChiTietPhieuNhap.builder()
+                .id(new ChiTietPhieuNhapId("PN001", "MH007"))
+                .phieuNhap(pn1).matHang(mh7).slNhap(50).donGiaNhap(new BigDecimal("200000")).build());
+
+        ChiTietPhieuNhap ctpn8 = chiTietPhieuNhapRepository.save(ChiTietPhieuNhap.builder()
+                .id(new ChiTietPhieuNhapId("PN001", "MH008"))
+                .phieuNhap(pn1).matHang(mh8).slNhap(20).donGiaNhap(new BigDecimal("4800000")).build());
+
+        ChiTietPhieuNhap ctpn9 = chiTietPhieuNhapRepository.save(ChiTietPhieuNhap.builder()
+                .id(new ChiTietPhieuNhapId("PN001", "MH009"))
+                .phieuNhap(pn1).matHang(mh9).slNhap(40).donGiaNhap(new BigDecimal("300000")).build());
+
+        // IMEI 15 chữ số hợp lệ cho các máy (khởi tạo con_hang để trg_ChiTietHoaDon tự cập nhật da_ban khi bán)
         Imei imei1 = imeiRepository.save(Imei.builder()
-                .maIMEI("IMEI001").chiTietPhieuNhap(ctpn1).soIMEI("356789123456781").trangThai("da_ban").build());
+                .maIMEI("IMEI001").chiTietPhieuNhap(ctpn1).soIMEI("356789123456781").trangThai("con_hang").build());
         Imei imei2 = imeiRepository.save(Imei.builder()
-                .maIMEI("IMEI002").chiTietPhieuNhap(ctpn1).soIMEI("356789123456782").trangThai("da_ban").build());
+                .maIMEI("IMEI002").chiTietPhieuNhap(ctpn1).soIMEI("356789123456782").trangThai("con_hang").build());
         Imei imei3 = imeiRepository.save(Imei.builder()
                 .maIMEI("IMEI003").chiTietPhieuNhap(ctpn1).soIMEI("356789123456783").trangThai("con_hang").build());
         Imei imei4 = imeiRepository.save(Imei.builder()
-                .maIMEI("IMEI004").chiTietPhieuNhap(ctpn2).soIMEI("356789123456784").trangThai("con_hang").build());
+                .maIMEI("IMEI004").chiTietPhieuNhap(ctpn1).soIMEI("356789123456784").trangThai("con_hang").build());
+
         Imei imei5 = imeiRepository.save(Imei.builder()
-                .maIMEI("IMEI005").chiTietPhieuNhap(ctpn3).soIMEI("356789123456785").trangThai("con_hang").build());
+                .maIMEI("IMEI005").chiTietPhieuNhap(ctpn2).soIMEI("356789123456785").trangThai("con_hang").build());
+        Imei imei6 = imeiRepository.save(Imei.builder()
+                .maIMEI("IMEI006").chiTietPhieuNhap(ctpn2).soIMEI("356789123456786").trangThai("con_hang").build());
+
+        Imei imei7 = imeiRepository.save(Imei.builder()
+                .maIMEI("IMEI007").chiTietPhieuNhap(ctpn3).soIMEI("356789123456787").trangThai("con_hang").build());
+        Imei imei8 = imeiRepository.save(Imei.builder()
+                .maIMEI("IMEI008").chiTietPhieuNhap(ctpn3).soIMEI("356789123456788").trangThai("con_hang").build());
+
+        Imei imei9 = imeiRepository.save(Imei.builder()
+                .maIMEI("IMEI009").chiTietPhieuNhap(ctpn4).soIMEI("356789123456789").trangThai("con_hang").build());
+        Imei imei10 = imeiRepository.save(Imei.builder()
+                .maIMEI("IMEI010").chiTietPhieuNhap(ctpn5).soIMEI("356789123456790").trangThai("con_hang").build());
 
         // 9. Khách hàng
         KhachHang kh1 = khachHangRepository.save(KhachHang.builder()
@@ -249,19 +374,26 @@ public class DataInitializer implements CommandLineRunner {
                 .maKH("KH003").hoTen("Trần Minh Đức")
                 .sdt("0903888999").email("duc.tran@outlook.com").diaChi("23 Nguyễn Văn Linh, Đà Nẵng").build());
 
-        // 10. Khuyến mãi
+        // 10. Khuyến mãi đang hoạt động
         KhuyenMai km1 = khuyenMaiRepository.save(KhuyenMai.builder()
-                .maKM("KM01").tenKM("Mở bán siêu phẩm iPhone 16")
+                .maKM("KM01").tenKM("Mở bán siêu phẩm điện thoại")
                 .phanTramGiam(new BigDecimal("10.00"))
                 .ngayBD(LocalDateTime.now().minusDays(10))
                 .ngayKT(LocalDateTime.now().plusDays(20))
                 .tamDung(false).build());
 
         KhuyenMai km2 = khuyenMaiRepository.save(KhuyenMai.builder()
-                .maKM("KM02").tenKM("Ưu đãi thanh toán QR Napas")
+                .maKM("KM02").tenKM("Ưu đãi thanh toán Chuyển khoản")
                 .phanTramGiam(new BigDecimal("2.00"))
                 .ngayBD(LocalDateTime.now().minusDays(5))
                 .ngayKT(LocalDateTime.now().plusDays(25))
+                .tamDung(false).build());
+
+        KhuyenMai km3 = khuyenMaiRepository.save(KhuyenMai.builder()
+                .maKM("KM03").tenKM("Tri ân thành viên S-Member")
+                .phanTramGiam(new BigDecimal("5.00"))
+                .ngayBD(LocalDateTime.now().minusDays(2))
+                .ngayKT(LocalDateTime.now().plusDays(30))
                 .tamDung(false).build());
 
         // 11. Tham số hệ thống
@@ -273,11 +405,11 @@ public class DataInitializer implements CommandLineRunner {
         HoaDon hd1 = hoaDonRepository.save(HoaDon.builder()
                 .soHD("HD00891").ngayLap(LocalDateTime.now().minusDays(1))
                 .khachHang(kh2).nhanVien(nv2).khuyenMai(km1).kenhBan("tai_quay")
-                .tongTien(new BigDecimal("36990000")).tienGiamGia(new BigDecimal("3699000"))
+                .tongTien(new BigDecimal("31490000")).tienGiamGia(new BigDecimal("3149000"))
                 .phuongThucThanhToan("chuyen_khoan").build());
 
         chiTietHoaDonRepository.save(ChiTietHoaDon.builder()
-                .hoaDon(hd1).matHang(mh2).imei(imei1).slBan(1).donGiaBan(new BigDecimal("36990000")).build());
+                .hoaDon(hd1).matHang(mh1).imei(imei1).slBan(1).donGiaBan(new BigDecimal("31490000")).build());
 
         HoaDon hd2 = hoaDonRepository.save(HoaDon.builder()
                 .soHD("HD00890").ngayLap(LocalDateTime.now().minusDays(2))
@@ -288,7 +420,7 @@ public class DataInitializer implements CommandLineRunner {
         chiTietHoaDonRepository.save(ChiTietHoaDon.builder()
                 .hoaDon(hd2).matHang(mh1).imei(imei2).slBan(1).donGiaBan(new BigDecimal("31490000")).build());
 
-        // 13. Bảo hành
+        // 13. Bảo hành (mỗi IMEI đã bán tạo 1 sổ bảo hành)
         BaoHanh bh1 = baoHanhRepository.save(BaoHanh.builder()
                 .maBH("BH001").hoaDon(hd1).imei(imei1)
                 .ngayBD(LocalDateTime.now().minusDays(1)).thoiHanThang(12)
@@ -297,7 +429,7 @@ public class DataInitializer implements CommandLineRunner {
         BaoHanh bh2 = baoHanhRepository.save(BaoHanh.builder()
                 .maBH("BH002").hoaDon(hd2).imei(imei2)
                 .ngayBD(LocalDateTime.now().minusDays(2)).thoiHanThang(12)
-                .dieuKien("Bảo hành tiêu chuẩn Apple").build());
+                .dieuKien("Bảo hành chính hãng 12 tháng Apple").build());
 
         // 14. Tiếp nhận bảo hành
         phieuTiepNhanBaoHanhRepository.save(PhieuTiepNhanBaoHanh.builder()
@@ -328,20 +460,20 @@ public class DataInitializer implements CommandLineRunner {
                 .maDH("DH100230").ngayDat(LocalDateTime.now().minusDays(1))
                 .maKH("KH002").tenNguoiNhan("Lê Thị Ngọc Mai").sdtNguoiNhan("0912345678")
                 .diaChiGiao("45 Lê Duẩn, Quận 1, TP. Hồ Chí Minh").phuongThucThanhToan("chuyen_khoan")
-                .tongTien(new BigDecimal("36990000")).trangThai("da_xac_nhan").build());
+                .tongTien(new BigDecimal("28490000")).trangThai("da_xac_nhan").build());
 
         chiTietDonHangOnlineRepository.save(ChiTietDonHangOnline.builder()
-                .maDH(dhol2.getMaDH()).maHang(mh2.getMaHang()).soLuong(1).donGia(new BigDecimal("36990000")).build());
+                .maDH(dhol2.getMaDH()).maHang(mh3.getMaHang()).soLuong(1).donGia(new BigDecimal("28490000")).build());
 
         DonHangOnline dhol3 = donHangOnlineRepository.save(DonHangOnline.builder()
                 .maDH("DH100215").ngayDat(LocalDateTime.now().minusDays(2))
                 .maKH("KH003").tenNguoiNhan("Trần Minh Đức").sdtNguoiNhan("0903888999")
                 .diaChiGiao("23 Nguyễn Văn Linh, Đà Nẵng").phuongThucThanhToan("the")
-                .tongTien(new BigDecimal("31490000")).trangThai("hoan_thanh").build());
+                .tongTien(new BigDecimal("18990000")).trangThai("hoan_thanh").build());
 
         chiTietDonHangOnlineRepository.save(ChiTietDonHangOnline.builder()
-                .maDH(dhol3.getMaDH()).maHang(mh1.getMaHang()).soLuong(1).donGia(new BigDecimal("31490000")).build());
+                .maDH(dhol3.getMaDH()).maHang(mh4.getMaHang()).soLuong(1).donGia(new BigDecimal("18990000")).build());
 
-        log.info("Khởi tạo toàn bộ dữ liệu mẫu thành công!");
+        log.info("Khởi tạo toàn bộ dữ liệu mẫu CellphoneS thành công!");
     }
 }

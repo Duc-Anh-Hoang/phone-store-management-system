@@ -58,12 +58,12 @@ body {
   background: #94a3b8;
 }
 
-/* Hiệu ứng nền Titanium Glow và Gradient */
+/* Hiệu ứng nền Premium Glow và Gradient */
 .hero-radial-bg {
   background: radial-gradient(circle at 75% 45%, rgba(221, 196, 173, 0.28) 0%, rgba(22, 163, 74, 0.08) 35%, rgba(243, 244, 246, 0) 70%);
 }
 
-.dark-titan-card {
+.dark-product-card {
   background: linear-gradient(145deg, #131d33 0%, #0b1120 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -297,7 +297,7 @@ body {
 }
 
 /* ==========================================================================
-   TITAN STORE - CELLPHONES STYLE EXTENSIONS
+   CELLPHONES STYLE EXTENSIONS
    ========================================================================== */
 
 /* Marquee / Dải chữ chạy Top Bar ngang mượt mà */

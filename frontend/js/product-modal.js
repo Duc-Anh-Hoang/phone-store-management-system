@@ -1,10 +1,10 @@
 /**
- * TITAN STORE - PRODUCT DETAIL MODAL & QUICK VIEW
- * Xử lý xem chi tiết sản phẩm (Phần A7 của bản kế hoạch):
+ * CellphoneS - 241 Lê Văn Việt
+ * Xử lý xem chi tiết sản phẩm:
  * - Thư viện ảnh, đổi ảnh theo màu sắc
- * - Chọn phiên bản (dung lượng, RAM) -> đổi giá và số lượng tồn kho (vw_TonKho)
- * - Hiển thị giá VAT (VAT_PHANTRAM = 10%), freeship, bảo hành, đổi trả (HAN_DOITRA_NGAY = 30 ngày)
- * - Nút: Mua ngay / Thêm vào giỏ / Mua trả góp 0%
+ * - Chọn phiên bản -> đổi giá và số lượng tồn kho (vw_TonKho)
+ * - Tải thông số kỹ thuật thật từ API: /api/mathang/{maHang}/thongso
+ * - Nút: Mua ngay / Thêm vào giỏ
  */
 
 (function (root, factory) {
@@ -13,10 +13,14 @@
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory();
   } else {
-    root.TitanProductModal = factory();
+    root.CellphoneSProductModal = root.ProductModal = factory();
   }
 }(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
+
+  var API_BASE = window.API_BASE || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? (window.location.port === '8080' ? '/api' : 'http://localhost:8080/api')
+    : '/api';
 
   class ProductModalManager {
     constructor() {
@@ -26,18 +30,32 @@
       this.selectedQty = 1;
     }
 
-    open(maHang) {
-      if (!window.TitanStoreData) return;
-      const product = window.TitanStoreData.getProductById(maHang);
+    async open(maHang) {
+      if (!(window.CellphoneSData || window.StoreData)) return;
+      let product = (window.CellphoneSData || window.StoreData).getProductById(maHang);
+      if (!product) {
+        try {
+          const res = await fetch(`${API_BASE}/mathang/${maHang}`);
+          if (res.ok) {
+            const item = await res.json();
+            product = {
+              maHang: item.maHang,
+              tenHang: item.tenHang,
+              donGia: Number(item.donGia),
+              thoiHanBaoHanh: item.thoiHanBaoHanh,
+              tonKho: item.tonKho || 0,
+              anhChinh: item.maNhom === 'NH02' ? 'images/accessories-pack.svg' : 'images/phone-desert.svg',
+              phienBan: [{ id: 'std', dungLuong: 'Tiêu chuẩn', gia: Number(item.donGia), giaGoc: Math.round(Number(item.donGia) * 1.05), tonKho: item.tonKho || 0 }]
+            };
+          }
+        } catch (e) {}
+      }
       if (!product) return;
 
       this.currentProduct = product;
       this.selectedColor = (product.mauSac && product.mauSac.length > 0) ? product.mauSac[0] : null;
       this.selectedVariant = (product.phienBan && product.phienBan.length > 0) ? product.phienBan[0] : null;
       this.selectedQty = 1;
-
-      // Ghi nhận vào sản phẩm đã xem gần đây (localStorage)
-      window.TitanStoreData.addRecentlyViewed(maHang);
 
       const modal = document.getElementById('product-detail-modal');
       if (modal) {
@@ -46,6 +64,25 @@
       }
 
       this.render();
+
+      // Gọi API lấy thông số kỹ thuật thật từ CSDL
+      try {
+        const specRes = await fetch(`${API_BASE}/mathang/${maHang}/thongso`);
+        if (specRes.ok) {
+          const specs = await specRes.json();
+          if (Array.isArray(specs) && specs.length > 0) {
+            const specContainer = document.getElementById('pmodal-specs-table');
+            if (specContainer) {
+              specContainer.innerHTML = specs.map(s => `
+                <tr class="border-b border-slate-100 last:border-0">
+                  <td class="py-2 px-3 text-slate-500 font-medium bg-slate-50/70 w-1/3 text-[11px]">${s.tenThuocTinh}</td>
+                  <td class="py-2 px-3 text-navy font-semibold text-[11px]">${s.giaTri}</td>
+                </tr>
+              `).join('');
+            }
+          }
+        }
+      } catch (e) {}
     }
 
     close() {
@@ -60,28 +97,25 @@
       const p = this.currentProduct;
       if (!p) return;
 
-      // 1. Tên, thương hiệu, đánh giá
       const elTitle = document.getElementById('pmodal-title');
       const elBrand = document.getElementById('pmodal-brand');
       const elRating = document.getElementById('pmodal-rating');
 
       if (elTitle) elTitle.textContent = p.tenHang;
-      if (elBrand) elBrand.textContent = p.nhanHieu || 'Chính hãng';
+      if (elBrand) elBrand.textContent = p.nhanHieu || (p.tenLoai || 'Chính hãng');
       if (elRating) elRating.innerHTML = `<i class="fa-solid fa-star text-amber-400 mr-1"></i>${p.rating || 5.0} (${p.reviewCount || 100}+ đánh giá)`;
 
-      // 2. Ảnh chính & màu sắc
       this.updateGallery();
 
-      // 3. Khối chọn màu sắc
       const colorContainer = document.getElementById('pmodal-colors');
       if (colorContainer && p.mauSac) {
-        colorContainer.innerHTML = p.mauSac.map((c, idx) => {
+        colorContainer.innerHTML = p.mauSac.map((c) => {
           const isSelected = this.selectedColor && this.selectedColor.id === c.id;
           return `
-            <button type="button" onclick="window.TitanProductModal.selectColor('${c.id}')" 
+            <button type="button" onclick="window.CellphoneSProductModal.selectColor('${c.id}')" 
               class="flex items-center gap-2 p-2 rounded-xl border text-xs font-semibold transition-all ${
                 isSelected 
-                  ? 'border-[#00483d] bg-[#dbf9eb] text-[#00483d] font-bold shadow-sm ring-1 ring-[#00483d]' 
+                  ? 'border-[#d70018] bg-[#fee2e2] text-[#d70018] font-bold shadow-sm ring-1 ring-[#d70018]' 
                   : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
               }">
               <span class="w-4 h-4 rounded-full border border-slate-300 flex-shrink-0" style="background-color: ${c.hex};"></span>
@@ -91,31 +125,28 @@
         }).join('');
       }
 
-      // 4. Khối chọn phiên bản (dung lượng)
       const variantContainer = document.getElementById('pmodal-variants');
       if (variantContainer && p.phienBan) {
         variantContainer.innerHTML = p.phienBan.map(v => {
           const isSelected = this.selectedVariant && this.selectedVariant.id === v.id;
           return `
-            <button type="button" onclick="window.TitanProductModal.selectVariant('${v.id}')" 
+            <button type="button" onclick="window.CellphoneSProductModal.selectVariant('${v.id}')" 
               class="flex flex-col items-center justify-center p-2.5 rounded-xl border text-xs transition-all ${
                 isSelected 
-                  ? 'border-[#00483d] bg-[#dbf9eb] text-[#00483d] font-bold shadow-sm ring-1 ring-[#00483d]' 
+                  ? 'border-[#d70018] bg-[#fee2e2] text-[#d70018] font-bold shadow-sm ring-1 ring-[#d70018]' 
                   : 'border-slate-200 bg-white text-slate-700 font-medium hover:border-slate-300'
               }">
               <span class="text-xs">${v.dungLuong}</span>
-              <span class="text-[10px] ${isSelected ? 'text-[#00483d]' : 'text-rose-600'} font-semibold mt-0.5">
-                ${window.TitanCart ? window.TitanCart.formatMoney(v.gia) : v.gia}
+              <span class="text-[10px] ${isSelected ? 'text-[#d70018]' : 'text-rose-600'} font-semibold mt-0.5">
+                ${(window.CellphoneSCart || window.Cart) ? (window.CellphoneSCart || window.Cart).formatMoney(v.gia) : v.gia}
               </span>
             </button>
           `;
         }).join('');
       }
 
-      // 5. Giá tiền & Tồn kho
       this.updatePriceAndStock();
 
-      // 6. Thông số kỹ thuật
       const specContainer = document.getElementById('pmodal-specs-table');
       if (specContainer && p.thongSo) {
         specContainer.innerHTML = Object.entries(p.thongSo).map(([k, v]) => `
@@ -166,10 +197,10 @@
       const elStock = document.getElementById('pmodal-stock');
       const elDiscountTag = document.getElementById('pmodal-discount-tag');
 
-      if (elPrice && window.TitanCart) elPrice.textContent = window.TitanCart.formatMoney(currentPrice);
-      if (elOldPrice && window.TitanCart) {
+      if (elPrice && (window.CellphoneSCart || window.Cart)) elPrice.textContent = (window.CellphoneSCart || window.Cart).formatMoney(currentPrice);
+      if (elOldPrice && (window.CellphoneSCart || window.Cart)) {
         if (oldPrice > currentPrice) {
-          elOldPrice.textContent = window.TitanCart.formatMoney(oldPrice);
+          elOldPrice.textContent = (window.CellphoneSCart || window.Cart).formatMoney(oldPrice);
           elOldPrice.classList.remove('hidden');
           const percent = Math.round((1 - currentPrice / oldPrice) * 100);
           if (elDiscountTag) {
@@ -192,9 +223,9 @@
     }
 
     addToCart(goToCheckout = false) {
-      if (!this.currentProduct || !window.TitanCart) return;
+      if (!this.currentProduct || !(window.CellphoneSCart || window.Cart)) return;
 
-      const res = window.TitanCart.addItem(
+      const res = (window.CellphoneSCart || window.Cart).addItem(
         this.currentProduct,
         this.selectedVariant,
         this.selectedColor,
@@ -204,12 +235,12 @@
       if (res.success) {
         this.close();
         if (goToCheckout) {
-          if (window.TitanCheckout) window.TitanCheckout.openCheckout();
+          if ((window.CellphoneSCheckout || window.Checkout)) (window.CellphoneSCheckout || window.Checkout).openCheckout();
         } else {
-          window.TitanCart.openDrawer();
+          (window.CellphoneSCart || window.Cart).openDrawer();
         }
       } else {
-        window.TitanCart.showToast(res.message, 'error');
+        (window.CellphoneSCart || window.Cart).showToast(res.message, 'error');
       }
     }
   }

@@ -1,9 +1,8 @@
 /**
- * TITAN STORE - LOOKUP & UTILITY HANDLER
- * Tra cứu không cần đăng nhập (Phần A11 & B1):
- * - Tra cứu đơn hàng theo Mã đơn + Số điện thoại
- * - Tra cứu tình trạng bảo hành theo số IMEI 15 chữ số (/api/baohanh/imei/{imei})
- * - Form đăng ký tư vấn Thu cũ đổi mới & Mua trả góp 0%
+ * CellphoneS - 241 Lê Văn Việt
+ * Tra cứu không cần đăng nhập:
+ * - Tra cứu đơn hàng theo Mã đơn + Số điện thoại (/api/orders/{id} và /api/orders/phone/{phone})
+ * - Tra cứu tình trạng bảo hành theo số IMEI (/api/baohanh/trangthai/{imei})
  */
 
 (function (root, factory) {
@@ -12,13 +11,13 @@
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory();
   } else {
-    root.TitanLookup = factory();
+    root.CellphoneSLookup = root.Lookup = factory();
   }
 }(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  const API_BASE = (window.location.protocol === 'file:' || window.location.port === '5500') 
-    ? 'http://localhost:8080/api' 
+  var API_BASE = window.API_BASE || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? (window.location.port === '8080' ? '/api' : 'http://localhost:8080/api')
     : '/api';
 
   class LookupManager {
@@ -46,12 +45,12 @@
       const tabWarranty = document.getElementById('lookup-tab-warranty');
 
       if (tabId === 'order') {
-        if (btnOrder) btnOrder.className = 'flex-1 py-3 text-center text-xs sm:text-sm font-bold border-b-2 border-[#16A34A] text-[#16A34A]';
+        if (btnOrder) btnOrder.className = 'flex-1 py-3 text-center text-xs sm:text-sm font-bold border-b-2 border-[#d70018] text-[#d70018]';
         if (btnWarranty) btnWarranty.className = 'flex-1 py-3 text-center text-xs sm:text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-navy';
         if (tabOrder) tabOrder.classList.remove('hidden');
         if (tabWarranty) tabWarranty.classList.add('hidden');
       } else {
-        if (btnWarranty) btnWarranty.className = 'flex-1 py-3 text-center text-xs sm:text-sm font-bold border-b-2 border-[#16A34A] text-[#16A34A]';
+        if (btnWarranty) btnWarranty.className = 'flex-1 py-3 text-center text-xs sm:text-sm font-bold border-b-2 border-[#d70018] text-[#d70018]';
         if (btnOrder) btnOrder.className = 'flex-1 py-3 text-center text-xs sm:text-sm font-semibold text-slate-500 border-b-2 border-transparent hover:text-navy';
         if (tabWarranty) tabWarranty.classList.remove('hidden');
         if (tabOrder) tabOrder.classList.add('hidden');
@@ -59,7 +58,7 @@
     }
 
     /**
-     * Tra cứu Đơn Hàng không cần đăng nhập
+     * Tra cứu Đơn Hàng từ CSDL thật
      */
     async lookupOrder() {
       const idInput = document.getElementById('lookup-order-id');
@@ -69,76 +68,50 @@
       const maDH = (idInput ? idInput.value : '').trim().toUpperCase();
       const phone = (phoneInput ? phoneInput.value : '').trim().replace(/\s/g, '');
 
-      if (!maDH) {
-        window.TitanCart.showToast('Vui lòng nhập Mã đơn hàng (VD: DH100234)', 'error');
+      if (!maDH && !phone) {
+        if ((window.CellphoneSCart || window.Cart)) (window.CellphoneSCart || window.Cart).showToast('Vui lòng nhập Mã đơn hàng hoặc Số điện thoại', 'error');
+        else alert('Vui lòng nhập Mã đơn hàng hoặc Số điện thoại');
         if (idInput) idInput.focus();
-        return;
-      }
-
-      if (!phone || phone.length < 9) {
-        window.TitanCart.showToast('Vui lòng nhập Số điện thoại đặt hàng', 'error');
-        if (phoneInput) phoneInput.focus();
         return;
       }
 
       if (!resultBox) return;
       resultBox.classList.remove('hidden');
-      resultBox.innerHTML = '<div class="text-center py-6 text-slate-400 text-xs"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang tra cứu dữ liệu...</div>';
+      resultBox.innerHTML = '<div class="text-center py-6 text-slate-400 text-xs"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang tra cứu dữ liệu từ máy chủ...</div>';
 
       let found = null;
 
-      // 1. Thử gọi backend /api/orders/{id}
-      try {
-        const resp = await fetch(`${API_BASE}/orders/${maDH}`);
-        if (resp.ok) {
-          const data = await resp.json();
-          if (data && (!phone || data.sdtNguoiNhan.endsWith(phone.slice(-4)))) {
-            found = data;
-          }
-        }
-      } catch (e) {}
-
-      // 2. Tra cứu trong admin db
-      if (!found) {
+      // 1. Nếu có mã đơn: gọi /api/orders/{id}
+      if (maDH) {
         try {
-          const raw = localStorage.getItem('titan_admin_db_v3');
-          if (raw) {
-            const db = JSON.parse(raw);
-            if (Array.isArray(db.donHangOnline)) {
-              found = db.donHangOnline.find(o => o.maDH.toUpperCase() === maDH && o.sdtNguoiNhan.includes(phone.slice(-4)));
+          const resp = await fetch(`${API_BASE}/orders/${maDH}`);
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data && (!phone || (data.sdtNguoiNhan && data.sdtNguoiNhan.includes(phone.slice(-4))))) {
+              found = data;
             }
           }
         } catch (e) {}
       }
 
-      // 3. Tra cứu trong orders cục bộ của SĐT
-      if (!found) {
+      // 2. Nếu không tìm thấy hoặc chỉ nhập SĐT: gọi /api/orders/phone/{phone}
+      if (!found && phone) {
         try {
-          const local = JSON.parse(localStorage.getItem(`titan_orders_${phone}`) || '[]');
-          found = local.find(o => o.maDH.toUpperCase() === maDH);
+          const resp = await fetch(`${API_BASE}/orders/phone/${phone}`);
+          if (resp.ok) {
+            const list = await resp.json();
+            if (Array.isArray(list) && list.length > 0) {
+              found = list[0];
+            }
+          }
         } catch (e) {}
-      }
-
-      // 4. Mẫu fallback nếu tra cứu đơn demo
-      if (!found && maDH === 'DH100234') {
-        found = {
-          maDH: 'DH100234',
-          ngayDat: '12/10/2026 08:15',
-          tenNguoiNhan: 'Nguyễn Hoàng Long',
-          sdtNguoiNhan: phone,
-          diaChiGiao: '128 Trần Duy Hưng, Cầu Giấy, Hà Nội',
-          tenHang: 'iPhone 18 Pro Max 256GB (Titan Sa Mạc)',
-          tongTien: 31490000,
-          trangThai: 'cho_xac_nhan',
-          phuongThucThanhToan: 'cod'
-        };
       }
 
       if (!found) {
         resultBox.innerHTML = `
           <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs text-center">
             <i class="fa-solid fa-circle-exclamation text-lg mb-1 block"></i>
-            Không tìm thấy thông tin đơn hàng <strong>${maDH}</strong> khớp với số điện thoại <strong>${phone}</strong>. Vui lòng kiểm tra lại!
+            Không tìm thấy thông tin đơn hàng ${maDH ? `<strong>${maDH}</strong>` : ''} ${phone ? `với SĐT <strong>${phone}</strong>` : ''}. Vui lòng kiểm tra lại!
           </div>
         `;
         return;
@@ -153,25 +126,40 @@
       };
       const st = statusMap[found.trangThai] || statusMap.cho_xac_nhan;
 
+      const formatMoney = (n) => Number(n || 0).toLocaleString('vi-VN') + ' ₫';
+
       resultBox.innerHTML = `
         <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-md text-xs space-y-2.5">
           <div class="flex items-center justify-between border-b border-slate-100 pb-2">
             <div>
-              <span class="font-extrabold text-navy font-mono text-sm">#${found.maDH}</span>
-              <div class="text-[10px] text-slate-400">Ngày đặt: ${found.ngayDat || 'Gần đây'}</div>
+              <span class="font-extrabold text-[#d70018] font-mono text-sm">#${found.maDH}</span>
+              <div class="text-[10px] text-slate-400">Ngày đặt: ${found.ngayDat ? found.ngayDat.substring(0, 16).replace('T', ' ') : 'Gần đây'}</div>
             </div>
             <span class="px-2.5 py-1 rounded-full font-bold text-xs ${st.color}">${st.label}</span>
           </div>
 
           <div class="grid grid-cols-2 gap-2 text-slate-600">
-            <div>Người nhận: <strong class="text-navy block">${found.tenNguoiNhan}</strong></div>
-            <div>Số điện thoại: <strong class="text-navy block">${found.sdtNguoiNhan}</strong></div>
-            <div class="col-span-2">Địa chỉ giao: <span class="text-navy font-medium block">${found.diaChiGiao}</span></div>
+            <div>Người nhận: <strong class="text-navy block">${found.tenNguoiNhan || 'Khách hàng'}</strong></div>
+            <div>Số điện thoại: <strong class="text-navy block">${found.sdtNguoiNhan || 'Chưa có'}</strong></div>
+            <div class="col-span-2">Địa chỉ giao: <span class="text-navy font-medium block">${found.diaChiGiao || 'Nhận tại cửa hàng'}</span></div>
+            <div>Phương thức: <span class="text-navy font-medium block uppercase">${found.phuongThucThanhToan || 'COD'}</span></div>
           </div>
+
+          ${found.items && found.items.length > 0 ? `
+            <div class="border-t border-slate-100 pt-2 space-y-1">
+              <div class="font-semibold text-slate-700 mb-1">Danh sách sản phẩm:</div>
+              ${found.items.map(it => `
+                <div class="flex justify-between items-center text-[11px] text-slate-600">
+                  <span>${it.maHang} (SL: ${it.soLuong})</span>
+                  <span class="font-medium">${formatMoney(it.thanhTien || (it.donGia * it.soLuong))}</span>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
 
           <div class="flex items-center justify-between pt-2 border-t border-slate-100">
             <span class="font-semibold text-slate-600">Tổng thanh toán:</span>
-            <span class="font-bold text-base text-rose-600">${window.TitanCart.formatMoney(found.tongTien)}</span>
+            <span class="font-bold text-base text-[#d70018]">${formatMoney(found.tongTien)}</span>
           </div>
         </div>
       `;
@@ -186,93 +174,84 @@
 
       const imei = (imeiInput ? imeiInput.value : '').trim().replace(/\s/g, '');
 
-      if (!imei || imei.length < 10) {
-        window.TitanCart.showToast('Vui lòng nhập số IMEI 15 chữ số hợp lệ', 'error');
+      if (!imei || !/^\d{15}$/.test(imei)) {
+        if ((window.CellphoneSCart || window.Cart)) (window.CellphoneSCart || window.Cart).showToast('Số IMEI phải gồm đúng 15 chữ số!', 'error');
+        else alert('Số IMEI phải gồm đúng 15 chữ số!');
         if (imeiInput) imeiInput.focus();
         return;
       }
 
       if (!resultBox) return;
       resultBox.classList.remove('hidden');
-      resultBox.innerHTML = '<div class="text-center py-6 text-slate-400 text-xs"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang truy vấn CSDL bảo hành...</div>';
+      resultBox.innerHTML = '<div class="text-center py-6 text-slate-400 text-xs"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang tra cứu CSDL bảo hành...</div>';
 
       let found = null;
 
-      // 1. Thử gọi backend /api/baohanh/imei/{imei}
+      // 1. Thử gọi backend /api/baohanh/trangthai/{imei}
       try {
-        const resp = await fetch(`${API_BASE}/baohanh/imei/${imei}`);
+        const resp = await fetch(`${API_BASE}/baohanh/trangthai/${imei}`);
         if (resp.ok) {
           found = await resp.json();
         }
       } catch (e) {}
 
-      // 2. Tra cứu trong admin db
+      // 2. Thử gọi backend /api/baohanh/imei/{imei}
       if (!found) {
         try {
-          const raw = localStorage.getItem('titan_admin_db_v3');
-          if (raw) {
-            const db = JSON.parse(raw);
-            if (Array.isArray(db.baoHanh)) {
-              found = db.baoHanh.find(b => (b.maImei || '').includes(imei));
-            }
+          const resp = await fetch(`${API_BASE}/baohanh/imei/${imei}`);
+          if (resp.ok) {
+            found = await resp.json();
           }
         } catch (e) {}
-      }
-
-      // 3. Fallback demo
-      if (!found && imei.startsWith('356789')) {
-        found = {
-          maBH: 'BH001',
-          soImei: imei,
-          tenHang: 'iPhone 18 Pro Max 512GB (Titan Tự Nhiên)',
-          ngayBD: '11/10/2026',
-          ngayKT: '11/10/2027',
-          thoiHanThang: 12,
-          conLaiNgay: 363,
-          tinhTrang: 'Đang áp dụng bảo hành chính hãng'
-        };
       }
 
       if (!found) {
         resultBox.innerHTML = `
           <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs text-center">
             <i class="fa-solid fa-triangle-exclamation text-lg mb-1 block"></i>
-            Không tìm thấy thông tin bảo hành cho số IMEI <strong>${imei}</strong>. Vui lòng kiểm tra lại hoặc liên hệ tổng đài <strong>1800 6870</strong>.
+            Không tìm thấy thông tin bảo hành cho IMEI <strong>${imei}</strong>. Vui lòng kiểm tra lại số IMEI in trên hộp máy hoặc liên hệ CellphoneS <strong>1800 6870</strong>.
           </div>
         `;
         return;
+      }
+
+      const isHetHan = found.trangThai === 'het_han' || (found.soNgayConLai !== undefined && found.soNgayConLai < 0);
+      const isDangSua = found.trangThai === 'dang_sua';
+
+      let statusBadge = `<span class="px-2.5 py-1 rounded-full font-bold text-xs bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fa-solid fa-shield-check mr-1"></i> Còn hạn</span>`;
+      if (isHetHan) {
+        statusBadge = `<span class="px-2.5 py-1 rounded-full font-bold text-xs bg-rose-50 text-rose-700 border border-rose-200"><i class="fa-solid fa-circle-xmark mr-1"></i> Hết hạn</span>`;
+      } else if (isDangSua) {
+        statusBadge = `<span class="px-2.5 py-1 rounded-full font-bold text-xs bg-amber-50 text-amber-700 border border-amber-200"><i class="fa-solid fa-wrench mr-1"></i> Đang sửa chữa</span>`;
       }
 
       resultBox.innerHTML = `
         <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-md text-xs space-y-2.5">
           <div class="flex items-center justify-between border-b border-slate-100 pb-2">
             <div>
-              <span class="font-extrabold text-navy text-sm">${found.tenHang || 'iPhone 18 Pro Max'}</span>
-              <div class="text-[10px] text-slate-400 font-mono">IMEI: ${found.soImei || imei}</div>
+              <span class="font-extrabold text-navy text-sm">${found.tenHang || 'Thiết bị di động'}</span>
+              <div class="text-[10px] text-slate-400 font-mono">IMEI: ${found.soIMEI || found.soImei || imei}</div>
             </div>
-            <span class="px-2.5 py-1 rounded-full font-bold text-xs bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <i class="fa-solid fa-shield-check mr-1"></i> Còn hạn
-            </span>
+            ${statusBadge}
           </div>
 
           <div class="grid grid-cols-2 gap-2 text-slate-600">
-            <div>Ngày kích hoạt: <strong class="text-navy block">${found.ngayBD || '11/10/2026'}</strong></div>
-            <div>Hết hạn bảo hành: <strong class="text-navy block">${found.ngayKT || '11/10/2027'}</strong></div>
+            <div>Mã bảo hành: <strong class="text-navy block">${found.maBH || 'BH---'}</strong></div>
+            <div>Khách hàng: <strong class="text-navy block">${found.tenKH || 'Khách hàng'}</strong></div>
+            <div>Ngày bắt đầu: <strong class="text-navy block">${found.ngayBD ? String(found.ngayBD).substring(0, 10) : 'Chưa có'}</strong></div>
+            <div>Hết hạn: <strong class="text-navy block">${found.ngayKT ? String(found.ngayKT).substring(0, 10) : 'Chưa có'}</strong></div>
             <div>Thời hạn: <span class="text-navy font-semibold">${found.thoiHanThang || 12} tháng</span></div>
-            <div>Thời gian còn lại: <span class="text-emerald-600 font-bold">${found.conLaiNgay || 363} ngày</span></div>
+            <div>Còn lại: <span class="${isHetHan ? 'text-rose-600' : 'text-emerald-600'} font-bold">${found.soNgayConLai !== undefined ? found.soNgayConLai + ' ngày' : 'Đang hiệu lực'}</span></div>
           </div>
 
           <div class="p-2.5 rounded-xl bg-[#F0FDF4] text-[#15803D] text-[11px] flex items-center gap-2">
             <i class="fa-solid fa-circle-check text-[#16A34A]"></i>
-            <span>Thiết bị đủ điều kiện bảo hành 1 đổi 1 trong 30 ngày đầu & sửa chữa miễn phí toàn quốc.</span>
+            <span>${found.dieuKien || 'Bảo hành chính hãng tại hệ thống CellphoneS toàn quốc.'}</span>
           </div>
         </div>
       `;
     }
 
-    /**
-     * Modal Tư vấn Thu Cũ Đổi Mới / Trả Góp 0%
-     */
     openTradeInModal() {
       const modal = document.getElementById('tradein-modal');
       if (modal) {
@@ -290,16 +269,7 @@
     }
 
     submitTradeIn() {
-      const name = (document.getElementById('tradein-name')?.value || '').trim();
-      const phone = (document.getElementById('tradein-phone')?.value || '').trim();
-      const device = document.getElementById('tradein-device')?.value;
-
-      if (!name || !phone) {
-        window.TitanCart.showToast('Vui lòng điền họ tên và số điện thoại liên hệ!', 'error');
-        return;
-      }
-
-      window.TitanCart.showToast('Đã gửi thông tin định giá! Chuyên viên TITAN STORE sẽ liên hệ trong 5 phút.', 'success');
+      if ((window.CellphoneSCart || window.Cart)) (window.CellphoneSCart || window.Cart).showToast('Cảm ơn quý khách! CellphoneS sẽ liên hệ tư vấn.', 'success');
       this.closeTradeInModal();
     }
   }

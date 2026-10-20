@@ -1,11 +1,9 @@
 /**
- * TITAN STORE - CHECKOUT & ORDER DISPATCHER
- * Xử lý quy trình thanh toán (Phần A9 & C của bản kế hoạch):
+ * CellphoneS - 241 Lê Văn Việt - CHECKOUT & ORDER DISPATCHER
+ * Xử lý quy trình thanh toán:
  * - Thu thập thông tin giao hàng: TENNGUOINHAN, SDTNGUOINHAN, DIACHIGIAO
  * - Phương thức: COD, Chuyển khoản (VietQR tự động), Thẻ
  * - Gửi đơn hàng tới backend API (POST /api/orders) kết nối sp_DatHangOnline
- * - Lưu ánh xạ MADH -> MAKM vào kho riêng của web để nhân viên áp dụng lúc lập hóa đơn
- * - Đồng bộ trực tiếp vào titan_admin_db_v3 để admin.html quản lý ngay lập tức
  */
 
 (function (root, factory) {
@@ -14,17 +12,17 @@
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory();
   } else {
-    root.TitanCheckout = factory();
+    root.CellphoneSCheckout = root.Checkout = factory();
   }
 }(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  const API_BASE = (window.location.protocol === 'file:' || window.location.port === '5500') 
+  var API_BASE = window.API_BASE || (window.location.protocol === 'file:' || window.location.port === '5500') 
     ? 'http://localhost:8080/api' 
     : '/api';
 
   const PHONE_REGEX = /^(0)(3[2-9]|5[2689]|7[06-9]|8[1-9]|9[0-9])[0-9]{7}$/;
-  const ORDER_PROMO_STORAGE = 'titan_order_promotions_v1';
+  const ORDER_PROMO_STORAGE = 'cellphones_order_promotions_v1';
 
   class CheckoutManager {
     constructor() {
@@ -32,13 +30,13 @@
     }
 
     openCheckout() {
-      if (!window.TitanCart || window.TitanCart.items.length === 0) {
-        window.TitanCart.showToast('Giỏ hàng của bạn đang trống!', 'warning');
+      if (!(window.CellphoneSCart || window.Cart) || (window.CellphoneSCart || window.Cart).items.length === 0) {
+        (window.CellphoneSCart || window.Cart).showToast('Giỏ hàng của bạn đang trống!', 'warning');
         return;
       }
 
       // Đóng drawer giỏ hàng nếu đang mở
-      window.TitanCart.closeDrawer();
+      (window.CellphoneSCart || window.Cart).closeDrawer();
 
       const modal = document.getElementById('checkout-modal');
       if (modal) {
@@ -105,7 +103,7 @@
      * Tự động điền thông tin nếu khách hàng đã đăng nhập
      */
     populateForm() {
-      const user = window.TitanAuth ? window.TitanAuth.getUser() : null;
+      const user = (window.CellphoneSAuth || window.Auth) ? (window.CellphoneSAuth || window.Auth).getUser() : null;
       const nameInput = document.getElementById('checkout-fullname');
       const phoneInput = document.getElementById('checkout-phone');
       const addressInput = document.getElementById('checkout-address');
@@ -124,13 +122,13 @@
       const elDiscount = document.getElementById('checkout-summary-discount');
       const elTotal = document.getElementById('checkout-summary-total');
 
-      if (!container || !window.TitanCart) return;
+      if (!container || !(window.CellphoneSCart || window.Cart)) return;
 
-      const items = window.TitanCart.items;
-      const subtotal = window.TitanCart.getSubtotal();
-      const discount = window.TitanCart.getDiscountAmount();
-      const total = window.TitanCart.getTotal();
-      const promo = window.TitanCart.appliedPromo;
+      const items = (window.CellphoneSCart || window.Cart).items;
+      const subtotal = (window.CellphoneSCart || window.Cart).getSubtotal();
+      const discount = (window.CellphoneSCart || window.Cart).getDiscountAmount();
+      const total = (window.CellphoneSCart || window.Cart).getTotal();
+      const promo = (window.CellphoneSCart || window.Cart).appliedPromo;
 
       container.innerHTML = items.map(item => `
         <div class="flex items-center justify-between gap-3 py-2 text-xs border-b border-slate-100 last:border-0">
@@ -141,16 +139,16 @@
               <span class="text-[10px] text-slate-500">${item.variantName ? item.variantName + ' - ' : ''}${item.colorName || ''}</span>
             </div>
           </div>
-          <span class="font-bold text-slate-700 whitespace-nowrap">${window.TitanCart.formatMoney(item.price * item.qty)}</span>
+          <span class="font-bold text-slate-700 whitespace-nowrap">${(window.CellphoneSCart || window.Cart).formatMoney(item.price * item.qty)}</span>
         </div>
       `).join('');
 
-      if (elSubtotal) elSubtotal.textContent = window.TitanCart.formatMoney(subtotal);
-      if (elTotal) elTotal.textContent = window.TitanCart.formatMoney(total);
+      if (elSubtotal) elSubtotal.textContent = (window.CellphoneSCart || window.Cart).formatMoney(subtotal);
+      if (elTotal) elTotal.textContent = (window.CellphoneSCart || window.Cart).formatMoney(total);
 
       if (discount > 0 && promo) {
         if (elDiscountRow) elDiscountRow.classList.remove('hidden');
-        if (elDiscount) elDiscount.textContent = `-${window.TitanCart.formatMoney(discount)} (${promo.phanTramGiam}%)`;
+        if (elDiscount) elDiscount.textContent = `-${(window.CellphoneSCart || window.Cart).formatMoney(discount)} (${promo.phanTramGiam}%)`;
       } else {
         if (elDiscountRow) elDiscountRow.classList.add('hidden');
       }
@@ -163,13 +161,13 @@
       const qrImg = document.getElementById('checkout-vietqr-image');
       const qrAmount = document.getElementById('checkout-qr-amount');
       const qrMemo = document.getElementById('checkout-qr-memo');
-      const memoCode = 'TITAN' + Math.floor(100000 + Math.random() * 900000);
+      const memoCode = 'CPS' + Math.floor(100000 + Math.random() * 900000);
 
-      if (qrAmount) qrAmount.textContent = window.TitanCart.formatMoney(total);
+      if (qrAmount) qrAmount.textContent = (window.CellphoneSCart || window.Cart).formatMoney(total);
       if (qrMemo) qrMemo.textContent = memoCode;
       if (qrImg) {
         // Sử dụng chuẩn QuickLink VietQR mở
-        const qrUrl = `https://img.vietqr.io/image/970436-098765432100-compact2.png?amount=${Math.round(total)}&addInfo=${memoCode}&accountName=TITAN%20STORE%20VIET%20NAM`;
+        const qrUrl = `https://img.vietqr.io/image/970436-098765432100-compact2.png?amount=${Math.round(total)}&addInfo=${memoCode}&accountName=CELLPHONES%20241%20LE%20VAN%20VIET`;
         qrImg.src = qrUrl;
       }
     }
@@ -194,40 +192,40 @@
 
       // Validate
       if (!name || name.length < 2) {
-        window.TitanCart.showToast('Vui lòng nhập họ và tên người nhận hợp lệ', 'error');
+        (window.CellphoneSCart || window.Cart).showToast('Vui lòng nhập họ và tên người nhận hợp lệ', 'error');
         if (nameInput) nameInput.focus();
         return;
       }
 
       if (!PHONE_REGEX.test(phone)) {
-        window.TitanCart.showToast('Số điện thoại không đúng định dạng 10 chữ số (VD: 0987654321)', 'error');
+        (window.CellphoneSCart || window.Cart).showToast('Số điện thoại không đúng định dạng 10 chữ số (VD: 0987654321)', 'error');
         if (phoneInput) phoneInput.focus();
         return;
       }
 
       if (!city) {
-        window.TitanCart.showToast('Vui lòng chọn Tỉnh/Thành phố nhận hàng', 'error');
+        (window.CellphoneSCart || window.Cart).showToast('Vui lòng chọn Tỉnh/Thành phố nhận hàng', 'error');
         if (cityInput) cityInput.focus();
         return;
       }
 
       if (!address || address.length < 5) {
-        window.TitanCart.showToast('Vui lòng nhập địa chỉ cụ thể (số nhà, đường, phường/xã)', 'error');
+        (window.CellphoneSCart || window.Cart).showToast('Vui lòng nhập địa chỉ cụ thể (số nhà, đường, phường/xã)', 'error');
         if (addressInput) addressInput.focus();
         return;
       }
 
-      const cartItems = window.TitanCart.items;
+      const cartItems = (window.CellphoneSCart || window.Cart).items;
       if (cartItems.length === 0) {
-        window.TitanCart.showToast('Giỏ hàng trống!', 'error');
+        (window.CellphoneSCart || window.Cart).showToast('Giỏ hàng trống!', 'error');
         return;
       }
 
       const fullAddress = `${address}, ${city}`;
-      const totalAmount = window.TitanCart.getTotal();
-      const appliedPromo = window.TitanCart.appliedPromo;
-      const user = window.TitanAuth ? window.TitanAuth.getUser() : null;
-      const maKH = (user && user.type === 'customer' && user.maKH) ? user.maKH : 'KH001';
+      const totalAmount = (window.CellphoneSCart || window.Cart).getTotal();
+      const appliedPromo = (window.CellphoneSCart || window.Cart).appliedPromo;
+      const user = (window.CellphoneSAuth || window.Auth) ? (window.CellphoneSAuth || window.Auth).getUser() : null;
+      const maKH = (user && user.type === 'customer' && user.maKH) ? user.maKH : null;
 
       // Nút đặt hàng loading
       const submitBtn = document.getElementById('btn-checkout-submit');
@@ -247,99 +245,36 @@
         items: cartItems.map(item => ({
           maHang: item.maHang,
           soLuong: item.qty,
-          donGia: item.price,
-          mauSac: item.colorName,
-          dungLuong: item.variantName
+          donGia: item.price
         }))
       };
 
       let orderResult = null;
 
-      // 1. Gửi lên Spring Boot REST API
+      // Gửi lên Spring Boot REST API
       try {
         const resp = await fetch(`${API_BASE}/orders`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(requestPayload)
         });
-        if (resp.ok) {
-          orderResult = await resp.json();
+        if (!resp.ok) {
+          const errData = await resp.json().catch(() => ({}));
+          throw new Error(errData.message || `Lỗi đặt hàng (HTTP ${resp.status})`);
         }
+        orderResult = await resp.json();
       } catch (err) {
-        console.warn('Backend API chưa khả dụng, chuyển sang lưu trữ cục bộ:', err);
-      }
-
-      // 2. Nếu API không khả dụng hoặc offline, sinh mã đơn theo quy tắc
-      if (!orderResult || !orderResult.maDH) {
-        const generatedMaDH = 'DH' + Math.floor(100000 + Math.random() * 900000);
-        orderResult = {
-          maDH: generatedMaDH,
-          tenNguoiNhan: name,
-          sdtNguoiNhan: phone,
-          diaChiGiao: fullAddress,
-          phuongThucThanhToan: paymentMethod,
-          tongTien: totalAmount,
-          trangThai: 'cho_xac_nhan',
-          ngayDat: new Date().toISOString().replace('T', ' ').substring(0, 16)
-        };
-      }
-
-      // 3. Phần C: Lưu ánh xạ MADH -> MAKM vào kho dữ liệu web để áp dụng lúc xuất hóa đơn
-      if (appliedPromo && appliedPromo.maKM) {
-        try {
-          const promoMaps = JSON.parse(localStorage.getItem(ORDER_PROMO_STORAGE) || '{}');
-          promoMaps[orderResult.maDH] = {
-            maKM: appliedPromo.maKM,
-            tenKM: appliedPromo.tenKM,
-            phanTramGiam: appliedPromo.phanTramGiam,
-            giamDuKien: window.TitanCart.getDiscountAmount()
-          };
-          localStorage.setItem(ORDER_PROMO_STORAGE, JSON.stringify(promoMaps));
-        } catch (e) {}
-      }
-
-      // 4. Đồng bộ vào kho titan_admin_db_v3 để Trang Quản Trị (admin.html) thấy ngay đơn hàng!
-      try {
-        const adminDbRaw = localStorage.getItem('titan_admin_db_v3');
-        if (adminDbRaw) {
-          const adminDb = JSON.parse(adminDbRaw);
-          if (!adminDb.donHangOnline) adminDb.donHangOnline = [];
-
-          adminDb.donHangOnline.unshift({
-            maDH: orderResult.maDH,
-            ngayDat: new Date().toISOString().replace('T', ' ').substring(0, 16),
-            maKH: maKH,
-            tenNguoiNhan: name,
-            sdtNguoiNhan: phone,
-            diaChiGiao: fullAddress,
-            phuongThucThanhToan: paymentMethod,
-            tongTien: totalAmount,
-            trangThai: 'cho_xac_nhan',
-            maHang: cartItems[0].maHang,
-            tenHang: cartItems[0].tenHang + (cartItems.length > 1 ? ` (+${cartItems.length - 1} món)` : ''),
-            soLuong: cartItems.reduce((acc, cur) => acc + cur.qty, 0)
-          });
-
-          localStorage.setItem('titan_admin_db_v3', JSON.stringify(adminDb));
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fa-solid fa-lock mr-2"></i> Xác Nhận Đặt Hàng';
         }
-      } catch (e) {
-        console.warn('Lỗi ghi titan_admin_db_v3:', e);
+        (window.CellphoneSCart || window.Cart).showToast('Đặt hàng thất bại: ' + err.message, 'error');
+        return;
       }
 
-      // 5. Lưu đơn vào danh sách đơn của SĐT khách để tra cứu nhanh
-      try {
-        const customerOrders = JSON.parse(localStorage.getItem(`titan_orders_${phone}`) || '[]');
-        customerOrders.unshift({
-          ...orderResult,
-          items: cartItems,
-          appliedPromo: appliedPromo
-        });
-        localStorage.setItem(`titan_orders_${phone}`, JSON.stringify(customerOrders));
-      } catch (e) {}
-
-      // 6. Xóa giỏ hàng và mở màn hình cảm ơn
-      window.TitanCart.clearCart();
-      window.TitanCart.removePromo();
+      // Xóa giỏ hàng và mở màn hình cảm ơn với mã đơn backend trả về
+      (window.CellphoneSCart || window.Cart).clearCart();
+      (window.CellphoneSCart || window.Cart).removePromo();
 
       if (submitBtn) {
         submitBtn.disabled = false;
@@ -363,7 +298,7 @@
       if (elName) elName.textContent = order.tenNguoiNhan;
       if (elPhone) elPhone.textContent = order.sdtNguoiNhan;
       if (elAddress) elAddress.textContent = order.diaChiGiao;
-      if (elTotal) elTotal.textContent = window.TitanCart.formatMoney(total);
+      if (elTotal) elTotal.textContent = (window.CellphoneSCart || window.Cart).formatMoney(total);
 
       const paymentMap = {
         cod: 'Thanh toán tiền mặt khi nhận hàng (COD)',
