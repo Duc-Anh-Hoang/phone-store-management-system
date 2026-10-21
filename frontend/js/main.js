@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 5. Đồng hồ đếm ngược Flash Sale kết thúc trong ngày
+  // 5. Đồng hồ đếm ngược ưu đãi kết thúc trong ngày
   const countdownEl = document.getElementById('flash-sale-countdown');
   if (countdownEl) {
     let targetTime = new Date();

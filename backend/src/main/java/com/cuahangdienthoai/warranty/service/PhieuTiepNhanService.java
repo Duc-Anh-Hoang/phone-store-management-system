@@ -19,6 +19,8 @@ public class PhieuTiepNhanService {
     private final PhieuTiepNhanBaoHanhRepository phieuTiepNhanRepository;
     private final com.cuahangdienthoai.warranty.repository.BaoHanhRepository baoHanhRepository;
     private final com.cuahangdienthoai.employee.repository.NhanVienRepository nhanVienRepository;
+    private final com.cuahangdienthoai.common.security.CurrentUser currentUser;
+    private final com.cuahangdienthoai.common.CodeGenerator codeGenerator;
 
     public List<PhieuTiepNhanDTO> getAll() {
         return phieuTiepNhanRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
@@ -62,19 +64,14 @@ public class PhieuTiepNhanService {
             throw new RuntimeException("Sổ bảo hành " + bh.getMaBH() + " đã hết hạn từ ngày " + ngayKT.toLocalDate() + ". Không thể tiếp nhận bảo hành.");
         }
 
-        var nvTiepNhan = (dto.getMaNVTiepNhan() != null && !dto.getMaNVTiepNhan().trim().isEmpty())
-                ? nhanVienRepository.findById(dto.getMaNVTiepNhan()).orElse(null) : null;
-        if (nvTiepNhan == null) {
-            nvTiepNhan = nhanVienRepository.findAll().stream().findFirst()
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên tiếp nhận"));
-        }
+        var nvTiepNhan = currentUser.getCurrentNhanVien();
 
         var nvKyThuat = (dto.getMaNVKyThuat() != null && !dto.getMaNVKyThuat().trim().isEmpty())
                 ? nhanVienRepository.findById(dto.getMaNVKyThuat()).orElse(null) : null;
 
         String maTN = dto.getMaTN();
         if (maTN == null || maTN.trim().isEmpty()) {
-            maTN = "TN" + String.format("%05d", (int) (System.currentTimeMillis() % 100000));
+            maTN = codeGenerator.generateNextMaTN();
         }
 
         LocalDateTime ngayHenTra = dto.getNgayHenTra() != null ? LocalDateTime.parse(dto.getNgayHenTra()) : LocalDateTime.now().plusDays(7);

@@ -18,6 +18,7 @@ public class DonHangOnlineService {
 
     private final DonHangOnlineRepository donHangOnlineRepository;
     private final HoaDonRepository hoaDonRepository;
+    private final com.cuahangdienthoai.common.security.CurrentUser currentUser;
 
     public List<DonHangOnlineDTO> getAll() {
         return donHangOnlineRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
@@ -84,7 +85,16 @@ public class DonHangOnlineService {
             entity.setSoHD(soHD);
         }
 
-        if (maNV != null && !maNV.trim().isEmpty()) {
+        String nvFromToken = null;
+        try {
+            if (currentUser != null) {
+                nvFromToken = currentUser.getCurrentMaNV();
+            }
+        } catch (Exception ignored) {}
+
+        if (nvFromToken != null) {
+            entity.setMaNV(nvFromToken);
+        } else if (maNV != null && !maNV.trim().isEmpty()) {
             entity.setMaNV(maNV);
         }
 

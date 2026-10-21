@@ -13,4 +13,5 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, String> {
     List<HoaDon> findByNhanVienMaNV(String maNV);
     List<HoaDon> findByNgayLapBetween(LocalDateTime from, LocalDateTime to);
     List<HoaDon> findByKenhBan(String kenhBan);
+    java.util.Optional<HoaDon> findTopByOrderBySoHDDesc();
 }

@@ -10,4 +10,5 @@ import java.util.List;
 public interface PhieuNhapRepository extends JpaRepository<PhieuNhap, String> {
     List<PhieuNhap> findByNhaCungCapMaNCC(String maNCC);
     List<PhieuNhap> findByNhanVienMaNV(String maNV);
+    java.util.Optional<PhieuNhap> findTopByOrderBySoPNhapDesc();
 }

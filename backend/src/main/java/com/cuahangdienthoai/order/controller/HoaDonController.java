@@ -2,6 +2,7 @@ package com.cuahangdienthoai.order.controller;
 
 import com.cuahangdienthoai.order.dto.HoaDonDTO;
 import com.cuahangdienthoai.order.service.HoaDonService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class HoaDonController {
     public List<HoaDonDTO> getByKhachHang(@PathVariable String maKH) { return hoaDonService.getByKhachHang(maKH); }
 
     @PostMapping
-    public HoaDonDTO create(@RequestBody HoaDonDTO dto) { return hoaDonService.create(dto); }
+    public HoaDonDTO create(@Valid @RequestBody HoaDonDTO dto) { return hoaDonService.create(dto); }
 
     @DeleteMapping("/{soHD}")
     public ResponseEntity<Void> delete(@PathVariable String soHD) {

@@ -110,7 +110,7 @@
           <!-- Nhóm 1 -->
           <div class="flex items-center gap-8 pr-8 flex-shrink-0">
             <span class="marquee-item inline-flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap">
-              <span class="bg-[#80ffbf] text-[#061a0f] font-black text-[10px] uppercase px-1.5 py-0.5 rounded shadow-sm">Flash Sale</span> Mở bán iPhone 16 Pro Max chính hãng VN/A - Ưu đãi giảm ngay 3.500.000đ
+              <span class="bg-[#80ffbf] text-[#061a0f] font-black text-[10px] uppercase px-1.5 py-0.5 rounded shadow-sm">Hot</span> Mở bán iPhone 16 Pro Max chính hãng VN/A - Ưu đãi giảm ngay 3.500.000đ
             </span>
             <span class="marquee-item inline-flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap">
               <i class="fa-solid fa-truck-fast text-[#80ffbf]"></i> Miễn phí vận chuyển toàn quốc đơn từ 500.000đ
@@ -129,7 +129,7 @@
           <!-- Nhóm 2 (Bản sao đối xứng để chạy vô tận không giật) -->
           <div class="flex items-center gap-8 pr-8 flex-shrink-0" aria-hidden="true">
             <span class="marquee-item inline-flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap">
-              <span class="bg-[#80ffbf] text-[#061a0f] font-black text-[10px] uppercase px-1.5 py-0.5 rounded shadow-sm">Flash Sale</span> Mở bán iPhone 16 Pro Max chính hãng VN/A - Ưu đãi giảm ngay 3.500.000đ
+              <span class="bg-[#80ffbf] text-[#061a0f] font-black text-[10px] uppercase px-1.5 py-0.5 rounded shadow-sm">Hot</span> Mở bán iPhone 16 Pro Max chính hãng VN/A - Ưu đãi giảm ngay 3.500.000đ
             </span>
             <span class="marquee-item inline-flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap">
               <i class="fa-solid fa-truck-fast text-[#80ffbf]"></i> Miễn phí vận chuyển toàn quốc đơn từ 500.000đ
@@ -178,9 +178,8 @@
           </div>
           <div>
             <span class="text-lg sm:text-xl font-black tracking-tight text-[#061a0f] flex items-center gap-1">
-              <span class="text-rose-600 font-black tracking-tight text-xl sm:text-2xl">Cellphone<span class="text-slate-900">S</span></span>
+              <span class="text-rose-600 font-black tracking-tight text-xl sm:text-2xl">Sama<span class="text-slate-900">Phone</span></span>
             </span>
-            <span class="text-[9px] sm:text-[10px] block font-extrabold text-[#061a0f]/80 tracking-wider uppercase -mt-1">Flagship Store #80ffbf</span>
           </div>
         </a>
 
@@ -230,7 +229,7 @@
           
 
           <!-- Nút Đăng Nhập (Khi chưa đăng nhập) -->
-          <button id="btn-header-login" type="button" onclick="window.CellphoneSCustomerPortal.openLoginModal()" class="h-11 inline-flex items-center gap-1.5 px-3.5 sm:px-4 rounded-xl bg-white hover:bg-slate-50 border border-slate-200/80 text-slate-900 font-black text-xs shadow-sm transition-all active:scale-95 whitespace-nowrap flex-shrink-0 cursor-pointer">
+          <button id="btn-header-login" type="button" onclick="window.CellphoneSCustomerPortal.openLoginModal()" class="h-11 inline-flex items-center gap-1.5 px-3.5 sm:px-4 rounded-xl bg-white hover:bg-slate-50 border border-slate-200/80 text-slate-900 font-black text-xs shadow-sm transition-all active:scale-95 whitespace-nowrap flex-shrink-0 cursor-pointer" title="Đăng nhập khách hàng S-Member">
             <i class="fa-regular fa-circle-user text-base text-emerald-600 pointer-events-none"></i>
             <span class="hidden sm:inline font-black text-slate-900">Đăng Nhập</span>
           </button>
@@ -251,12 +250,12 @@
 
           <!-- Menu Quản Trị Viên / Nhân Viên (Khi nhân viên đăng nhập) -->
           <div id="header-staff-menu" class="hidden items-center gap-1.5 flex-shrink-0 flex-nowrap" style="display: none;">
-            <a href="admin.html" class="h-11 inline-flex items-center gap-2 px-3.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200/80 text-slate-900 transition-colors text-xs font-black whitespace-nowrap shadow-sm" title="Truy cập Trang Quản Trị Hệ Thống">
+            <div class="h-11 inline-flex items-center gap-2 px-3.5 rounded-xl bg-white border border-slate-200/80 text-slate-900 text-xs font-black whitespace-nowrap shadow-sm">
               <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-black flex-shrink-0">
-                <i class="fa-solid fa-user-shield"></i>
+                <i class="fa-solid fa-user"></i>
               </span>
-              <span id="staff-header-name" class="text-slate-900 font-black whitespace-nowrap">Vào Quản Trị</span>
-            </a>
+              <span id="staff-header-name" class="text-slate-900 font-black whitespace-nowrap">Nhân viên</span>
+            </div>
             <button type="button" onclick="if(window.CellphoneSAuth) window.CellphoneSAuth.logout();" class="h-11 w-11 rounded-xl bg-white hover:bg-rose-50 border border-slate-200/80 text-slate-700 hover:text-rose-600 inline-flex items-center justify-center shadow-sm transition-colors text-xs flex-shrink-0 cursor-pointer" title="Đăng xuất">
               <i class="fa-solid fa-arrow-right-from-bracket"></i>
             </button>
@@ -807,8 +806,7 @@
             <li><a href="#order" class="hover:text-white transition-colors">Hướng dẫn đặt hàng online</a></li>
             <li><button type="button" onclick="window.openInstallmentModal()" class="hover:text-white transition-colors text-left cursor-pointer">Quy trình mua trả góp 0%</button></li>
             <li><a href="#shelf-phones" class="hover:text-white transition-colors">Bảng so sánh thông số cấu hình</a></li>
-            <li><a href="#feedback" class="hover:text-white transition-colors">Xem video review công nghệ</a></li>
-            <li><a href="#order" class="hover:text-white transition-colors">Kiểm tra bảo hành qua IMEI/Serial</a></li>
+                        <li><a href="#order" class="hover:text-white transition-colors">Kiểm tra bảo hành qua IMEI/Serial</a></li>
           </ul>
         </div>
 
@@ -1890,33 +1888,6 @@
         <div id="lookup-warranty-result" class="hidden pt-2"></div>
       </div>
 
-    </div>
-  </div>
-
-  <!-- =========================================================================
-       POPUP CHÀO MỪNG FLASH SALE (WELCOME POPUP - PHẦN A13)
-       ========================================================================= -->
-  <div id="welcome-flash-popup" class="hidden fixed bottom-6 left-6 z-40 max-w-sm bg-white rounded-3xl p-4 shadow-2xl border border-slate-200 animate-in slide-in-from-bottom duration-300">
-    <div class="flex items-start gap-3">
-      <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-600 text-white flex items-center justify-center text-xl flex-shrink-0 shadow-md">
-        <i class="fa-solid fa-gift"></i>
-      </div>
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center justify-between">
-          <span class="text-[10px] font-extrabold text-rose-600 uppercase">Ưu đãi chào mừng</span>
-          <button type="button" onclick="window.closeWelcomePopup()" class="text-slate-400 hover:text-slate-600 p-0.5"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <h4 class="font-extrabold text-xs sm:text-sm text-navy mt-0.5">Tặng Voucher 10% Cho Bạn!</h4>
-        <p class="text-[11px] text-slate-500 mt-0.5">Sử dụng mã <strong class="text-[#16A34A] font-mono">KM01</strong> khi đặt hàng online hôm nay.</p>
-        <div class="mt-2.5 flex items-center gap-2">
-          <button type="button" onclick="window.CellphoneSProductModal.open('MH001'); window.closeWelcomePopup();" class="px-3 py-1.5 rounded-xl bg-[#16A34A] text-white font-bold text-[11px]">
-            Săn Deal Ngay
-          </button>
-          <button type="button" onclick="window.closeWelcomePopup()" class="text-[11px] text-slate-400 hover:text-slate-600">
-            Bỏ qua
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 

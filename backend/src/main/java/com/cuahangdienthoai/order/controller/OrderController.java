@@ -30,17 +30,19 @@ public class OrderController {
     }
 
     /**
-     * API tra cứu chi tiết đơn hàng theo mã
-     * GET /api/orders/{id}
+     * API tra cứu chi tiết đơn hàng theo mã (phải kèm SĐT xác thực)
+     * GET /api/orders/{id}?sdt=...
      */
     @GetMapping("/{id}")
-    public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable("id") String maDH) {
-        OrderResponseDTO response = orderService.getOrderById(maDH);
+    public ResponseEntity<OrderResponseDTO> getOrderById(
+            @PathVariable("id") String maDH,
+            @RequestParam(value = "sdt", required = false) String sdt) {
+        OrderResponseDTO response = orderService.getOrderByIdAndPhone(maDH, sdt);
         return ResponseEntity.ok(response);
     }
 
     /**
-     * API tra cứu danh sách đơn hàng theo số điện thoại người nhận
+     * API tra cứu danh sách đơn hàng theo số điện thoại người nhận (trả dữ liệu rút gọn, che giữa SĐT)
      * GET /api/orders/phone/{phone}
      */
     @GetMapping("/phone/{phone}")

@@ -12,4 +12,5 @@ public interface TraHangRepository extends JpaRepository<TraHang, String> {
     List<TraHang> findByHoaDonSoHD(String soHD);
     Optional<TraHang> findByImeiMaIMEI(String maIMEI);
     List<TraHang> findByNhanVienMaNV(String maNV);
+    Optional<TraHang> findTopByOrderByMaTRDesc();
 }

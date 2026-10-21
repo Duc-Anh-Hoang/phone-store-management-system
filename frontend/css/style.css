@@ -328,7 +328,7 @@ body {
   white-space: nowrap !important;
 }
 
-/* Hiệu ứng lửa Flash Sale */
+/* Hiệu ứng lửa ưu đãi */
 @keyframes flamePulse {
   0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.6)); }
   50% { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.8)); }

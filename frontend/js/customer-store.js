@@ -3,7 +3,7 @@
  * Điều khiển giao diện khách hàng tham khảo phong cách CellphoneS:
  * - Mega menu 3 tầng (NhomHang -> LoaiHang -> MatHang)
  * - Hero Banner Slider & Quick Tags
- * - 6 Dải sản phẩm: Flash Sale, Điện thoại nổi bật, Hàng mới, Bán chạy, Phụ kiện, Đã xem
+ * - 6 Dải sản phẩm: Điện thoại nổi bật, Hàng mới, Bán chạy, Phụ kiện, Đã xem
  * - Thanh tìm kiếm thông minh với Autocomplete và Bộ lọc nâng cao
  * - Đồng hồ đếm ngược khuyến mãi theo vw_KhuyenMaiTrangThai
  * - Tương thích song ngữ và đồng bộ phiên đăng nhập
@@ -122,16 +122,78 @@
   /**
    * Hero Slider
    */
+  const DEFAULT_HERO_SLIDES = [
+    {
+      id: "slide-1",
+      title: "iPhone 16 Pro Max",
+      subtitle: "ĐỈNH CAO TITAN SA MẠC - CHIP A18 PRO 3NM",
+      desc: "Màn hình 6.9 inch viền siêu mỏng, Camera 48MP Zoom 5x, Phím Camera Control thế hệ mới.",
+      badge: "Mở Bán Siêu Phẩm 2026",
+      priceText: "Từ 31.490.000 đ",
+      oldPriceText: "34.990.000 đ",
+      discountText: "Giảm 3.500.000 đ",
+      image: "images/phone-desert.svg",
+      targetMaHang: "MH001",
+      btnText: "Mua Ngay Giảm 10%",
+      bgGradient: "from-[#061a0f] via-[#092b19] to-[#04120a]",
+      themeColor: "#80ffbf"
+    },
+    {
+      id: "slide-2",
+      title: "Galaxy S24 Ultra 5G",
+      subtitle: "QUYỀN NĂNG GALAXY AI - KHUNG VIỀN TITAN",
+      desc: "Bút S-Pen quyền năng, Camera 200MP Mắt Thần Bóng Đêm, Màn hình Dynamic AMOLED 2X 2600 nits.",
+      badge: "Flagship Đỉnh Cao",
+      priceText: "28.490.000 đ",
+      oldPriceText: "33.990.000 đ",
+      discountText: "Giảm 5.500.000 đ",
+      image: "images/galaxy-s24.svg",
+      targetMaHang: "MH003",
+      btnText: "Xem Chi Tiết",
+      bgGradient: "from-slate-950 via-indigo-950 to-slate-900",
+      themeColor: "#6366F1"
+    },
+    {
+      id: "slide-3",
+      title: "Đại Tiệc Phụ Kiện Cao Cấp",
+      subtitle: "CHÍNH HÃNG APPLE & ANKER GIẢM ĐẾN 40%",
+      desc: "Củ sạc 20W USB-C, Ốp lưng MagSafe, Cáp sạc bọc dù chống đứt, Tai nghe AirPods Pro 2.",
+      badge: "Deal Hot Trong Ngày",
+      priceText: "Chỉ từ 450.000 đ",
+      oldPriceText: "650.000 đ",
+      discountText: "Ưu Đãi Lớn",
+      image: "images/accessories-pack.svg",
+      targetMaHang: "MH006",
+      btnText: "Săn Deal Ngay",
+      bgGradient: "from-amber-950 via-rose-950 to-slate-950",
+      themeColor: "#F59E0B"
+    },
+    {
+      id: "slide-4",
+      title: "Thu Cũ Đổi Mới Lên Đời",
+      subtitle: "TRỢ GIÁ ĐẾN 2.500.000 Đ - KHÔNG LO BÙ TIỀN",
+      desc: "Thu mua máy cũ giá cao nhất thị trường. Kiểm tra định giá nhanh trong 5 phút. Trả góp 0%.",
+      badge: "Thu Cũ Trợ Giá Cao",
+      priceText: "Thu đổi mọi thương hiệu",
+      oldPriceText: "",
+      discountText: "Trợ giá tới 2.5TR",
+      image: "images/phone-natural.svg",
+      targetMaHang: "MH001",
+      btnText: "Định Giá Máy Cũ",
+      bgGradient: "from-emerald-950 via-teal-950 to-slate-900",
+      themeColor: "#80ffbf"
+    }
+  ];
+
   function renderHeroSlider() {
     const slidesContainer = document.getElementById('hero-slider-container');
     const dotsContainer = document.getElementById('hero-slider-dots');
-    if (!slidesContainer || !(window.CellphoneSData || window.StoreData)) return;
+    if (!slidesContainer) return;
 
-    const slides = ((window.CellphoneSData || window.StoreData).config && (window.CellphoneSData || window.StoreData).config.banners)
-      ? (window.CellphoneSData || window.StoreData).config.banners.heroSlides
-      : [];
-
-    if (slides.length === 0) return;
+    let slides = ((window.CellphoneSData || window.StoreData)?.config?.banners?.heroSlides);
+    if (!slides || !slides.length) {
+      slides = DEFAULT_HERO_SLIDES;
+    }
 
     slidesContainer.innerHTML = slides.map((s, idx) => `
       <div class="hero-slide flex-shrink-0 w-full ${idx === 0 ? 'active-slide' : ''}" data-slide-index="${idx}">
@@ -677,29 +739,6 @@
   }
 
   /**
-   * Popup chào mừng Flash Sale (Phần A13)
-   */
-  function initWelcomePopup() {
-    const popup = document.getElementById('welcome-flash-popup');
-    if (!popup) return;
-
-    const dismissed = sessionStorage.getItem('cellphones_welcome_popup_dismissed');
-    if (!dismissed) {
-      setTimeout(() => {
-        popup.classList.remove('hidden');
-      }, 1500);
-    }
-  }
-
-  window.closeWelcomePopup = function () {
-    const popup = document.getElementById('welcome-flash-popup');
-    if (popup) {
-      popup.classList.add('hidden');
-      sessionStorage.setItem('cellphones_welcome_popup_dismissed', 'true');
-    }
-  };
-
-  /**
    * Back-to-Top Button
    */
   function initScrollToTop() {
@@ -735,9 +774,16 @@
     `;
 
     nhomList.forEach(nh => {
-      const loaiOfNhom = loaiList.filter(l => l.maNhom === nh.maNhom || !l.maNhom);
-      const icon = nh.maNhom === 'NH01' ? 'fa-mobile-screen' : 'fa-plug';
-      const color = nh.maNhom === 'NH01' ? 'text-[#16A34A]' : 'text-amber-600';
+      const loaiOfNhom = loaiList.filter(l => {
+        if (l.maNhom) return l.maNhom === nh.maNhom;
+        return store.products.some(p => p.maNhom === nh.maNhom && p.maLoai === l.maLoai);
+      });
+      let icon = 'fa-mobile-screen';
+      let color = 'text-[#16A34A]';
+      if (nh.maNhom === 'NH02') { icon = 'fa-plug'; color = 'text-amber-600'; }
+      else if (nh.maNhom === 'NH03') { icon = 'fa-headphones'; color = 'text-blue-600'; }
+      else if (nh.maNhom === 'NH04') { icon = 'fa-tablet-screen-button'; color = 'text-indigo-600'; }
+      else if (nh.maNhom === 'NH05') { icon = 'fa-clock'; color = 'text-purple-600'; }
 
       html += `
         <div class="space-y-3">

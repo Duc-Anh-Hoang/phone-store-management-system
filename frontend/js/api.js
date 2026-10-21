@@ -8,10 +8,11 @@ var API_BASE = window.API_BASE = window.API_BASE || ((window.location.protocol =
 function getAuthHeaders(extraHeaders = {}) {
     const headers = { ...extraHeaders };
     let token = (typeof localStorage !== 'undefined' ? localStorage.getItem('admin_token') : null) 
-        || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('admin_token') : null);
+        || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('admin_token') : null)
+        || (typeof localStorage !== 'undefined' ? localStorage.getItem('customer_token') : null);
     if (!token) {
         try {
-            const userStr = localStorage.getItem('auth_user');
+            const userStr = localStorage.getItem('cellphones_auth_user') || localStorage.getItem('auth_user');
             if (userStr) {
                 const u = JSON.parse(userStr);
                 if (u && u.token) token = u.token;
@@ -24,6 +25,31 @@ function getAuthHeaders(extraHeaders = {}) {
     }
     return headers;
 }
+window.getAuthHeaders = getAuthHeaders;
+
+function handleAuthStatus(res) {
+    if (res.status === 401) {
+        if (typeof localStorage !== 'undefined') {
+            localStorage.removeItem('admin_token');
+            localStorage.removeItem('customer_token');
+            localStorage.removeItem('cellphones_auth_user');
+        }
+        if (typeof sessionStorage !== 'undefined') {
+            sessionStorage.removeItem('admin_token');
+        }
+        const isAdmin = typeof window !== 'undefined' && (window.location.pathname.includes('admin') || window.location.href.includes('admin.html'));
+        if (isAdmin && typeof window.showAdminLoginScreen === 'function') {
+            window.showAdminLoginScreen('Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.');
+        } else if (!isAdmin) {
+            alert('Phiên đã hết hạn');
+        }
+        throw new Error('Phiên đã hết hạn');
+    }
+    if (res.status === 403) {
+        alert('Bạn không có quyền thực hiện chức năng này');
+        throw new Error('Bạn không có quyền thực hiện chức năng này');
+    }
+}
 
 const api = {
     async get(path) {
@@ -32,11 +58,12 @@ const api = {
             headers: getAuthHeaders()
         });
         if (!res.ok) {
+            handleAuthStatus(res);
             let errorMsg = `GET ${path} thất bại (${res.status})`;
             try {
                 const err = await res.json();
-                if (err.message) errorMsg = err.message;
-                else if (err.error) errorMsg = err.error;
+                if (err.error) errorMsg = err.error;
+                else if (err.message) errorMsg = err.message;
             } catch (e) {}
             throw new Error(errorMsg);
         }
@@ -51,11 +78,12 @@ const api = {
             body: JSON.stringify(data)
         });
         if (!res.ok) {
+            handleAuthStatus(res);
             let errorMsg = `POST ${path} thất bại (${res.status})`;
             try {
                 const err = await res.json();
-                if (err.message) errorMsg = err.message;
-                else if (err.error) errorMsg = err.error;
+                if (err.error) errorMsg = err.error;
+                else if (err.message) errorMsg = err.message;
             } catch (e) {}
             throw new Error(errorMsg);
         }
@@ -70,11 +98,12 @@ const api = {
             body: JSON.stringify(data)
         });
         if (!res.ok) {
+            handleAuthStatus(res);
             let errorMsg = `PUT ${path} thất bại (${res.status})`;
             try {
                 const err = await res.json();
-                if (err.message) errorMsg = err.message;
-                else if (err.error) errorMsg = err.error;
+                if (err.error) errorMsg = err.error;
+                else if (err.message) errorMsg = err.message;
             } catch (e) {}
             throw new Error(errorMsg);
         }
@@ -88,11 +117,12 @@ const api = {
             headers: getAuthHeaders()
         });
         if (!res.ok) {
+            handleAuthStatus(res);
             let errorMsg = `DELETE ${path} thất bại (${res.status})`;
             try {
                 const err = await res.json();
-                if (err.message) errorMsg = err.message;
-                else if (err.error) errorMsg = err.error;
+                if (err.error) errorMsg = err.error;
+                else if (err.message) errorMsg = err.message;
             } catch (e) {}
             throw new Error(errorMsg);
         }

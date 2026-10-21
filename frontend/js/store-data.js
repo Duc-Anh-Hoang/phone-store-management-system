@@ -49,9 +49,16 @@
           const tonKho = item.tonKho !== undefined ? Number(item.tonKho) : 0;
           const donGia = Number(item.donGia) || 0;
           let anhChinh = 'images/phone-desert.svg';
-          if ((item.tenHang || '').toLowerCase().includes('samsung') || (item.tenHang || '').toLowerCase().includes('galaxy')) {
+          const nameLower = (item.tenHang || '').toLowerCase();
+          if (item.maNhom === 'NH04' || nameLower.includes('ipad') || nameLower.includes('tab')) {
+            anhChinh = 'images/ipad-pro.svg';
+          } else if (nameLower.includes('samsung') || nameLower.includes('galaxy')) {
             anhChinh = 'images/galaxy-s24.svg';
-          } else if (item.maNhom === 'NH02' || (item.tenHang || '').toLowerCase().includes('sạc') || (item.tenHang || '').toLowerCase().includes('cáp') || (item.tenHang || '').toLowerCase().includes('tai nghe') || (item.tenHang || '').toLowerCase().includes('ốp')) {
+          } else if (nameLower.includes('iphone 15') || nameLower.includes('natural')) {
+            anhChinh = 'images/phone-natural.svg';
+          } else if (nameLower.includes('iphone 13') || nameLower.includes('iphone 16 plus') || nameLower.includes('redmi') || nameLower.includes('oppo')) {
+            anhChinh = 'images/phone-black.svg';
+          } else if (item.maNhom === 'NH02' || item.maNhom === 'NH03' || item.maNhom === 'NH05' || nameLower.includes('sạc') || nameLower.includes('cáp') || nameLower.includes('tai nghe') || nameLower.includes('loa') || nameLower.includes('pin') || nameLower.includes('ốp') || nameLower.includes('watch')) {
             anhChinh = 'images/accessories-pack.svg';
           }
 
@@ -110,11 +117,11 @@
     }
 
     getNewArrivals() {
-      return this.products.slice(0, 4);
+      return this.products.slice(0, 8);
     }
 
     getBestSellers() {
-      return this.products.slice(0, 4);
+      return this.products.slice(8, 16);
     }
 
     getFlashSaleProducts() {

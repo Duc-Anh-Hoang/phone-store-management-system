@@ -75,29 +75,33 @@
         return;
       }
 
+      if (maDH && !phone) {
+        if ((window.CellphoneSCart || window.Cart)) (window.CellphoneSCart || window.Cart).showToast('Tra cứu theo mã đơn hàng yêu cầu nhập kèm Số điện thoại đặt hàng', 'error');
+        else alert('Tra cứu theo mã đơn hàng yêu cầu nhập kèm Số điện thoại đặt hàng');
+        if (phoneInput) phoneInput.focus();
+        return;
+      }
+
       if (!resultBox) return;
       resultBox.classList.remove('hidden');
       resultBox.innerHTML = '<div class="text-center py-6 text-slate-400 text-xs"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang tra cứu dữ liệu từ máy chủ...</div>';
 
       let found = null;
 
-      // 1. Nếu có mã đơn: gọi /api/orders/{id}
+      // 1. Nếu có mã đơn: gọi /api/orders/{id}?sdt={phone}
       if (maDH) {
         try {
-          const resp = await fetch(`${API_BASE}/orders/${maDH}`);
+          const resp = await fetch(`${API_BASE}/orders/${encodeURIComponent(maDH)}?sdt=${encodeURIComponent(phone)}`);
           if (resp.ok) {
-            const data = await resp.json();
-            if (data && (!phone || (data.sdtNguoiNhan && data.sdtNguoiNhan.includes(phone.slice(-4))))) {
-              found = data;
-            }
+            found = await resp.json();
           }
         } catch (e) {}
       }
 
-      // 2. Nếu không tìm thấy hoặc chỉ nhập SĐT: gọi /api/orders/phone/{phone}
-      if (!found && phone) {
+      // 2. Nếu không nhập mã đơn nhưng có SĐT: gọi /api/orders/phone/{phone} (trả dữ liệu rút gọn)
+      if (!found && !maDH && phone) {
         try {
-          const resp = await fetch(`${API_BASE}/orders/phone/${phone}`);
+          const resp = await fetch(`${API_BASE}/orders/phone/${encodeURIComponent(phone)}`);
           if (resp.ok) {
             const list = await resp.json();
             if (Array.isArray(list) && list.length > 0) {

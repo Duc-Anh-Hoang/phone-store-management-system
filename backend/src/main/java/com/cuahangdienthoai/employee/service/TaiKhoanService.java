@@ -37,17 +37,23 @@ public class TaiKhoanService {
 
     @Transactional
     public TaiKhoanDTO create(String maNV, String maQuyen, String username, String password) {
+        if (password == null || password.trim().length() < 6) {
+            throw new IllegalArgumentException("Mật khẩu không được để trống và phải có ít nhất 6 ký tự");
+        }
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên đăng nhập không được để trống");
+        }
         NhanVien nv = nhanVienRepository.findById(maNV)
-                .orElseThrow(() -> new RuntimeException("Nhân viên không tồn tại: " + maNV));
+                .orElseThrow(() -> new IllegalArgumentException("Nhân viên không tồn tại: " + maNV));
         PhanQuyen pq = phanQuyenRepository.findById(maQuyen)
-                .orElseThrow(() -> new RuntimeException("Phân quyền không tồn tại: " + maQuyen));
+                .orElseThrow(() -> new IllegalArgumentException("Phân quyền không tồn tại: " + maQuyen));
 
-        String encodedPassword = (password != null && password.startsWith("$2a$"))
+        String encodedPassword = (password.startsWith("$2a$") || password.startsWith("$2b$"))
                 ? password
-                : passwordEncoder.encode(password != null ? password : "123");
+                : passwordEncoder.encode(password);
 
         TaiKhoan tk = TaiKhoan.builder()
-                .username(username)
+                .username(username.trim())
                 .passwordHash(encodedPassword)
                 .nhanVien(nv)
                 .phanQuyen(pq)

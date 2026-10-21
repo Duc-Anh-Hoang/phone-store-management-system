@@ -5,6 +5,7 @@ import com.cuahangdienthoai.customer.dto.KhachHangDTO;
 import com.cuahangdienthoai.customer.service.KhachHangService;
 import com.cuahangdienthoai.employee.dto.TaiKhoanDTO;
 import com.cuahangdienthoai.employee.service.TaiKhoanService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class AuthController {
     /**
      * API Đăng nhập chung: Tự động phân luồng:
      * - Nhân viên/Admin -> chuyển đến admin.html (kèm token xác thực)
-     * - Khách hàng (User) -> ở lại index.html
+     * - Khách hàng (User) -> ở lại index.html (kèm token xác thực vai trò CUSTOMER)
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
@@ -64,8 +65,10 @@ public class AuthController {
                 }
 
                 if (kh != null) {
+                    String token = tokenService.createToken(kh.getSdt(), "CUSTOMER", kh.getMaKH());
                     return ResponseEntity.ok(Map.of(
                             "success", true,
+                            "token", token,
                             "type", "customer",
                             "role", "CUSTOMER",
                             "redirect", "index.html",
@@ -83,7 +86,7 @@ public class AuthController {
     }
 
     /**
-     * API Đăng nhập riêng cho Khách hàng qua SĐT
+     * API Đăng nhập riêng cho Khách hàng qua SĐT (S2)
      */
     @PostMapping("/customer-login")
     public ResponseEntity<?> customerLogin(@RequestBody Map<String, String> body) {
@@ -92,10 +95,13 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("error", "Vui lòng nhập số điện thoại"));
         }
 
+        phone = phone.trim();
         try {
-            KhachHangDTO kh = khachHangService.getBySdt(phone.trim());
+            KhachHangDTO kh = khachHangService.getBySdt(phone);
+            String token = tokenService.createToken(phone, "CUSTOMER", kh.getMaKH());
             return ResponseEntity.ok(Map.of(
                     "success", true,
+                    "token", token,
                     "type", "customer",
                     "role", "CUSTOMER",
                     "redirect", "index.html",
@@ -108,5 +114,35 @@ public class AuthController {
                     "error", "Số điện thoại chưa có trên hệ thống. Quý khách vui lòng đặt hàng để đăng ký!"
             ));
         }
+    }
+
+    /**
+     * API Đăng xuất (S3): Hủy token trên bộ nhớ RAM
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, @RequestBody(required = false) Map<String, String> body) {
+        String token = resolveToken(request);
+        if (token == null && body != null) {
+            token = body.get("token");
+        }
+        if (token != null) {
+            tokenService.removeToken(token);
+        }
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Đăng xuất thành công"
+        ));
+    }
+
+    private String resolveToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7).trim();
+        }
+        String xAuth = request.getHeader("X-Auth-Token");
+        if (xAuth != null && !xAuth.trim().isEmpty()) {
+            return xAuth.trim();
+        }
+        return null;
     }
 }

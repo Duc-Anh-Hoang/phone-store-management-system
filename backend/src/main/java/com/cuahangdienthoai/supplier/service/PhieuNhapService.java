@@ -1,5 +1,7 @@
 package com.cuahangdienthoai.supplier.service;
 
+import com.cuahangdienthoai.common.CodeGenerator;
+import com.cuahangdienthoai.common.security.CurrentUser;
 import com.cuahangdienthoai.employee.entity.NhanVien;
 import com.cuahangdienthoai.employee.repository.NhanVienRepository;
 import com.cuahangdienthoai.product.entity.MatHang;
@@ -8,6 +10,7 @@ import com.cuahangdienthoai.supplier.dto.ChiTietPhieuNhapDTO;
 import com.cuahangdienthoai.supplier.dto.PhieuNhapDTO;
 import com.cuahangdienthoai.supplier.entity.ChiTietPhieuNhap;
 import com.cuahangdienthoai.supplier.entity.ChiTietPhieuNhapId;
+import com.cuahangdienthoai.supplier.entity.Imei;
 import com.cuahangdienthoai.supplier.entity.NhaCungCap;
 import com.cuahangdienthoai.supplier.entity.PhieuNhap;
 import com.cuahangdienthoai.supplier.repository.ChiTietPhieuNhapRepository;
@@ -19,8 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +35,8 @@ public class PhieuNhapService {
     private final NhanVienRepository nhanVienRepository;
     private final MatHangRepository matHangRepository;
     private final ImeiRepository imeiRepository;
+    private final CurrentUser currentUser;
+    private final CodeGenerator codeGenerator;
 
     public List<PhieuNhapDTO> getAll() {
         return phieuNhapRepository.findAll().stream()
@@ -43,10 +47,14 @@ public class PhieuNhapService {
     public PhieuNhapDTO getById(String soPNhap) {
         return phieuNhapRepository.findById(soPNhap)
                 .map(this::toDTO)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu nhập: " + soPNhap));
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy phiếu nhập: " + soPNhap));
     }
 
     public List<PhieuNhapDTO> getByNCC(String maNCC) {
+        return getByNhaCungCap(maNCC);
+    }
+
+    public List<PhieuNhapDTO> getByNhaCungCap(String maNCC) {
         return phieuNhapRepository.findByNhaCungCapMaNCC(maNCC).stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
@@ -58,22 +66,20 @@ public class PhieuNhapService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public PhieuNhapDTO create(PhieuNhapDTO dto) {
-        NhaCungCap ncc = nhaCungCapRepository.findById(dto.getMaNCC())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhà cung cấp: " + dto.getMaNCC()));
-        NhanVien nv = null;
-        if (dto.getMaNV() != null && !dto.getMaNV().trim().isEmpty()) {
-            nv = nhanVienRepository.findById(dto.getMaNV()).orElse(null);
+        if (dto == null || dto.getMaNCC() == null || dto.getMaNCC().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng chọn nhà cung cấp");
         }
-        if (nv == null) {
-            nv = nhanVienRepository.findAll().stream().findFirst()
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên nhập kho"));
-        }
+
+        NhaCungCap ncc = nhaCungCapRepository.findById(dto.getMaNCC().trim())
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy nhà cung cấp: " + dto.getMaNCC()));
+
+        NhanVien nv = currentUser.getCurrentNhanVien();
 
         String soPN = dto.getSoPNhap();
         if (soPN == null || soPN.trim().isEmpty()) {
-            soPN = "PN" + String.format("%03d", phieuNhapRepository.count() + 1);
+            soPN = codeGenerator.generateNextSoPN();
         }
 
         PhieuNhap phieuNhap = PhieuNhap.builder()
@@ -86,36 +92,63 @@ public class PhieuNhapService {
 
         if (dto.getChiTiet() != null && !dto.getChiTiet().isEmpty()) {
             final PhieuNhap savedPn = phieuNhap;
-            for (var ct : dto.getChiTiet()) {
+            Set<String> allInputImeis = new HashSet<>();
+
+            for (ChiTietPhieuNhapDTO ct : dto.getChiTiet()) {
                 MatHang mh = matHangRepository.findById(ct.getMaHang())
-                        .orElseThrow(() -> new RuntimeException("Không tìm thấy mặt hàng: " + ct.getMaHang()));
+                        .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy mặt hàng: " + ct.getMaHang()));
+
+                int slNhap = ct.getSlNhap();
+                if (slNhap <= 0) {
+                    throw new IllegalArgumentException("Số lượng nhập phải lớn hơn 0");
+                }
+
                 ChiTietPhieuNhapId id = new ChiTietPhieuNhapId(savedPn.getSoPNhap(), mh.getMaHang());
                 ChiTietPhieuNhap detail = ChiTietPhieuNhap.builder()
                         .id(id)
                         .phieuNhap(savedPn)
                         .matHang(mh)
-                        .slNhap(ct.getSlNhap())
+                        .slNhap(slNhap)
                         .donGiaNhap(ct.getDonGiaNhap())
                         .build();
                 detail = chiTietPhieuNhapRepository.save(detail);
 
-                // Nếu mặt hàng quản lý IMEI thì sinh danh sách mã IMEI (15 chữ số)
+                // Xử lý kiểm tra IMEI (S6)
                 if (mh.isQuanLyImei()) {
-                    int sl = ct.getSlNhap() > 0 ? ct.getSlNhap() : 1;
-                    for (int k = 0; k < sl; k++) {
-                        long countImei = imeiRepository.count() + 1 + k;
-                        String maImei = "IMEI" + String.format("%03d", countImei);
-                        // Sinh 15 chữ số duy nhất bắt đầu bằng 35
-                        long randomPart = (long) (Math.random() * 9000000000000L) + 1000000000000L;
-                        String soImei = "35" + String.valueOf(randomPart).substring(0, 13);
+                    List<String> imeiList = ct.getDanhSachImei();
+                    int countProvided = (imeiList != null) ? imeiList.size() : 0;
+                    if (countProvided != slNhap) {
+                        throw new IllegalArgumentException("Mặt hàng " + mh.getTenHang() + " (" + mh.getMaHang() +
+                                ") quản lý IMEI: số lượng IMEI (" + countProvided + ") phải bằng số lượng nhập (" + slNhap + ")");
+                    }
 
-                        com.cuahangdienthoai.supplier.entity.Imei imeiObj = com.cuahangdienthoai.supplier.entity.Imei.builder()
+                    for (String rawImei : imeiList) {
+                        if (rawImei == null || !rawImei.trim().matches("^[0-9]{15}$")) {
+                            throw new IllegalArgumentException("IMEI không hợp lệ (phải đúng 15 chữ số): " + rawImei);
+                        }
+                        String cleanImei = rawImei.trim();
+
+                        if (!allInputImeis.add(cleanImei)) {
+                            throw new IllegalArgumentException("Danh sách IMEI bị trùng lặp: " + cleanImei);
+                        }
+
+                        if (imeiRepository.findBySoIMEI(cleanImei).isPresent()) {
+                            throw new IllegalArgumentException("Số IMEI đã tồn tại trong hệ thống: " + cleanImei);
+                        }
+
+                        String maImei = codeGenerator.generateNextMaIMEI();
+                        Imei imeiObj = Imei.builder()
                                 .maIMEI(maImei)
                                 .chiTietPhieuNhap(detail)
-                                .soIMEI(soImei)
+                                .soIMEI(cleanImei)
                                 .trangThai("con_hang")
                                 .build();
                         imeiRepository.save(imeiObj);
+                    }
+                } else {
+                    // Mặt hàng không quản lý IMEI thì không nhận danh sách IMEI
+                    if (ct.getDanhSachImei() != null && !ct.getDanhSachImei().isEmpty()) {
+                        throw new IllegalArgumentException("Mặt hàng " + mh.getTenHang() + " không quản lý IMEI, không được gửi danh sách IMEI");
                     }
                 }
             }

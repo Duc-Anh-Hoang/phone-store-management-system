@@ -14,6 +14,7 @@ public interface ImeiRepository extends JpaRepository<Imei, String> {
     List<Imei> findByTrangThai(String trangThai);
     Optional<Imei> findBySoIMEI(String soIMEI);
     List<Imei> findByChiTietPhieuNhapMatHangMaHang(String maHang);
+    Optional<Imei> findTopByOrderByMaIMEIDesc();
 
     @Query(value = "SELECT MAIMEI as maIMEI, SOIMEI as soIMEI, MAHANG as maHang, TENHANG as tenHang, SOPN as soPn, NGAYNHAP as ngayNhap FROM dbo.vw_IMEIConHang WHERE MAHANG = :maHang", nativeQuery = true)
     List<ImeiConHangProjection> findAvailableByMaHang(@Param("maHang") String maHang);

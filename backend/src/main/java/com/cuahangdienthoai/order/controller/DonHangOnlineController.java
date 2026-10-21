@@ -2,6 +2,7 @@ package com.cuahangdienthoai.order.controller;
 
 import com.cuahangdienthoai.order.dto.DonHangOnlineDTO;
 import com.cuahangdienthoai.order.service.DonHangOnlineService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class DonHangOnlineController {
     }
 
     @PostMapping
-    public DonHangOnlineDTO create(@RequestBody DonHangOnlineDTO dto) { return donHangOnlineService.create(dto); }
+    public DonHangOnlineDTO create(@Valid @RequestBody DonHangOnlineDTO dto) { return donHangOnlineService.create(dto); }
 
     @PutMapping("/{maDH}/trangthai")
     public DonHangOnlineDTO updateTrangThai(@PathVariable String maDH, @RequestBody Map<String, String> body) {

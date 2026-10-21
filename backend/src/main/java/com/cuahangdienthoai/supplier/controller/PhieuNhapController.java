@@ -2,6 +2,7 @@ package com.cuahangdienthoai.supplier.controller;
 
 import com.cuahangdienthoai.supplier.dto.PhieuNhapDTO;
 import com.cuahangdienthoai.supplier.service.PhieuNhapService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class PhieuNhapController {
     }
 
     @PostMapping
-    public PhieuNhapDTO create(@RequestBody PhieuNhapDTO dto) {
+    public PhieuNhapDTO create(@Valid @RequestBody PhieuNhapDTO dto) {
         return phieuNhapService.create(dto);
     }
 

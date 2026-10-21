@@ -11,4 +11,5 @@ public interface DonHangOnlineRepository extends JpaRepository<DonHangOnline, St
     List<DonHangOnline> findByTrangThai(String trangThai);
     List<DonHangOnline> findBySdtNguoiNhanOrderByNgayDatDesc(String sdtNguoiNhan);
     List<DonHangOnline> findByTrangThaiOrderByNgayDatDesc(String trangThai);
+    java.util.Optional<DonHangOnline> findTopByOrderByMaDHDesc();
 }

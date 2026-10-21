@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface KhachHangRepository extends JpaRepository<KhachHang, String> {
     Optional<KhachHang> findBySdt(String sdt);
     Optional<KhachHang> findByEmail(String email);
+    Optional<KhachHang> findTopByOrderByMaKHDesc();
 
     @Query(value = "SELECT MAKH as maKH, DIEMTICHLUY as diemTichLuy, TONGCHITIEU as tongChiTieu, TONGHOAN as tongHoan FROM dbo.vw_KhachHangThanThiet", nativeQuery = true)
     List<KhachHangThanThietProjection> findAllDiemTichLuy();

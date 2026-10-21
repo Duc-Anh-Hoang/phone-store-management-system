@@ -119,17 +119,24 @@
 
         if (resp.ok) {
           const resJson = await resp.json();
-          if (resJson && resJson.customer) {
-            customerData.maKH = resJson.customer.maKH || '';
-            customerData.hoTen = resJson.customer.hoTen || customerData.hoTen;
-            customerData.email = resJson.customer.email || customerData.email;
-            customerData.diaChi = resJson.customer.diaChi || customerData.diaChi;
+          if (resJson && resJson.token) {
+            localStorage.setItem('customer_token', resJson.token);
+            customerData.token = resJson.token;
+          }
+          const u = resJson.user || resJson.customer;
+          if (u) {
+            customerData.maKH = u.maKH || '';
+            customerData.hoTen = u.hoTen || customerData.hoTen;
+            customerData.email = u.email || customerData.email;
+            customerData.diaChi = u.diaChi || customerData.diaChi;
           }
         }
 
-        // 2. Tải thông tin điểm tích lũy & chi tiêu từ view vw_KhachHangThanThiet
+        // 2. Tải thông tin điểm tích lũy & chi tiêu từ view vw_KhachHangThanThiet (kèm token)
         try {
-          const khResp = await fetch(`${API_BASE}/khachhang/sdt/${phone}`);
+          const token = localStorage.getItem('customer_token') || customerData.token;
+          const headers = token ? { 'Authorization': 'Bearer ' + token, 'X-Auth-Token': token } : {};
+          const khResp = await fetch(`${API_BASE}/khachhang/sdt/${phone}`, { headers });
           if (khResp.ok) {
             const kh = await khResp.json();
             if (kh) {
@@ -177,10 +184,12 @@
       if (elName) elName.textContent = user.hoTen || 'Khách hàng';
       if (elPhone) elPhone.textContent = user.sdt || '';
 
-      // Tải điểm mới nhất từ backend
+      // Tải điểm mới nhất từ backend (kèm token)
       let points = user.diemTichLuy || 0;
       try {
-        const khResp = await fetch(`${API_BASE}/khachhang/sdt/${user.sdt}`);
+        const token = localStorage.getItem('customer_token') || user.token;
+        const headers = token ? { 'Authorization': 'Bearer ' + token, 'X-Auth-Token': token } : {};
+        const khResp = await fetch(`${API_BASE}/khachhang/sdt/${user.sdt}`, { headers });
         if (khResp.ok) {
           const kh = await khResp.json();
           if (kh && kh.diemTichLuy !== undefined) {

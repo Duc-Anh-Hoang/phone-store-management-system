@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hệ Thống Quản Trị Cửa Hàng Điện Thoại | CellphoneS - 241 Lê Văn Việt Management</title>
+  <title>Hệ Thống Quản Trị Cửa Hàng Điện Thoại | SamaPhone Management</title>
   
   <!-- Google Fonts: Plus Jakarta Sans & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -93,6 +93,69 @@
   </style>
 </head>
 <body class="h-full font-sans text-slate-900 antialiased flex overflow-hidden bg-[#F3F4F6]">
+  <!-- MÀN HÌNH ĐĂNG NHẬP CHUYÊN BIỆT CHO TRANG QUẢN TRỊ -->
+  <div id="admin-login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/95 backdrop-blur-md">
+    <div class="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl border border-slate-200">
+      
+      <!-- Header Form Đăng nhập -->
+      <div class="p-6 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-[#80ffbf] text-[#061a0f] flex items-center justify-center font-black text-xl shadow-md">
+            <i class="fa-solid fa-layer-group"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-base leading-tight">Cổng Quản Trị SamaPhone</h3>
+            <p class="text-xs text-slate-400">Đăng nhập tài khoản Nhân viên / Quản lý</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Body Form Đăng nhập -->
+      <div class="p-6 sm:p-7 space-y-4">
+        <div id="admin-login-screen-error" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold"></div>
+        
+        <form id="form-admin-login-screen" onsubmit="window.handleAdminLoginScreenSubmit(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Tên đăng nhập</label>
+            <div class="relative">
+              <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+              <input type="text" id="admin-login-screen-username" required placeholder="admin / quanly / banhang / thungan / kho / kythuat" class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Mật khẩu</label>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+              <input type="password" id="admin-login-screen-password" required value="123456" placeholder="Mật khẩu" class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit-admin-login" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-black text-white font-extrabold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-right-to-bracket text-[#80ffbf]"></i>
+            <span>Đăng Nhập</span>
+          </button>
+        </form>
+
+        <div class="pt-3 border-t border-slate-100 text-xs text-slate-500">
+          <span class="font-bold text-slate-700">Đăng nhập nhanh tài khoản mẫu:</span>
+          <div class="grid grid-cols-3 gap-1.5 mt-2">
+            <button type="button" onclick="window.quickFillAdminLogin('quanly')" class="px-2 py-1.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-[11px] font-bold rounded-lg border border-slate-200 transition-colors">quanly</button>
+            <button type="button" onclick="window.quickFillAdminLogin('banhang')" class="px-2 py-1.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-[11px] font-bold rounded-lg border border-slate-200 transition-colors">banhang</button>
+            <button type="button" onclick="window.quickFillAdminLogin('thungan')" class="px-2 py-1.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-[11px] font-bold rounded-lg border border-slate-200 transition-colors">thungan</button>
+            <button type="button" onclick="window.quickFillAdminLogin('kho')" class="px-2 py-1.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-[11px] font-bold rounded-lg border border-slate-200 transition-colors">kho</button>
+            <button type="button" onclick="window.quickFillAdminLogin('kythuat')" class="px-2 py-1.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-[11px] font-bold rounded-lg border border-slate-200 transition-colors">kythuat</button>
+            <button type="button" onclick="window.quickFillAdminLogin('admin')" class="px-2 py-1.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-[11px] font-bold rounded-lg border border-slate-200 transition-colors">admin</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTAINER CHỨA TOÀN BỘ GIAO DIỆN QUẢN TRỊ (CHỈ HIỂN THỊ KHI ĐÃ ĐĂNG NHẬP) -->
+  <div id="admin-app-layout" class="w-full h-full flex overflow-hidden">
+
 
   <!-- =========================================================================
        SIDEBAR NAVIGATION (Phong cách hiện đại: Logo #80ffbf, Menu chọn #eafff5 + chữ #064e29)
@@ -106,8 +169,7 @@
           <i class="fa-solid fa-layer-group text-xs text-[#061a0f]"></i>
         </div>
         <div>
-          <span class="text-sm font-black text-slate-900 tracking-tight">CellphoneS <span class="text-[#064e29] bg-[#eafff5] px-1.5 py-0.5 rounded text-xs font-black">ADMIN</span></span>
-          <span class="text-[10px] block font-bold text-emerald-600 -mt-0.5">#80ffbf Theme</span>
+          <span class="text-sm font-black text-slate-900 tracking-tight">SamaPhone <span class="text-[#064e29] bg-[#eafff5] px-1.5 py-0.5 rounded text-xs font-black">ADMIN</span></span>
         </div>
       </a>
       <button id="btn-close-sidebar" class="lg:hidden p-1.5 text-slate-400 hover:text-slate-700 rounded-lg">
@@ -303,12 +365,6 @@
           </div>
         </div>
 
-        <!-- Nút Đổi tài khoản / Đăng nhập lại -->
-        <button type="button" onclick="window.openLoginModal ? window.openLoginModal('tab-staff-login') : null" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-600 hover:text-slate-900 text-xs font-medium transition-colors flex-shrink-0" title="Đăng nhập tài khoản khác">
-          <i class="fa-solid fa-user-pen text-xs"></i>
-          <span class="hidden sm:inline">Đổi TK</span>
-        </button>
-
         <!-- Nút Đăng xuất -->
         <button type="button" onclick="window.doLogout ? window.doLogout() : ((window.CellphoneSAuth || window.Auth) ? (window.CellphoneSAuth || window.Auth).logout() : null)" class="btn-do-logout inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-600 hover:text-slate-900 text-xs font-medium transition-colors flex-shrink-0" title="Đăng xuất">
           <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
@@ -337,7 +393,7 @@
                 <div id="dash-revenue" class="text-lg sm:text-xl xl:text-2xl font-extrabold text-slate-800 mt-1 font-mono tracking-tight truncate whitespace-nowrap">61.632.000 đ</div>
                 <div class="text-[11px] text-emerald-600 font-bold mt-1.5 flex items-center gap-1 truncate whitespace-nowrap">
                   <i class="fa-solid fa-arrow-trend-up flex-shrink-0"></i>
-                  <span class="truncate">+12% so với tháng trước</span>
+                  <span id="dash-revenue-sub-text" class="truncate">+12% so với tháng trước</span>
                 </div>
               </div>
               <div class="flex-shrink-0 w-11 h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-lg">
@@ -353,7 +409,7 @@
               <div class="min-w-0 flex-1">
                 <div class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider truncate">Đơn Online Chờ Duyệt</div>
                 <div id="dash-pending-orders" class="text-lg sm:text-xl xl:text-2xl font-extrabold text-slate-800 mt-1 font-sans truncate whitespace-nowrap">1 đơn</div>
-                <div class="text-[11px] text-slate-500 font-medium mt-1.5 truncate whitespace-nowrap">Cần xác nhận & xuất hóa đơn</div>
+                <div id="dash-pending-orders-sub" class="text-[11px] text-slate-500 font-medium mt-1.5 truncate whitespace-nowrap">Cần xác nhận & xuất hóa đơn</div>
               </div>
               <div class="flex-shrink-0 w-11 h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-lg">
                 <i class="fa-solid fa-hourglass-half"></i>
@@ -368,7 +424,7 @@
               <div class="min-w-0 flex-1">
                 <div class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider truncate">Tổng Tồn Kho Máy</div>
                 <div id="dash-total-stock" class="text-lg sm:text-xl xl:text-2xl font-extrabold text-slate-800 mt-1 font-sans truncate whitespace-nowrap">1150 máy</div>
-                <div class="text-[11px] text-slate-500 font-medium mt-1.5 truncate whitespace-nowrap">Đang còn hàng</div>
+                <div id="dash-total-stock-sub" class="text-[11px] text-slate-500 font-medium mt-1.5 truncate whitespace-nowrap">Đang còn hàng</div>
               </div>
               <div class="flex-shrink-0 w-11 h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-lg">
                 <i class="fa-solid fa-boxes-stacked"></i>
@@ -383,7 +439,7 @@
               <div class="min-w-0 flex-1">
                 <div class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider truncate">Máy Đang Bảo Hành</div>
                 <div id="dash-warranty-count" class="text-lg sm:text-xl xl:text-2xl font-extrabold text-slate-800 mt-1 font-sans truncate whitespace-nowrap">1 máy</div>
-                <div class="text-[11px] text-indigo-600 font-bold mt-1.5 truncate whitespace-nowrap">Tiếp nhận & đang sửa</div>
+                <div id="dash-warranty-count-sub" class="text-[11px] text-indigo-600 font-bold mt-1.5 truncate whitespace-nowrap">Tiếp nhận & đang sửa</div>
               </div>
               <div class="flex-shrink-0 w-11 h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-lg">
                 <i class="fa-solid fa-shield-halved"></i>
@@ -429,7 +485,7 @@
           <!-- Kênh Bán Hàng -->
           <div class="bg-white rounded-2xl border border-slate-200/80 shadow-card-sleek p-5">
             <div class="flex items-center justify-between mb-3 border-b pb-2">
-              <h3 class="font-bold text-navy text-sm"><i class="fa-solid fa-store text-[#16A34A] mr-2"></i><span>Doanh Thu Theo Kênh Bán (FR25)</span></h3>
+              <h3 class="font-bold text-navy text-sm"><i class="fa-solid fa-store text-[#16A34A] mr-2"></i><span>Doanh Thu Theo Kênh Bán</span></h3>
               <span class="text-[11px] text-slate-400 font-mono">sp_ThongKeDoanhThu</span>
             </div>
             <div id="dash-channel-stats" class="space-y-3 text-xs">
@@ -440,7 +496,7 @@
           <!-- Nhóm Ngành Hàng -->
           <div class="bg-white rounded-2xl border border-slate-200/80 shadow-card-sleek p-5">
             <div class="flex items-center justify-between mb-3 border-b pb-2">
-              <h3 class="font-bold text-navy text-sm"><i class="fa-solid fa-boxes-stacked text-purple-600 mr-2"></i><span>Doanh Thu Theo Nhóm Hàng (FR25)</span></h3>
+              <h3 class="font-bold text-navy text-sm"><i class="fa-solid fa-boxes-stacked text-purple-600 mr-2"></i><span>Doanh Thu Theo Nhóm Hàng</span></h3>
               <span class="text-[11px] text-slate-400 font-mono">vw_DoanhThuNhomHang</span>
             </div>
             <div id="dash-category-stats" class="space-y-3 text-xs">
@@ -862,7 +918,7 @@
       <section id="view-imei" class="admin-view-section hidden space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 class="text-xl font-extrabold text-navy tracking-tight">Tra Cứu Lịch Sử IMEI (FR14)</h2>
+            <h2 class="text-xl font-extrabold text-navy tracking-tight">Tra Cứu Lịch Sử IMEI</h2>
             <p class="text-xs text-slate-500 mt-0.5">Truy vết vòng đời từng thiết bị: Ngày nhập kho, NCC, Ngày bán, Khách hàng, Bảo hành, Đổi trả (vw_IMEIConHang)</p>
           </div>
           <div class="max-w-xs w-full relative">
@@ -895,7 +951,7 @@
       <section id="view-hoadon-list" class="admin-view-section hidden space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 class="text-xl font-extrabold text-navy tracking-tight">Sổ Hóa Đơn Bán Hàng (FR17)</h2>
+            <h2 class="text-xl font-extrabold text-navy tracking-tight">Sổ Hóa Đơn Bán Hàng</h2>
             <p class="text-xs text-slate-500 mt-0.5">Tra cứu, xem chi tiết chứng từ kế toán và in lại hóa đơn kèm phiếu bảo hành</p>
           </div>
           <div class="flex items-center gap-2">
@@ -937,7 +993,7 @@
            ===================================================================== -->
       <section id="view-tracuu-baohanh" class="admin-view-section hidden space-y-6">
         <div>
-          <h2 class="text-xl font-extrabold text-navy tracking-tight">Tra Cứu Thông Tin Bảo Hành (FR21)</h2>
+          <h2 class="text-xl font-extrabold text-navy tracking-tight">Tra Cứu Thông Tin Bảo Hành</h2>
           <p class="text-xs text-slate-500 mt-0.5">Kiểm tra thời hạn còn lại, số ngày bảo hành và lịch sử sửa chữa theo IMEI hoặc SĐT</p>
         </div>
 
@@ -962,7 +1018,7 @@
            ===================================================================== -->
       <section id="view-nhomloai" class="admin-view-section hidden space-y-6">
         <div>
-          <h2 class="text-xl font-extrabold text-navy tracking-tight">Quản Lý Hãng & Loại Hàng (FR07)</h2>
+          <h2 class="text-xl font-extrabold text-navy tracking-tight">Quản Lý Hãng & Loại Hàng</h2>
           <p class="text-xs text-slate-500 mt-0.5">CRUD đầy đủ: Nhóm hàng (Hãng sản xuất) và Loại hàng phân loại thiết bị (chỉ xóa khi chưa có model)</p>
         </div>
 
@@ -1021,7 +1077,7 @@
       <section id="view-thuoctinh" class="admin-view-section hidden space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 class="text-xl font-extrabold text-navy tracking-tight">Thông Số Kỹ Thuật (FR06)</h2>
+            <h2 class="text-xl font-extrabold text-navy tracking-tight">Thông Số Kỹ Thuật</h2>
             <p class="text-xs text-slate-500 mt-0.5">Quản lý các trường thuộc tính kỹ thuật (RAM, ROM, Màn hình, Chip, Pin) và gán thông số chi tiết</p>
           </div>
           <div class="flex items-center gap-2">
@@ -1076,7 +1132,7 @@
            ===================================================================== -->
       <section id="view-taikhoan" class="admin-view-section hidden space-y-6">
         <div>
-          <h2 class="text-xl font-extrabold text-navy tracking-tight">Tài Khoản & Phân Quyền Hệ Thống (FR04, FR05)</h2>
+          <h2 class="text-xl font-extrabold text-navy tracking-tight">Tài Khoản & Phân Quyền Hệ Thống</h2>
           <p class="text-xs text-slate-500 mt-0.5">Quản lý tài khoản đăng nhập (khóa/mở khóa, đặt lại mật khẩu) và phân quyền 5 vai trò hệ thống</p>
         </div>
 
@@ -1085,7 +1141,7 @@
           <div class="xl:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-card-sleek p-5 space-y-4">
             <div class="flex items-center justify-between border-b pb-3">
               <div>
-                <h3 class="font-bold text-navy text-sm"><i class="fa-solid fa-users-gear text-[#16A34A] mr-2"></i>Tài Khoản Đăng Nhập (TaiKhoan - FR04)</h3>
+                <h3 class="font-bold text-navy text-sm"><i class="fa-solid fa-users-gear text-[#16A34A] mr-2"></i>Tài Khoản Đăng Nhập</h3>
                 <p class="text-[11px] text-slate-400 mt-0.5">Có sửa, khóa / mở khóa, đặt lại mật khẩu, không xóa tài khoản</p>
               </div>
               <button onclick="openTaiKhoanModal()" class="px-3.5 py-1.5 bg-[#16A34A] hover:bg-[#15803D] text-white font-bold text-xs rounded-xl shadow-sm transition-colors">
@@ -1113,7 +1169,7 @@
           <div class="bg-white rounded-2xl border border-slate-200/80 shadow-card-sleek p-5 space-y-4">
             <div class="flex items-center justify-between border-b pb-3">
               <div>
-                <h3 class="font-bold text-navy text-sm"><i class="fa-solid fa-shield-halved text-purple-600 mr-2"></i>Vai Trò & Quyền (FR05)</h3>
+                <h3 class="font-bold text-navy text-sm"><i class="fa-solid fa-shield-halved text-purple-600 mr-2"></i>Vai Trò & Quyền</h3>
                 <p class="text-[11px] text-slate-400 mt-0.5">CRUD đầy đủ: xóa chỉ khi chưa có nhân viên</p>
               </div>
               <button onclick="openPhanQuyenModal()" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-sm transition-colors">
@@ -1139,6 +1195,7 @@
 
     </main>
   </div>
+  </div> <!-- /#admin-app-layout -->
 
   <!-- =========================================================================
        MODAL: CẬP NHẬT MẶT HÀNG (Khung cố định, label chuẩn mực song ngữ)
@@ -1285,8 +1342,13 @@
             <input type="number" name="donGiaNhap" value="28000000" min="1000" required class="w-full h-10 px-3.5 border border-slate-200 rounded-xl focus:outline-none focus:border-[#16A34A]">
           </div>
         </div>
-        <div class="bg-blue-50/80 p-3.5 rounded-xl border border-blue-100 text-[11px] text-blue-800">
-          <i class="fa-solid fa-circle-info mr-1 text-[#16A34A]"></i> <span>Hệ thống sẽ tự động tạo đủ số lượng mã IMEI hợp lệ 15 chữ số cho từng máy vào bảng <strong>IMEI</strong>.</span>
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-xs font-bold text-slate-700">Danh sách IMEI (15 chữ số, mỗi dòng 1 số):</label>
+            <span id="pn-imei-count" class="text-[11px] font-bold text-[#16A34A]">Đã nhập: 0 số</span>
+          </div>
+          <textarea id="pn-imei-list" name="imeiList" rows="4" placeholder="Dán danh sách IMEI 15 chữ số tại đây (mỗi dòng một số)..." oninput="updateImeiCount()" class="w-full p-2.5 border border-slate-200 rounded-xl font-mono text-xs focus:outline-none focus:border-[#16A34A]"></textarea>
+          <div class="text-[11px] text-slate-400 mt-1">Lưu ý: Đối với mặt hàng quản lý IMEI, số lượng IMEI dán vào phải bằng đúng số lượng nhập.</div>
         </div>
         <div class="pt-3 border-t flex justify-end gap-2.5">
           <button type="button" onclick="closeModal('modal-nhapkho')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 font-bold rounded-xl text-slate-700 transition-colors">Hủy</button>
@@ -1391,7 +1453,7 @@
     <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-100 p-6 sm:p-8 space-y-6 animate-in fade-in duration-200">
       <div class="flex items-center justify-between border-b border-slate-100 pb-4">
         <div>
-          <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#15803D] bg-[#F0FDF4] px-2.5 py-1 rounded-full border border-blue-100">Chứng Từ Kế Toán Hợp Lệ (NFR05)</span>
+          <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#15803D] bg-[#F0FDF4] px-2.5 py-1 rounded-full border border-blue-100">Chứng Từ Kế Toán Hợp Lệ</span>
           <h3 class="font-extrabold text-navy text-lg mt-1.5">Hóa Đơn Bán Hàng & Phiếu Bảo Hành</h3>
         </div>
         <button onclick="closeModal('modal-chitiethoadon')" class="text-slate-400 hover:text-navy p-1 flex-shrink-0"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -1418,7 +1480,7 @@
     <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-slate-100 p-6 space-y-5 animate-in fade-in duration-200">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div>
-          <span class="text-[10px] font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">Audit Trail (FR14)</span>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">Nhật Ký Truy Vết</span>
           <h3 id="timeline-imei-title" class="font-extrabold text-navy text-base mt-1">Truy Vết Lịch Sử IMEI</h3>
         </div>
         <button onclick="closeModal('modal-timeline-imei')" class="text-slate-400 hover:text-navy p-1 flex-shrink-0"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -1439,7 +1501,7 @@
     <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-100 p-6 space-y-5 animate-in fade-in duration-200">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div>
-          <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Hồ Sơ Khách Thân Thiết (BR21)</span>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Hồ Sơ Khách Thân Thiết</span>
           <h3 id="lichsu-kh-title" class="font-extrabold text-navy text-base mt-1">Lịch Sử Mua Hàng & Tích Điểm</h3>
         </div>
         <button onclick="closeModal('modal-lichsu-khachhang')" class="text-slate-400 hover:text-navy p-1 flex-shrink-0"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -1460,7 +1522,7 @@
     <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-slate-100 p-6 space-y-5 animate-in fade-in duration-200">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div>
-          <span class="text-[10px] font-bold uppercase tracking-wider text-[#15803D] bg-[#F0FDF4] px-2 py-0.5 rounded-full border border-blue-100">Chi Tiết Lô Nhập (FR12)</span>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#15803D] bg-[#F0FDF4] px-2.5 py-1 rounded-full border border-blue-100">Chi Tiết Lô Nhập</span>
           <h3 id="chitiet-pn-title" class="font-extrabold text-navy text-base mt-1">Danh Sách IMEI Thuộc Phiếu Nhập</h3>
         </div>
         <button onclick="closeModal('modal-chitiet-nhapkho')" class="text-slate-400 hover:text-navy p-1 flex-shrink-0"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -1583,12 +1645,12 @@
   <div id="modal-taikhoan" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md overflow-y-auto">
     <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 p-6 space-y-4 animate-in fade-in duration-200">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-extrabold text-navy text-base">Tạo Tài Khoản Nhân Viên (FR04)</h3>
+        <h3 class="font-extrabold text-navy text-base">Tạo Tài Khoản Nhân Viên</h3>
         <button onclick="closeModal('modal-taikhoan')" class="text-slate-400 hover:text-navy"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <form onsubmit="saveTaiKhoan(event)" class="space-y-4 text-xs">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Chọn Nhân Viên (Mỗi NV tối đa 1 tài khoản - BR22):</label>
+          <label class="block font-bold text-slate-700 mb-1">Chọn Nhân Viên (Mỗi NV tối đa 1 tài khoản):</label>
           <select id="tk-select-nhanvien" name="maNV" required class="w-full h-10 px-3 border border-slate-200 rounded-xl bg-white focus:outline-none"></select>
         </div>
         <div>
@@ -1596,7 +1658,7 @@
           <input type="text" name="tenDangNhap" required class="w-full h-10 px-3 border border-slate-200 rounded-xl font-mono focus:border-[#16A34A] focus:outline-none">
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Mật khẩu khởi tạo (sẽ lưu dạng hash bcrypt - NFR01):</label>
+          <label class="block font-bold text-slate-700 mb-1">Mật khẩu khởi tạo (sẽ lưu dạng hash bcrypt):</label>
           <input type="password" name="matKhau" value="123456" required class="w-full h-10 px-3 border border-slate-200 rounded-xl font-mono focus:border-[#16A34A] focus:outline-none">
           <span class="text-[10px] text-slate-400 mt-1 block">Mặc định: 123456</span>
         </div>
@@ -1652,7 +1714,7 @@
           </div>
           <div>
             <h3 class="font-bold text-slate-800 text-base leading-tight">Đăng Nhập / Đổi Tài Khoản</h3>
-            <p class="text-xs text-slate-500">Phân quyền vai trò hệ thống CellphoneS - 241 Lê Văn Việt</p>
+            <p class="text-xs text-slate-500">Phân quyền vai trò hệ thống SamaPhone</p>
           </div>
         </div>
         <button type="button" onclick="window.closeLoginModal()" class="btn-close-auth-modal text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-200/60 transition-colors" aria-label="Đóng">

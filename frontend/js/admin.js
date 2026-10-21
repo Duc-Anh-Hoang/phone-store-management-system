@@ -4,237 +4,67 @@
  * Dựa trên cấu trúc CSDL QuanLyCuaHangDienThoai (Table.sql & Code.sql)
  */
 
-// DỮ LIỆU KHỞI TẠO BAN ĐẦU THEO CSDL
-const InitialDatabase = {
-  // 1. Mặt hàng
-  matHang: [
-    { maHang: 'MH001', tenHang: 'iPhone 16 Pro Max 256GB', donGia: 31490000, dvt: 'Cái', maNhom: 'NH01', maLoai: 'LH01', quanLyImei: true, thoiHanBaoHanh: 12, tonKho: 28 },
-    { maHang: 'MH002', tenHang: 'iPhone 16 Pro Max 512GB', donGia: 36990000, dvt: 'Cái', maNhom: 'NH01', maLoai: 'LH01', quanLyImei: true, thoiHanBaoHanh: 12, tonKho: 15 },
-    { maHang: 'MH003', tenHang: 'iPhone 16 Pro Max 1TB', donGia: 42490000, dvt: 'Cái', maNhom: 'NH01', maLoai: 'LH01', quanLyImei: true, thoiHanBaoHanh: 12, tonKho: 8 },
-    { maHang: 'MH004', tenHang: 'iPhone 16 Pro 128GB', donGia: 27990000, dvt: 'Cái', maNhom: 'NH01', maLoai: 'LH01', quanLyImei: true, thoiHanBaoHanh: 12, tonKho: 34 },
-    { maHang: 'MH005', tenHang: 'Samsung Galaxy S24 Ultra 256GB', donGia: 28490000, dvt: 'Cái', maNhom: 'NH01', maLoai: 'LH02', quanLyImei: true, thoiHanBaoHanh: 12, tonKho: 19 },
-    { maHang: 'MH006', tenHang: 'Củ sạc Apple 20W USB-C', donGia: 550000, dvt: 'Cái', maNhom: 'NH02', maLoai: 'LH03', quanLyImei: false, thoiHanBaoHanh: 6, tonKho: 120 },
-    { maHang: 'MH007', tenHang: 'Ốp lưng MagSafe iPhone 16 Pro Max', donGia: 450000, dvt: 'Cái', maNhom: 'NH02', maLoai: 'LH03', quanLyImei: false, thoiHanBaoHanh: 0, tonKho: 95 }
-  ],
-
-  // 2. Nhóm hàng & Loại hàng
-  nhomHang: [
-    { maNhom: 'NH01', tenNhom: 'Điện thoại di động' },
-    { maNhom: 'NH02', tenNhom: 'Phụ kiện chính hãng' },
-    { maNhom: 'NH03', tenNhom: 'Thiết bị âm thanh' }
-  ],
-  loaiHang: [
-    { maLoai: 'LH01', tenLoai: 'Apple iPhone' },
-    { maLoai: 'LH02', tenLoai: 'Samsung Galaxy' },
-    { maLoai: 'LH03', tenLoai: 'Sạc & Cáp' }
-  ],
-
-  // 3. Khách hàng
-  khachHang: [
-    { maKH: 'KH001', hoTen: 'Nguyễn Hoàng Long', sdt: '0987654321', email: 'long.nh@gmail.com', diaChi: '128 Trần Duy Hưng, Cầu Giấy, Hà Nội' },
-    { maKH: 'KH002', hoTen: 'Lê Thị Ngọc Mai', sdt: '0912345678', email: 'mai.le@yahoo.com', diaChi: '45 Lê Duẩn, Quận 1, TP. Hồ Chí Minh' },
-    { maKH: 'KH003', hoTen: 'Trần Minh Đức', sdt: '0903888999', email: 'duc.tran@outlook.com', diaChi: '23 Nguyễn Văn Linh, Đà Nẵng' }
-  ],
-
-  // 4. Nhân viên & Tài khoản
-  nhanVien: [
-    { maNV: 'NV001', hoTen: 'Nguyễn Văn Quản', chucVu: 'Quản lý', sdt: '0901112233', email: 'quanly@cellphones.com.vn', trangThai: 'dang_lam' },
-    { maNV: 'NV002', hoTen: 'Trần Thị Thu Ngân', chucVu: 'Thu ngân', sdt: '0902223344', email: 'thungan@cellphones.com.vn', trangThai: 'dang_lam' },
-    { maNV: 'NV003', hoTen: 'Lê Văn Bán Hàng', chucVu: 'Bán hàng', sdt: '0903334455', email: 'banhang@cellphones.com.vn', trangThai: 'dang_lam' },
-    { maNV: 'NV004', hoTen: 'Phạm Kỹ Thuật', chucVu: 'Kỹ thuật & Bảo hành', sdt: '0904445566', email: 'kythuat@cellphones.com.vn', trangThai: 'dang_lam' }
-  ],
-
-  // 5. Nhà cung cấp
-  nhaCungCap: [
-    { maNCC: 'NCC01', tenNCC: 'Công ty TNHH Apple Việt Nam', sdt: '02838222333', email: 'contact@apple.vn', diaChi: 'Tòa nhà Deutsches Haus, TP.HCM' },
-    { maNCC: 'NCC02', tenNCC: 'Công ty CP Phân Phối Synnex FPT', sdt: '02473006666', email: 'synnex@fpt.com.vn', diaChi: 'Tòa nhà FPT, Cầu Giấy, Hà Nội' }
-  ],
-
-  // 6. Khuyến mãi
-  khuyenMai: [
-    { maKM: 'KM01', tenKM: 'Mở bán siêu phẩm iPhone 16', phanTramGiam: 10, ngayBD: '2026-10-01', ngayKT: '2026-10-31', tamDung: false },
-    { maKM: 'KM02', tenKM: 'Ưu đãi thanh toán QR Napas', phanTramGiam: 2, ngayBD: '2026-09-15', ngayKT: '2026-11-15', tamDung: false }
-  ],
-
-  // 7. Tham số hệ thống
-  thamSo: [
-    { maThamSo: 'VAT_PHANTRAM', tenThamSo: 'Thuế VAT đã gồm trong giá bán', giaTri: 10, donVi: '%' },
-    { maThamSo: 'DIEM_MOI_VND', tenThamSo: 'Số tiền chi tiêu để được 1 điểm', giaTri: 100000, donVi: 'VND' },
-    { maThamSo: 'HAN_DOITRA_NGAY', tenThamSo: 'Hạn đổi trả tính từ ngày lập hóa đơn', giaTri: 30, donVi: 'ngày' }
-  ],
-
-  // 8. Đơn hàng online (Xử lý dữ liệu)
-  donHangOnline: [
-    {
-      maDH: 'DH100234',
-      ngayDat: '2026-10-12 08:15',
-      maKH: 'KH001',
-      tenNguoiNhan: 'Nguyễn Hoàng Long',
-      sdtNguoiNhan: '0987654321',
-      diaChiGiao: '128 Trần Duy Hưng, Cầu Giấy, Hà Nội',
-      phuongThucThanhToan: 'cod',
-      tongTien: 31490000,
-      trangThai: 'cho_xac_nhan',
-      maHang: 'MH001',
-      tenHang: 'iPhone 16 Pro Max 256GB (Sa Mạc)',
-      soLuong: 1
-    },
-    {
-      maDH: 'DH100230',
-      ngayDat: '2026-10-11 16:40',
-      maKH: 'KH002',
-      tenNguoiNhan: 'Lê Thị Ngọc Mai',
-      sdtNguoiNhan: '0912345678',
-      diaChiGiao: '45 Lê Duẩn, Quận 1, TP. Hồ Chí Minh',
-      phuongThucThanhToan: 'chuyen_khoan',
-      tongTien: 36990000,
-      trangThai: 'da_xac_nhan',
-      maHang: 'MH002',
-      tenHang: 'iPhone 16 Pro Max 512GB (Tự Nhiên)',
-      soLuong: 1
-    },
-    {
-      maDH: 'DH100215',
-      ngayDat: '2026-10-10 11:20',
-      maKH: 'KH003',
-      tenNguoiNhan: 'Trần Minh Đức',
-      sdtNguoiNhan: '0903888999',
-      diaChiGiao: '23 Nguyễn Văn Linh, Đà Nẵng',
-      phuongThucThanhToan: 'the',
-      tongTien: 31490000,
-      trangThai: 'hoan_thanh',
-      maHang: 'MH001',
-      tenHang: 'iPhone 16 Pro Max 256GB (Đen)',
-      soLuong: 1
-    }
-  ],
-
-  // 9. Hóa đơn bán hàng
-  hoaDon: [
-    { soHD: 'HD00891', ngayLap: '2026-10-11 10:30', maKH: 'KH002', tenKH: 'Lê Thị Ngọc Mai', maNV: 'NV002', kenhBan: 'tai_quay', tongTien: 36990000, tienGiamGia: 3699000, thanhTien: 33291000, phuongThuc: 'chuyen_khoan', maImei: '356789123456781' },
-    { soHD: 'HD00890', ngayLap: '2026-10-10 15:45', maKH: 'KH003', tenKH: 'Trần Minh Đức', maNV: 'NV002', kenhBan: 'online', tongTien: 31490000, tienGiamGia: 3149000, thanhTien: 28341000, phuongThuc: 'the', maImei: '356789123456782' }
-  ],
-
-  // 10. Phiếu bảo hành & Tiếp nhận
-  baoHanh: [
-    { maBH: 'BH001', soHD: 'HD00891', maImei: '356789123456781', tenHang: 'iPhone 16 Pro Max 512GB', ngayBD: '2026-10-11', thoiHanThang: 12, ngayKT: '2027-10-11' },
-    { maBH: 'BH002', soHD: 'HD00890', maImei: '356789123456782', tenHang: 'iPhone 16 Pro Max 256GB', ngayBD: '2026-10-10', thoiHanThang: 12, ngayKT: '2027-10-10' }
-  ],
-  tiepNhanBaoHanh: [
-    { maTN: 'TN001', maBH: 'BH001', soImei: '356789123456781', ngayNhan: '2026-10-12 09:00', tinhTrangLoi: 'Loa trong hơi rè khi đàm thoại', nvTiepNhan: 'NV004', nvKyThuat: 'NV004', ngayHenTra: '2026-10-14', chiPhi: 0, trangThai: 'dang_sua' }
-  ],
-
-  // 11. Phiếu nhập & IMEI
-  phieuNhap: [
-    { soPN: 'PN001', ngayNhap: '2026-10-01 09:30', maNCC: 'NCC01', tenNCC: 'Công ty TNHH Apple Việt Nam', maNV: 'NV001', slNhap: 50, tongTienNhap: 1450000000 }
-  ],
-  danhSachImei: [
-    { maImei: 'IMEI001', soImei: '356789123456781', maHang: 'MH001', tenHang: 'iPhone 16 Pro Max 256GB', soPN: 'PN001', trangThai: 'da_ban' },
-    { maImei: 'IMEI002', soImei: '356789123456782', maHang: 'MH001', tenHang: 'iPhone 16 Pro Max 256GB', soPN: 'PN001', trangThai: 'da_ban' },
-    { maImei: 'IMEI003', soImei: '356789123456783', maHang: 'MH001', tenHang: 'iPhone 16 Pro Max 256GB', soPN: 'PN001', trangThai: 'con_hang' },
-    { maImei: 'IMEI004', soImei: '356789123456784', maHang: 'MH002', tenHang: 'iPhone 16 Pro Max 512GB', soPN: 'PN001', trangThai: 'con_hang' },
-    { maImei: 'IMEI005', soImei: '356789123456785', maHang: 'MH003', tenHang: 'iPhone 16 Pro Max 1TB', soPN: 'PN001', trangThai: 'con_hang' }
-  ],
-
-  // 12. Đổi trả hàng
-  traHang: [
-    { maTR: 'TR001', soHD: 'HD00870', maImei: '356789123456700', ngayTR: '2026-10-09', lyDo: 'Lỗi cảm ứng màn hình nhà sản xuất', hinhThuc: 'doi_hang', maNV: 'NV001' }
-  ],
-
-  // 13. Thuộc tính & Chi tiết thuộc tính (FR06)
-  thuocTinh: [
-    { maThuocTinh: 'TT01', tenThuocTinh: 'Dung lượng RAM' },
-    { maThuocTinh: 'TT02', tenThuocTinh: 'Bộ nhớ trong (ROM)' },
-    { maThuocTinh: 'TT03', tenThuocTinh: 'Màn hình & Tần số quét' },
-    { maThuocTinh: 'TT04', tenThuocTinh: 'Chip xử lý (CPU/GPU)' },
-    { maThuocTinh: 'TT05', tenThuocTinh: 'Dung lượng Pin & Sạc nhanh' }
-  ],
-  chiTietThuocTinh: [
-    { maHang: 'MH001', maThuocTinh: 'TT01', giaTri: '8GB Unified RAM' },
-    { maHang: 'MH001', maThuocTinh: 'TT02', giaTri: '256GB NVMe' },
-    { maHang: 'MH001', maThuocTinh: 'TT03', giaTri: '6.9" Super Retina XDR OLED 120Hz' },
-    { maHang: 'MH001', maThuocTinh: 'TT04', giaTri: 'Apple A19 Pro 3nm Bionic' },
-    { maHang: 'MH001', maThuocTinh: 'TT05', giaTri: '4685 mAh, Sạc nhanh 35W' },
-    { maHang: 'MH002', maThuocTinh: 'TT01', giaTri: '8GB Unified RAM' },
-    { maHang: 'MH002', maThuocTinh: 'TT02', giaTri: '512GB NVMe' },
-    { maHang: 'MH002', maThuocTinh: 'TT03', giaTri: '6.9" Super Retina XDR OLED 120Hz' },
-    { maHang: 'MH002', maThuocTinh: 'TT04', giaTri: 'Apple A19 Pro 3nm Bionic' },
-    { maHang: 'MH002', maThuocTinh: 'TT05', giaTri: '4685 mAh, Sạc nhanh 35W' },
-    { maHang: 'MH005', maThuocTinh: 'TT01', giaTri: '12GB LPDDR5X' },
-    { maHang: 'MH005', maThuocTinh: 'TT02', giaTri: '256GB UFS 4.0' },
-    { maHang: 'MH005', maThuocTinh: 'TT03', giaTri: '6.8" Dynamic AMOLED 2X 120Hz' },
-    { maHang: 'MH005', maThuocTinh: 'TT04', giaTri: 'Snapdragon 8 Gen 3 for Galaxy' },
-    { maHang: 'MH005', maThuocTinh: 'TT05', giaTri: '5000 mAh, Sạc nhanh 45W' }
-  ],
-
-  // 14. Tài khoản nhân viên (FR04, BR22)
-  taiKhoan: [
-    { tenDangNhap: 'quanly', maNV: 'NV001', trangThai: 'hoat_dong', ngayTao: '2026-09-01' },
-    { tenDangNhap: 'thungan', maNV: 'NV002', trangThai: 'hoat_dong', ngayTao: '2026-09-01' },
-    { tenDangNhap: 'banhang', maNV: 'NV003', trangThai: 'hoat_dong', ngayTao: '2026-09-01' },
-    { tenDangNhap: 'kythuat', maNV: 'NV004', trangThai: 'hoat_dong', ngayTao: '2026-09-01' }
-  ],
-
-  // 15. Phân quyền vai trò (FR05, BR23)
-  phanQuyen: [
-    { maQuyen: 'PQ01', tenQuyen: 'Quản lý', moTa: 'Toàn quyền điều hành, phân quyền và cấu hình tham số', soNhanVien: 1 },
-    { maQuyen: 'PQ02', tenQuyen: 'Bán hàng', moTa: 'Bán hàng tại quầy POS, xử lý đơn online, xem tồn kho', soNhanVien: 1 },
-    { maQuyen: 'PQ03', tenQuyen: 'Thu ngân', moTa: 'Xem doanh thu, in lại hóa đơn, tiếp nhận đổi trả hàng', soNhanVien: 1 },
-    { maQuyen: 'PQ04', tenQuyen: 'Kho', moTa: 'Lập phiếu nhập, sinh mã IMEI 15 số, theo dõi tồn kho, NCC', soNhanVien: 0 },
-    { maQuyen: 'PQ05', tenQuyen: 'Kỹ thuật & Bảo hành', moTa: 'Tra cứu hạn bảo hành, tiếp nhận và sửa chữa máy', soNhanVien: 1 }
-  ]
-};
-
-// ĐỊA CHỈ API BACKEND SPRING BOT
+// ĐỊA CHỈ API BACKEND SPRING BOOT
 var API_BASE = window.API_BASE = window.API_BASE || ((window.location.protocol === 'file:' || window.location.port === '5500') ? 'http://localhost:8080/api' : '/api');
 
-// QUẢN LÝ STATE VÀ KẾT NỐI BACKEND DATABASE
+// QUẢN LÝ STATE TRONG BỘ NHỚ (IN-MEMORY ONLY)
 class AdminStore {
   constructor() {
-    this.storageKey = 'cellphones_admin_cache';
-    this.data = this.loadLocal();
-  }
-
-  loadLocal() {
-    let loaded = null;
-    try {
-      const raw = localStorage.getItem(this.storageKey);
-      if (raw) loaded = JSON.parse(raw);
-    } catch (e) {
-      console.warn('Lỗi đọc local store, dùng InitialDatabase:', e);
-    }
-    const def = JSON.parse(JSON.stringify(InitialDatabase));
-    if (!loaded) return def;
-    // Tự động đồng bộ các mảng danh mục mới nếu chưa có trong LocalStorage
-    if (!loaded.thuocTinh) loaded.thuocTinh = def.thuocTinh;
-    if (!loaded.chiTietThuocTinh) loaded.chiTietThuocTinh = def.chiTietThuocTinh;
-    if (!loaded.taiKhoan) loaded.taiKhoan = def.taiKhoan;
-    if (!loaded.phanQuyen) loaded.phanQuyen = def.phanQuyen;
-    if (!loaded.nhomHang) loaded.nhomHang = def.nhomHang;
-    if (!loaded.loaiHang) loaded.loaiHang = def.loaiHang;
-    return loaded;
+    this.data = {
+      matHang: [],
+      nhomHang: [],
+      loaiHang: [],
+      khachHang: [],
+      nhanVien: [],
+      nhaCungCap: [],
+      hoaDon: [],
+      chiTietHoaDon: [],
+      danhSachImei: [],
+      phieuNhap: [],
+      traHang: [],
+      tiepNhanBaoHanh: [],
+      baoHanh: [],
+      thuocTinh: [],
+      chiTietThuocTinh: [],
+      taiKhoan: [],
+      phanQuyen: []
+    };
   }
 
   save() {
-    try {
-      localStorage.setItem(this.storageKey, JSON.stringify(this.data));
-    } catch (e) {
-      console.error('Không thể lưu admin store:', e);
-    }
+    // In-memory store: không lưu localStorage
   }
 
   async syncFromBackend() {
     try {
-      const res = await fetch(API_BASE + '/mathang');
-      if (res.ok) {
-        const mh = await res.json();
-        if (Array.isArray(mh) && mh.length > 0) {
-          this.data.matHang = mh;
-          this.save();
-        }
-      }
+      const [mh, nh, lh, tt, kh, nv, pq, ncc, tk, pn, hd, imei] = await Promise.all([
+        api.get('/mathang').catch(() => []),
+        api.get('/nhomhang').catch(() => []),
+        api.get('/loaihang').catch(() => []),
+        api.get('/thuoctinh').catch(() => []),
+        api.get('/khachhang').catch(() => []),
+        api.get('/nhanvien').catch(() => []),
+        api.get('/phanquyen').catch(() => []),
+        api.get('/nhacungcap').catch(() => []),
+        api.get('/taikhoan').catch(() => []),
+        api.get('/phieunhap').catch(() => []),
+        api.get('/hoadon').catch(() => []),
+        api.get('/imei').catch(() => [])
+      ]);
+      if (Array.isArray(mh)) this.data.matHang = mh;
+      if (Array.isArray(nh)) this.data.nhomHang = nh;
+      if (Array.isArray(lh)) this.data.loaiHang = lh;
+      if (Array.isArray(tt)) this.data.thuocTinh = tt;
+      if (Array.isArray(kh)) this.data.khachHang = kh;
+      if (Array.isArray(nv)) this.data.nhanVien = nv;
+      if (Array.isArray(pq)) this.data.phanQuyen = pq;
+      if (Array.isArray(ncc)) this.data.nhaCungCap = ncc;
+      if (Array.isArray(tk)) this.data.taiKhoan = tk;
+      if (Array.isArray(pn)) this.data.phieuNhap = pn;
+      if (Array.isArray(hd)) this.data.hoaDon = hd;
+      if (Array.isArray(imei)) this.data.danhSachImei = imei;
     } catch (e) {
-      // Offline fallback silent
+      console.warn('Lỗi syncFromBackend:', e);
     }
   }
 }
@@ -477,39 +307,182 @@ function renderSection(sectionId) {
 // -------------------------------------------------------------
 async function renderDashboard() {
   try {
-    const [th, dt, orders] = await Promise.all([
-      api.get('/thongke/tonghop'),
-      api.get('/thongke/doanhthu').catch(() => []),
+    const [th, dtKenh, dtNhom, orders] = await Promise.all([
+      api.get('/thongke/tonghop').catch(() => ({})),
+      api.get('/thongke/kenhban').catch(() => []),
+      api.get('/thongke/nhomhang').catch(() => []),
       api.get('/donhangonline').catch(() => [])
     ]);
 
+    // 1. Card Doanh Thu
     const revEl = document.getElementById('dash-revenue');
     if (revEl) revEl.textContent = Format.currency(th.tongDoanhThu || 0);
 
-    const pendingCount = (orders || []).filter(o => o.trangThai === 'cho_xac_nhan').length;
+    const revSubText = document.getElementById('dash-revenue-sub-text');
+    if (revSubText) {
+      revSubText.textContent = (th.tongHoaDon > 0) ? `${th.tongHoaDon} hóa đơn đã hoàn tất` : 'Chưa có hóa đơn phát sinh';
+    }
+
+    // 2. Card Đơn Chờ Duyệt
+    const pendingOrders = (orders || []).filter(o => o.trangThai === 'cho_xac_nhan');
+    const pendingCount = pendingOrders.length;
     const pendingEl = document.getElementById('dash-pending-orders');
     if (pendingEl) pendingEl.textContent = pendingCount + ' đơn';
 
+    const pendingSub = document.getElementById('dash-pending-orders-sub');
+    if (pendingSub) {
+      if (pendingCount > 0) {
+        pendingSub.textContent = 'Cần duyệt & xuất hóa đơn';
+        pendingSub.className = 'text-[11px] text-amber-600 font-bold mt-1.5 truncate whitespace-nowrap';
+      } else {
+        pendingSub.textContent = 'Đã xử lý hết đơn hàng';
+        pendingSub.className = 'text-[11px] text-slate-500 font-medium mt-1.5 truncate whitespace-nowrap';
+      }
+    }
+
+    // 3. Card Tổng Tồn Kho Máy
     const stockEl = document.getElementById('dash-total-stock');
-    if (stockEl) stockEl.textContent = (th.tongMatHang || 0) + ' mặt hàng';
+    const totalMatHang = th.tongMatHang != null ? Number(th.tongMatHang) : 0;
+    const totalTonKho = th.tongTonKho != null ? Number(th.tongTonKho) : 0;
+    
+    if (stockEl) {
+      stockEl.textContent = totalMatHang + ' mặt hàng';
+    }
 
+    const stockSub = document.getElementById('dash-total-stock-sub');
+    if (stockSub) {
+      if (totalMatHang === 0 || totalTonKho === 0) {
+        stockSub.textContent = 'Hết hàng';
+        stockSub.className = 'text-[11px] text-rose-600 font-bold mt-1.5 truncate whitespace-nowrap';
+      } else if (totalTonKho <= 5) {
+        stockSub.textContent = `Cảnh báo sắp hết (${totalTonKho} máy)`;
+        stockSub.className = 'text-[11px] text-amber-600 font-bold mt-1.5 truncate whitespace-nowrap';
+      } else {
+        stockSub.textContent = `Đang còn hàng (${totalTonKho} máy)`;
+        stockSub.className = 'text-[11px] text-emerald-700 font-medium mt-1.5 truncate whitespace-nowrap';
+      }
+    }
+
+    // 4. Card Bảo Hành
+    const warrantyCount = th.mayBaoHanh != null ? Number(th.mayBaoHanh) : 0;
     const invoiceEl = document.getElementById('dash-warranty-count');
-    if (invoiceEl) invoiceEl.textContent = (th.tongHoaDon || 0) + ' HĐ đã xuất';
+    if (invoiceEl) {
+      invoiceEl.textContent = warrantyCount + ' máy';
+    }
 
+    const warrantySub = document.getElementById('dash-warranty-count-sub');
+    if (warrantySub) {
+      if (warrantyCount > 0) {
+        warrantySub.textContent = 'Tiếp nhận & đang sửa chữa';
+        warrantySub.className = 'text-[11px] text-indigo-600 font-bold mt-1.5 truncate whitespace-nowrap';
+      } else {
+        warrantySub.textContent = 'Không có máy đang sửa';
+        warrantySub.className = 'text-[11px] text-slate-500 font-medium mt-1.5 truncate whitespace-nowrap';
+      }
+    }
+
+    // 5. Render Doanh Thu Theo Kênh Bán (FR25)
+    const channelContainer = document.getElementById('dash-channel-stats');
+    if (channelContainer) {
+      const channelList = Array.isArray(dtKenh) && dtKenh.length > 0 ? dtKenh : [];
+      const totalRev = channelList.reduce((acc, c) => acc + (Number(c.DOANHTHU) || 0), 0);
+      
+      if (channelList.length === 0) {
+        channelContainer.innerHTML = '<div class="text-slate-400 italic py-3 text-center">Chưa có số liệu doanh thu kênh bán</div>';
+      } else {
+        channelContainer.innerHTML = channelList.map(c => {
+          const rev = Number(c.DOANHTHU) || 0;
+          const pct = totalRev > 0 ? Math.round((rev / totalRev) * 100) : 0;
+          const isOnline = c.KENHBAN === 'online';
+          const name = isOnline ? 'Đơn Đặt Online (Website)' : 'Bán Tại Quầy (POS)';
+          const icon = isOnline ? 'fa-globe text-blue-500' : 'fa-cash-register text-emerald-600';
+          const barColor = isOnline ? 'bg-blue-600' : 'bg-emerald-600';
+
+          return `
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-slate-800 flex items-center gap-1.5">
+                  <i class="fa-solid ${icon}"></i>
+                  ${name}
+                </span>
+                <span class="font-mono font-bold text-slate-900">${Format.currency(rev)}</span>
+              </div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500 mb-1.5">
+                <span>Số lượng: <b>${c.SOHOADON || 0} hóa đơn</b></span>
+                <span class="font-bold text-slate-700">${pct}%</span>
+              </div>
+              <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                <div class="${barColor} h-2 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // 6. Render Doanh Thu Theo Nhóm Hàng (FR25)
+    const catContainer = document.getElementById('dash-category-stats');
+    if (catContainer) {
+      const catList = Array.isArray(dtNhom) && dtNhom.length > 0 ? dtNhom : [];
+      const totalCatRev = catList.reduce((acc, c) => acc + (Number(c.DOANHTHU) || 0), 0);
+
+      if (catList.length === 0) {
+        catContainer.innerHTML = '<div class="text-slate-400 italic py-3 text-center">Chưa có số liệu doanh thu nhóm hàng</div>';
+      } else {
+        const colors = [
+          { bar: 'bg-purple-600', icon: 'fa-mobile-screen text-purple-600' },
+          { bar: 'bg-amber-500', icon: 'fa-headphones text-amber-500' },
+          { bar: 'bg-teal-500', icon: 'fa-plug text-teal-500' },
+          { bar: 'bg-indigo-500', icon: 'fa-layer-group text-indigo-500' }
+        ];
+
+        catContainer.innerHTML = catList.map((c, idx) => {
+          const rev = Number(c.DOANHTHU) || 0;
+          const pct = totalCatRev > 0 ? Math.round((rev / totalCatRev) * 100) : 0;
+          const colorObj = colors[idx % colors.length];
+
+          return `
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-slate-800 flex items-center gap-1.5">
+                  <i class="fa-solid ${colorObj.icon}"></i>
+                  ${c.TENNHOM}
+                </span>
+                <span class="font-mono font-bold text-slate-900">${Format.currency(rev)}</span>
+              </div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500 mb-1.5">
+                <span>Đã bán: <b>${c.SOLUONGBAN || 0} sản phẩm</b></span>
+                <span class="font-bold text-slate-700">${pct}%</span>
+              </div>
+              <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                <div class="${colorObj.bar} h-2 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // 7. Bảng đơn hàng online gần đây
     const tbody = document.getElementById('dash-recent-orders-table');
     if (tbody) {
-      tbody.innerHTML = (orders || []).slice(0, 5).map(o => `
-        <tr class="border-b border-slate-100 hover:bg-slate-50">
-          <td class="p-3 font-mono font-bold text-[#15803D] text-xs whitespace-nowrap">${o.maDH}</td>
-          <td class="p-3 font-semibold text-xs text-navy whitespace-nowrap">${o.tenNguoiNhan || '-'}</td>
-          <td class="p-3 text-xs text-slate-600 min-w-[150px] truncate">${o.diaChiGiao || '-'}</td>
-          <td class="p-3 font-bold text-xs text-navy text-right whitespace-nowrap">${Format.currency(o.tongTien)}</td>
-          <td class="p-3 text-xs text-center whitespace-nowrap">${Format.statusBadge(o.trangThai)}</td>
-          <td class="p-3 text-xs text-right whitespace-nowrap">
-            <button onclick="renderSection('view-donhang')" class="px-2.5 py-1 bg-blue-50 text-[#166534] hover:bg-blue-100 font-bold rounded-lg text-xs whitespace-nowrap transition-colors">Xem đơn</button>
-          </td>
-        </tr>
-      `).join('');
+      const recentOrders = (orders || []).slice(0, 5);
+      if (recentOrders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-400">Chưa có đơn hàng trực tuyến nào</td></tr>';
+      } else {
+        tbody.innerHTML = recentOrders.map(o => `
+          <tr class="border-b border-slate-100 hover:bg-slate-50">
+            <td class="p-3 font-mono font-bold text-[#15803D] text-xs whitespace-nowrap">${o.maDH}</td>
+            <td class="p-3 font-semibold text-xs text-navy whitespace-nowrap">${o.tenNguoiNhan || '-'}</td>
+            <td class="p-3 text-xs text-slate-600 min-w-[150px] truncate">${o.diaChiGiao || '-'}</td>
+            <td class="p-3 font-bold text-xs text-navy text-right whitespace-nowrap">${Format.currency(o.tongTien)}</td>
+            <td class="p-3 text-xs text-center whitespace-nowrap">${Format.statusBadge(o.trangThai)}</td>
+            <td class="p-3 text-xs text-right whitespace-nowrap">
+              <button onclick="renderSection('view-donhang')" class="px-2.5 py-1 bg-blue-50 text-[#166534] hover:bg-blue-100 font-bold rounded-lg text-xs whitespace-nowrap transition-colors">Xem đơn</button>
+            </td>
+          </tr>
+        `).join('');
+      }
     }
   } catch (err) {
     console.warn('Lỗi render dashboard:', err);
@@ -1049,25 +1022,38 @@ async function openNhapKhoModal() {
   modal.classList.remove('hidden');
 }
 
+function updateImeiCount() {
+  const ta = document.getElementById('pn-imei-list');
+  const countEl = document.getElementById('pn-imei-count');
+  if (!ta || !countEl) return;
+  const lines = ta.value.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+  countEl.textContent = `Đã nhập: ${lines.length} số`;
+}
+
 async function saveNhapKho(e) {
   e.preventDefault();
   const form = e.target;
+  const imeiText = (form.imeiList ? form.imeiList.value : '').trim();
+  const imeis = imeiText ? imeiText.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [];
+
   const payload = {
     maNCC: form.maNCC.value,
     chiTiet: [
       {
         maHang: form.maHang.value,
         slNhap: Number(form.slNhap.value) || 1,
-        donGiaNhap: Number(form.donGiaNhap.value) || 0
+        donGiaNhap: Number(form.donGiaNhap.value) || 0,
+        danhSachImei: imeis
       }
     ]
   };
 
   try {
     const createdPn = await api.post('/phieunhap', payload);
-    showToast('Lập phiếu nhập ' + createdPn.soPNhap + ' và sinh IMEI thành công!', 'success');
+    showToast('Lập phiếu nhập ' + createdPn.soPNhap + ' thành công!', 'success');
     closeModal('modal-nhapkho');
     form.reset();
+    updateImeiCount();
     await renderNhapKhoTable();
     if (typeof renderTonKhoTable === 'function') renderTonKhoTable();
     if (typeof renderImeiTable === 'function') renderImeiTable();
@@ -1851,7 +1837,7 @@ function traCuuBaoHanhAction(e) {
       <div class="p-4 rounded-xl ${activeTicket ? 'bg-amber-50 border border-amber-200' : 'bg-emerald-50 border border-emerald-200'} text-xs">
         <div class="font-bold text-slate-800 flex items-center gap-2">
           <i class="fa-solid ${activeTicket ? 'fa-screwdriver-wrench text-amber-600' : 'fa-check text-emerald-600'}"></i>
-          <span>${activeTicket ? 'Thiết bị đang trong quá trình sửa chữa bảo hành (BR16)' : 'Không có yêu cầu bảo hành mở nào'}</span>
+          <span>${activeTicket ? 'Thiết bị đang trong quá trình sửa chữa bảo hành' : 'Không có yêu cầu bảo hành mở nào'}</span>
         </div>
         ${activeTicket ? `
           <div class="mt-2 text-slate-600 space-y-1">
@@ -1930,7 +1916,7 @@ function viewImeiTimeline(soImei) {
           <span class="absolute -left-6 top-0 w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px]"><i class="fa-solid fa-shield-halved"></i></span>
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
             <div class="flex justify-between items-center text-xs">
-              <span class="font-bold text-navy">3. Kích hoạt bảo hành điện tử (BR12)</span>
+              <span class="font-bold text-navy">3. Kích hoạt bảo hành điện tử</span>
               <span class="text-slate-400 font-mono">${bh.ngayBD}</span>
             </div>
             <div class="text-[11px] text-slate-600 mt-1">
@@ -1947,7 +1933,7 @@ function viewImeiTimeline(soImei) {
           <span class="absolute -left-6 top-0 w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center text-[10px]"><i class="fa-solid fa-rotate-left"></i></span>
           <div class="bg-rose-50 p-3 rounded-xl border border-rose-200">
             <div class="flex justify-between items-center text-xs">
-              <span class="font-bold text-rose-800">4. Phát sinh đổi trả hàng (BR14)</span>
+              <span class="font-bold text-rose-800">4. Phát sinh đổi trả hàng</span>
               <span class="text-slate-400 font-mono">${tr.ngayTR}</span>
             </div>
             <div class="text-[11px] text-rose-700 mt-1">
@@ -2054,7 +2040,7 @@ function viewKhachHangHistory(maKH) {
         <div class="font-extrabold text-[#166534] text-sm font-mono mt-0.5">${Format.currency(totalSpent)}</div>
       </div>
       <div>
-        <span class="text-slate-400 uppercase text-[10px] font-bold block">Điểm Thưởng Tích Lũy (BR21)</span>
+        <span class="text-slate-400 uppercase text-[10px] font-bold block">Điểm Thưởng Tích Lũy</span>
         <div class="font-extrabold text-amber-600 text-sm font-mono mt-0.5">${points} Điểm (1đ / 100k)</div>
       </div>
       <div>
@@ -2476,7 +2462,7 @@ function saveTaiKhoan(e) {
   const tenDangNhap = form.tenDangNhap.value.trim().toLowerCase();
 
   if (!maNV) {
-    alert('Không còn nhân viên nào chưa có tài khoản (BR22: Mỗi nhân viên tối đa 1 tài khoản).');
+    alert('Không còn nhân viên nào chưa có tài khoản (Mỗi nhân viên tối đa 1 tài khoản).');
     return;
   }
 
@@ -2651,79 +2637,147 @@ function applyRolePermissions(userIdentifier) {
 window.renderSection = renderSection;
 
 // =============================================================
-// KHỞI ĐỘNG TRANG ADMIN
+// QUẢN LÝ ĐĂNG NHẬP VÀ MÀN HÌNH KHỞI ĐỘNG ADMIN
 // =============================================================
+let isAdminInitialized = false;
+
+window.showAdminLoginScreen = function(msg = '') {
+  const loginScreen = document.getElementById('admin-login-screen');
+  const appLayout = document.getElementById('admin-app-layout');
+  const errBox = document.getElementById('admin-login-screen-error');
+
+  if (loginScreen) loginScreen.classList.remove('hidden');
+  if (appLayout) appLayout.classList.add('hidden');
+  if (errBox) {
+    if (msg) {
+      errBox.textContent = msg;
+      errBox.classList.remove('hidden');
+    } else {
+      errBox.classList.add('hidden');
+    }
+  }
+};
+
+window.handleAdminLoginScreenSubmit = async function(event) {
+  event.preventDefault();
+  const usernameInput = document.getElementById('admin-login-screen-username');
+  const passwordInput = document.getElementById('admin-login-screen-password');
+  const errBox = document.getElementById('admin-login-screen-error');
+  const submitBtn = document.getElementById('btn-submit-admin-login');
+
+  const username = usernameInput ? usernameInput.value.trim() : '';
+  const password = passwordInput ? passwordInput.value : '';
+
+  if (!username || !password) {
+    if (errBox) {
+      errBox.textContent = 'Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu';
+      errBox.classList.remove('hidden');
+    }
+    return;
+  }
+
+  if (errBox) errBox.classList.add('hidden');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang đăng nhập...';
+  }
+
+  try {
+    const res = await (window.cellphonesAuth || window.Auth).loginStaff(username, password);
+    if (res && res.success) {
+      const loginScreen = document.getElementById('admin-login-screen');
+      const appLayout = document.getElementById('admin-app-layout');
+      if (loginScreen) loginScreen.classList.add('hidden');
+      if (appLayout) appLayout.classList.remove('hidden');
+      initAdminDashboard();
+    } else {
+      if (errBox) {
+        errBox.textContent = (res && res.message) ? res.message : 'Tên đăng nhập hoặc mật khẩu không chính xác';
+        errBox.classList.remove('hidden');
+      }
+    }
+  } catch (err) {
+    if (errBox) {
+      errBox.textContent = err.message || 'Lỗi kết nối máy chủ';
+      errBox.classList.remove('hidden');
+    }
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket text-[#80ffbf]"></i><span>Đăng Nhập</span>';
+    }
+  }
+};
+
+window.quickFillAdminLogin = function(username) {
+  const uInput = document.getElementById('admin-login-screen-username');
+  const pInput = document.getElementById('admin-login-screen-password');
+  if (uInput) uInput.value = username;
+  if (pInput) pInput.value = '123456';
+  const form = document.getElementById('form-admin-login-screen');
+  if (form) {
+    const submitEvt = new Event('submit', { cancelable: true });
+    form.dispatchEvent(submitEvt);
+  }
+};
+
+function checkAdminAuthAndStart() {
+  const loginScreen = document.getElementById('admin-login-screen');
+  const appLayout = document.getElementById('admin-app-layout');
+
+  const curUser = (window.cellphonesAuth || window.Auth) ? (window.cellphonesAuth || window.Auth).getUser() : null;
+  const token = (typeof localStorage !== 'undefined' ? localStorage.getItem('admin_token') : null) || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('admin_token') : null);
+
+  if (!curUser || !token || curUser.type !== 'staff') {
+    // Chưa đăng nhập -> Hiện màn hình đăng nhập, tuyệt đối không gọi API ngầm
+    if (loginScreen) loginScreen.classList.remove('hidden');
+    if (appLayout) appLayout.classList.add('hidden');
+    return;
+  }
+
+  // Đã có phiên nhân viên -> Ẩn màn hình đăng nhập, hiện giao diện chính và chạy
+  if (loginScreen) loginScreen.classList.add('hidden');
+  if (appLayout) appLayout.classList.remove('hidden');
+  initAdminDashboard();
+}
+
 function initAdminDashboard() {
+  if (isAdminInitialized) {
+    renderSection(currentActiveSection || 'view-dashboard');
+    return;
+  }
+  isAdminInitialized = true;
+
   initNavigation();
+
+  // Cập nhật thông tin User trên Header
+  if (window.cellphonesAuth) {
+    const curUser = window.cellphonesAuth.getUser();
+    if (curUser && curUser.type === 'staff') {
+      const nameEl = document.getElementById('admin-user-fullname');
+      const roleEl = document.getElementById('admin-user-title');
+      const avatarEl = document.getElementById('admin-avatar-icon');
+      if (nameEl) nameEl.textContent = curUser.tenNhanVien || curUser.username;
+      if (roleEl) roleEl.textContent = 'Chức vụ: ' + (curUser.tenQuyen || 'Quản lý cửa hàng');
+      if (avatarEl) {
+        const initials = (curUser.tenNhanVien || curUser.username)
+          .split(' ').map(w => w[0]).slice(-2).join('').toUpperCase();
+        avatarEl.textContent = initials || 'QL';
+      }
+      applyRolePermissions(curUser.username || curUser.tenQuyen);
+    }
+  }
+
   renderDashboard();
 
   // Khởi tạo và đồng bộ ngôn ngữ i18n
   if (window.cellphonesI18n) {
     window.cellphonesI18n.applyDOM();
-
     window.cellphonesI18n.onChange((cur) => {
       window.cellphonesI18n.applyDOM();
       renderSection(currentActiveSection || 'view-dashboard');
       showToast(cur === 'vi' ? 'Đã đổi sang Tiếng Việt 🇻🇳' : 'Switched language to English 🇬🇧', 'info');
     });
-  }
-
-  // Kiểm tra quyền truy cập: Chỉ nhân viên/Admin mới được vào admin.html
-  if (window.cellphonesAuth) {
-    const curUser = window.cellphonesAuth.getUser();
-    if (curUser) {
-      if (curUser.type === 'customer') {
-        const warnBox = document.createElement('div');
-        warnBox.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm';
-        warnBox.innerHTML = `
-          <div class="bg-white p-6 rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 text-center space-y-4">
-            <div class="w-14 h-14 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto text-2xl">
-              <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <h3 class="text-lg font-bold text-slate-800">Khu Vực Quản Trị Hệ Thống</h3>
-            <p class="text-xs text-slate-600">Bạn đang đăng nhập bằng tài khoản Khách hàng <strong>(${curUser.hoTen || curUser.sdt})</strong>.<br>Khu vực này chỉ dành cho Nhân viên & Quản lý cửa hàng.</p>
-            <div class="flex gap-2 pt-2">
-              <a href="/home" class="flex-1 py-2.5 rounded-xl bg-[#16A34A] text-white font-bold text-xs hover:bg-blue-700 transition-colors">Về Trang Người Dùng</a>
-              <button onclick="window.cellphonesAuth.logout();" class="flex-1 py-2.5 rounded-xl border border-slate-300 bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 transition-colors">Đổi Tài Khoản</button>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(warnBox);
-      } else {
-        const nameEl = document.getElementById('admin-user-fullname');
-        const roleEl = document.getElementById('admin-user-title');
-        const avatarEl = document.getElementById('admin-avatar-icon');
-        if (nameEl) nameEl.textContent = curUser.tenNhanVien || curUser.username;
-        if (roleEl) roleEl.textContent = 'Chức vụ: ' + (curUser.tenQuyen || 'Quản lý cửa hàng');
-        if (avatarEl) {
-          const initials = (curUser.tenNhanVien || curUser.username)
-            .split(' ').map(w => w[0]).slice(-2).join('').toUpperCase();
-          avatarEl.textContent = initials || 'QL';
-        }
-
-        // PHÂN QUYỀN HIỂN THỊ MENU THEO ROLE (KẾ HOẠCH MỤC 4)
-        applyRolePermissions(curUser.username || curUser.tenQuyen);
-
-        let detectedRole = 'quanly';
-        const lowerU = (curUser.username || curUser.tenQuyen || '').toLowerCase();
-        if (lowerU.includes('banhang') || lowerU.includes('bán hàng')) detectedRole = 'banhang';
-        else if (lowerU.includes('thungan') || lowerU.includes('thu ngân')) detectedRole = 'thungan';
-        else if (lowerU.includes('kho')) detectedRole = 'kho';
-        else if (lowerU.includes('kythuat') || lowerU.includes('kỹ thuật')) detectedRole = 'kythuat';
-
-        const roleSel = document.getElementById('admin-role-selector');
-        if (roleSel) roleSel.value = detectedRole;
-      }
-    } else {
-      // Mặc định hiển thị đầy đủ menu Admin khi vào trang quản trị
-      applyRolePermissions('admin');
-      const roleSel = document.getElementById('admin-role-selector');
-      if (roleSel) roleSel.value = 'quanly';
-    }
-  } else {
-    applyRolePermissions('admin');
-    const roleSel = document.getElementById('admin-role-selector');
-    if (roleSel) roleSel.value = 'quanly';
   }
 
   // Tự động đồng bộ toàn bộ cơ sở dữ liệu từ Backend Spring Boot
@@ -2763,13 +2817,10 @@ function initAdminDashboard() {
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initAdminDashboard);
+  document.addEventListener('DOMContentLoaded', checkAdminAuthAndStart);
 } else {
-  initAdminDashboard();
+  checkAdminAuthAndStart();
 }
-
-
-
 
 // =============================================================
 // THÊM ĐẦY ĐỦ CÁC HÀM CRUD & THAO TÁC CHO CÁC BẢNG QUẢN TRỊ
@@ -3213,6 +3264,7 @@ window.printInvoiceAction = printInvoiceAction;
 
 window.openNhapKhoModal = openNhapKhoModal;
 window.saveNhapKho = saveNhapKho;
+window.updateImeiCount = updateImeiCount;
 window.viewChiTietNhapKho = viewChiTietNhapKho;
 
 window.openTiepNhanBaoHanhModal = openTiepNhanBaoHanhModal;

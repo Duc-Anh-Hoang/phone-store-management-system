@@ -2,6 +2,7 @@ package com.cuahangdienthoai.warranty.controller;
 
 import com.cuahangdienthoai.warranty.dto.PhieuTiepNhanDTO;
 import com.cuahangdienthoai.warranty.service.PhieuTiepNhanService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class PhieuTiepNhanController {
     }
 
     @PostMapping
-    public PhieuTiepNhanDTO create(@RequestBody PhieuTiepNhanDTO dto) {
+    public PhieuTiepNhanDTO create(@Valid @RequestBody PhieuTiepNhanDTO dto) {
         return phieuTiepNhanService.create(dto);
     }
 

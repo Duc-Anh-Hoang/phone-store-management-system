@@ -10,4 +10,5 @@ import java.util.List;
 public interface PhieuTiepNhanBaoHanhRepository extends JpaRepository<PhieuTiepNhanBaoHanh, String> {
     List<PhieuTiepNhanBaoHanh> findByTrangThai(String trangThai);
     List<PhieuTiepNhanBaoHanh> findByNhanVienKyThuatMaNV(String maNV);
+    java.util.Optional<PhieuTiepNhanBaoHanh> findTopByOrderByMaTNDesc();
 }

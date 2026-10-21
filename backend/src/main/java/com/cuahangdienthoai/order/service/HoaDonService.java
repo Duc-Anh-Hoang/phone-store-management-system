@@ -39,6 +39,8 @@ public class HoaDonService {
     private final MatHangRepository matHangRepository;
     private final ImeiRepository imeiRepository;
     private final BaoHanhRepository baoHanhRepository;
+    private final com.cuahangdienthoai.common.security.CurrentUser currentUser;
+    private final com.cuahangdienthoai.common.CodeGenerator codeGenerator;
 
     public List<HoaDonDTO> getAll() {
         return hoaDonRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
@@ -61,15 +63,7 @@ public class HoaDonService {
             kh = khachHangRepository.findById(dto.getMaKH()).orElse(null);
         }
 
-        NhanVien nv = null;
-        if (dto.getMaNV() != null && !dto.getMaNV().trim().isEmpty()) {
-            nv = nhanVienRepository.findById(dto.getMaNV()).orElse(null);
-        }
-        if (nv == null) {
-            // Default to first employee if not provided
-            nv = nhanVienRepository.findAll().stream().findFirst()
-                    .orElseThrow(() -> new RuntimeException("Chưa có nhân viên nào trong hệ thống"));
-        }
+        NhanVien nv = currentUser.getCurrentNhanVien();
 
         KhuyenMai km = null;
         if (dto.getMaKM() != null && !dto.getMaKM().trim().isEmpty()) {
@@ -78,7 +72,7 @@ public class HoaDonService {
 
         String soHD = dto.getSoHD();
         if (soHD == null || soHD.trim().isEmpty()) {
-            soHD = "HD" + String.format("%06d", (int) (System.currentTimeMillis() % 1000000));
+            soHD = codeGenerator.generateNextSoHD();
         }
 
         // Calculate total if not set or zero
@@ -140,7 +134,7 @@ public class HoaDonService {
                 // Tự động sinh sổ bảo hành cho máy có IMEI và thời hạn bảo hành > 0
                 if (imei != null && mh.getThoiHanBaoHanh() > 0) {
                     if (baoHanhRepository.findByImeiMaIMEI(imei.getMaIMEI()).isEmpty()) {
-                        String maBH = "BH" + String.format("%06d", (int) (System.currentTimeMillis() % 900000 + 100000));
+                        String maBH = codeGenerator.generateNextMaBH();
                         baoHanhRepository.save(BaoHanh.builder()
                                 .maBH(maBH)
                                 .hoaDon(savedHd)

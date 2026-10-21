@@ -12,22 +12,6 @@
 
   const AUTH_STORAGE_KEY = 'cellphones_auth_user';
 
-  // Danh mục tài khoản mẫu (Offline Demo / Fallback)
-  const DEMO_STAFF = {
-    'admin': { type: 'staff', username: 'admin', tenNhanVien: 'Nguyễn Văn Quản', tenQuyen: 'Quản trị viên', maNV: 'NV001' },
-    'quanly': { type: 'staff', username: 'quanly', tenNhanVien: 'Nguyễn Văn Quản', tenQuyen: 'Quản lý cửa hàng', maNV: 'NV001' },
-    'thungan': { type: 'staff', username: 'thungan', tenNhanVien: 'Trần Thị Thu Ngân', tenQuyen: 'Thu ngân', maNV: 'NV002' },
-    'banhang': { type: 'staff', username: 'banhang', tenNhanVien: 'Lê Văn Bán Hàng', tenQuyen: 'Bán hàng', maNV: 'NV003' },
-    'kho': { type: 'staff', username: 'kho', tenNhanVien: 'Hoàng Thủ Kho', tenQuyen: 'Thủ kho', maNV: 'NV005' },
-    'kythuat': { type: 'staff', username: 'kythuat', tenNhanVien: 'Phạm Kỹ Thuật', tenQuyen: 'Kỹ thuật & Bảo hành', maNV: 'NV004' }
-  };
-
-  const DEMO_CUSTOMERS = {
-    '0987654321': { type: 'customer', maKH: 'KH001', hoTen: 'Nguyễn Hoàng Long', sdt: '0987654321', email: 'long.nh@gmail.com', diaChi: '128 Trần Duy Hưng, Cầu Giấy, Hà Nội' },
-    '0912345678': { type: 'customer', maKH: 'KH002', hoTen: 'Lê Thị Ngọc Mai', sdt: '0912345678', email: 'mai.le@yahoo.com', diaChi: '45 Lê Duẩn, Quận 1, TP. Hồ Chí Minh' },
-    '0903888999': { type: 'customer', maKH: 'KH003', hoTen: 'Trần Minh Đức', sdt: '0903888999', email: 'duc.tran@outlook.com', diaChi: '23 Nguyễn Văn Linh, Đà Nẵng' }
-  };
-
   const Auth = {
     getUser() {
       const saved = localStorage.getItem(AUTH_STORAGE_KEY);
@@ -117,12 +101,17 @@
         if (resp.ok && data.user) {
           const userObj = {
             type: 'customer',
+            role: 'CUSTOMER',
             maKH: data.user.maKH,
             hoTen: data.user.hoTen,
             sdt: data.user.sdt,
             email: data.user.email,
-            diaChi: data.user.diaChi
+            diaChi: data.user.diaChi,
+            token: data.token
           };
+          if (data.token) {
+            localStorage.setItem('customer_token', data.token);
+          }
           this.setUser(userObj);
           return { success: true, redirect: 'index.html', user: userObj };
         } else {
@@ -133,11 +122,29 @@
       }
     },
 
-    logout() {
+    async logout() {
+      const token = localStorage.getItem('admin_token') || localStorage.getItem('customer_token');
+      if (token) {
+        try {
+          await fetch(`${API_BASE}/auth/logout`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ token })
+          });
+        } catch (e) {}
+      }
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('customer_token');
       this.setUser(null);
-      const isFile = window.location.protocol === 'file:';
-      if (window.location.pathname.includes('admin')) {
-        window.location.href = isFile ? 'index.html' : '/home';
+      if (window.location.pathname.includes('admin') || window.location.href.includes('admin.html')) {
+        if (typeof window.showAdminLoginScreen === 'function') {
+          window.showAdminLoginScreen('Bạn đã đăng xuất thành công.');
+          return;
+        }
+        window.location.reload();
       } else {
         window.location.reload();
       }
@@ -152,16 +159,6 @@
         }
       } catch (e) {
         console.warn('Error fetching orders:', e.message);
-      }
-
-      // Fallback tra cứu từ LocalStore nếu có
-      if (window.localStorage.getItem('QuanLyCuaHangDienThoai_DB')) {
-        try {
-          const db = JSON.parse(window.localStorage.getItem('QuanLyCuaHangDienThoai_DB'));
-          if (db && db.donHangOnline) {
-            return db.donHangOnline.filter(o => o.sdtNguoiNhan === phone);
-          }
-        } catch (e) {}
       }
       return [];
     },
@@ -207,13 +204,13 @@
           const nameEl = document.getElementById('staff-header-name');
           const roleEl = document.getElementById('staff-header-role');
           const isEn = false && false.getLang() === 'en';
-          if (nameEl) nameEl.textContent = isEn ? 'Admin Portal' : 'Vào Quản Trị';
+          if (nameEl) nameEl.textContent = user.tenNhanVien || user.username || (isEn ? 'Staff' : 'Nhân viên');
           // Bỏ hoàn toàn phần hiển thị role (banhang) trong nút theo yêu cầu của người dùng
           if (roleEl) roleEl.remove();
           const linkEl = staffBadge.querySelector('a');
           if (linkEl) {
             const fullName = user.tenNhanVien ? (user.tenNhanVien + ' (' + (user.tenQuyen || user.username) + ')') : user.username;
-            linkEl.title = (isEn ? 'Admin Portal: ' : 'Vào Quản Trị: ') + fullName;
+            linkEl.title = fullName;
           }
         }
       } else if (user.type === 'customer') {
@@ -403,17 +400,8 @@
     }
 
     try {
-      const uLower = username.toLowerCase();
-      // Nếu là tài khoản nhân viên / admin
-      if (DEMO_STAFF[uLower]) {
-        await Auth.loginStaff(uLower, password);
-        const isFile = window.location.protocol === 'file:';
-        window.location.href = isFile ? 'admin.html' : '/admin';
-        return;
-      }
-
-      // Nếu là số điện thoại hoặc khách hàng
-      if (DEMO_CUSTOMERS[username] || /^[0-9]{9,11}$/.test(username)) {
+      // Nếu là số điện thoại 9-11 số: đăng nhập tài khoản Khách hàng
+      if (/^[0-9]{9,11}$/.test(username)) {
         await Auth.loginCustomer(username);
         window.closeLoginModal();
         Auth.updateUI();
@@ -421,10 +409,9 @@
         return;
       }
 
-      // Backend fallback
+      // Ngược lại: Đăng nhập Nhân viên / Quản trị viên
       await Auth.loginStaff(username, password);
-      const isFile = window.location.protocol === 'file:';
-      window.location.href = isFile ? 'admin.html' : '/admin';
+      window.location.href = 'admin.html';
     } catch (err) {
       if (errBox) {
         errBox.textContent = err.message || 'Sai tên đăng nhập hoặc mật khẩu!';
@@ -558,7 +545,7 @@
         try {
           const res = await Auth.loginStaff(username, password);
           if (submitBtn) {
-            submitBtn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Thành công! Đang vào Quản trị...';
+            submitBtn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Thành công! Đang xử lý...';
           }
           setTimeout(() => {
             closeModal();

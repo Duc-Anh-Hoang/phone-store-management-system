@@ -76,6 +76,8 @@ Hệ thống hỗ trợ phân luồng thông minh:
 - **Đăng nhập Khách hàng (Người dùng)** ➔ Ở lại trang bán hàng `index.html`, tự động điền đơn hàng & hiển thị đơn hàng đã đặt.
 
 ### 4.1. Tài khoản Quản trị / Nhân viên (Admin Portal)
+> **Lưu ý bảo mật về Token:** Hệ thống lưu trữ phiên đăng nhập (token) trên bộ nhớ RAM của backend (`TokenService`). Do đó, khi khởi động lại ứng dụng backend, toàn bộ phiên đăng nhập trước đó sẽ bị hủy và người dùng/nhân viên cần đăng nhập lại để tiếp tục làm việc.
+
 | Tên đăng nhập | Mật khẩu | Họ và tên | Chức vụ / Quyền hạn | Chuyển hướng |
 | :--- | :--- | :--- | :--- | :--- |
 | `admin` | `123456` | Nguyễn Văn Quản | Quản trị viên hệ thống | `admin.html` |
