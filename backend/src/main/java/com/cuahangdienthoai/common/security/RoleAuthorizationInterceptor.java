@@ -96,8 +96,8 @@ public class RoleAuthorizationInterceptor implements HandlerInterceptor {
     }
 
     private boolean isPublicEndpoint(String method, String uri) {
-        // Đăng nhập
-        if (uri.equals("/api/auth/login") || uri.equals("/api/auth/customer-login")) {
+        // Đăng nhập, đăng xuất, OTP email
+        if (uri.equals("/api/auth/login") || uri.equals("/api/auth/customer-login") || uri.equals("/api/auth/logout") || uri.startsWith("/api/email/")) {
             return true;
         }
 
@@ -116,8 +116,8 @@ public class RoleAuthorizationInterceptor implements HandlerInterceptor {
             if (uri.startsWith("/api/orders/") && !uri.equals("/api/orders") && !uri.equals("/api/orders/")) {
                 return true;
             }
-            // GET /api/baohanh/trangthai/{imei}
-            if (uri.startsWith("/api/baohanh/trangthai/")) {
+            // GET /api/baohanh/trangthai/{imei} hoặc /api/baohanh/imei/{imei}
+            if (uri.startsWith("/api/baohanh/trangthai/") || uri.startsWith("/api/baohanh/imei/")) {
                 return true;
             }
             // Dữ liệu danh mục chung hiển thị trên Web
@@ -160,6 +160,9 @@ public class RoleAuthorizationInterceptor implements HandlerInterceptor {
         }
 
         if (uri.startsWith("/api/trahang")) {
+            if ("GET".equalsIgnoreCase(method) && uri.startsWith("/api/trahang/tracuu")) {
+                return Set.of("BANHANG", "THUNGAN", "KYTHUAT", "QUANLY", "ADMIN");
+            }
             return Set.of("THUNGAN", "QUANLY", "ADMIN");
         }
 

@@ -1,0 +1,15 @@
+{
+  "storeInfo": {
+    "name": "CellphoneS - 241 Lê Văn Việt",
+    "shortName": "CellphoneS",
+    "slogan": "Hệ thống bán lẻ điện thoại di động & phụ kiện chính hãng",
+    "hotline": "1800 2097",
+    "hotlineComplain": "1800 2063",
+    "hotlineWarranty": "1800 2064",
+    "email": "cskh@cellphones.com.vn",
+    "address": "241 Lê Văn Việt, Phường Hiệp Phú, TP. Thủ Đức, TP. Hồ Chí Minh",
+    "vatPercent": 10,
+    "returnDays": 30,
+    "warrantyMonthsDefault": 12
+  }
+}

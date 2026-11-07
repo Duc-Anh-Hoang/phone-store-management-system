@@ -15,9 +15,7 @@
 }(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  var API_BASE = window.API_BASE || (window.location.protocol === 'file:' || window.location.port === '5500') 
-    ? 'http://localhost:8080/api' 
-    : '/api';
+  var API_BASE = window.API_BASE || '/api';
 
   class StoreDataManager {
     constructor() {
@@ -33,62 +31,85 @@
       if (this.isInitialized) return;
 
       try {
-        const [mathangRes, nhomhangRes, loaihangRes, kmRes] = await Promise.all([
-          fetch(`${API_BASE}/mathang`).then(r => r.ok ? r.json() : Promise.reject(`Lỗi tải mặt hàng (${r.status})`)),
+        const [mathangRes, nhomhangRes, loaihangRes, kmRes, metaRes] = await Promise.all([
+          fetch(`${API_BASE}/mathang`).then(r => r.ok ? r.json() : []).catch(() => []),
           fetch(`${API_BASE}/nhomhang`).then(r => r.ok ? r.json() : []).catch(() => []),
           fetch(`${API_BASE}/loaihang`).then(r => r.ok ? r.json() : []).catch(() => []),
-          fetch(`${API_BASE}/khuyenmai/hoatdong`).then(r => r.ok ? r.json() : []).catch(() => [])
+          fetch(`${API_BASE}/khuyenmai/hoatdong`).then(r => r.ok ? r.json() : []).catch(() => []),
+          fetch('data/products-meta.json').then(r => r.ok ? r.json() : fetch('products-meta.json').then(r2 => r2.ok ? r2.json() : {})).catch(() => ({}))
         ]);
 
         this.nhomHang = Array.isArray(nhomhangRes) ? nhomhangRes : [];
         this.loaiHang = Array.isArray(loaihangRes) ? loaihangRes : [];
         this.promotions = Array.isArray(kmRes) ? kmRes : [];
 
-        // Map backend entities to frontend product models
-        this.products = (Array.isArray(mathangRes) ? mathangRes : []).map(item => {
-          const tonKho = item.tonKho !== undefined ? Number(item.tonKho) : 0;
-          const donGia = Number(item.donGia) || 0;
-          let anhChinh = 'images/phone-desert.svg';
-          const nameLower = (item.tenHang || '').toLowerCase();
-          if (item.maNhom === 'NH04' || nameLower.includes('ipad') || nameLower.includes('tab')) {
-            anhChinh = 'images/ipad-pro.svg';
-          } else if (nameLower.includes('samsung') || nameLower.includes('galaxy')) {
-            anhChinh = 'images/galaxy-s24.svg';
-          } else if (nameLower.includes('iphone 15') || nameLower.includes('natural')) {
-            anhChinh = 'images/phone-natural.svg';
-          } else if (nameLower.includes('iphone 13') || nameLower.includes('iphone 16 plus') || nameLower.includes('redmi') || nameLower.includes('oppo')) {
-            anhChinh = 'images/phone-black.svg';
-          } else if (item.maNhom === 'NH02' || item.maNhom === 'NH03' || item.maNhom === 'NH05' || nameLower.includes('sạc') || nameLower.includes('cáp') || nameLower.includes('tai nghe') || nameLower.includes('loa') || nameLower.includes('pin') || nameLower.includes('ốp') || nameLower.includes('watch')) {
-            anhChinh = 'images/accessories-pack.svg';
-          }
+        const metaMap = (metaRes && typeof metaRes === 'object') ? metaRes : {};
+        const metaValues = Object.values(metaMap);
+        const backendItems = Array.isArray(mathangRes) ? mathangRes : [];
 
-          return {
+        const mergedList = [];
+        const seenIds = new Set();
+
+        for (const item of backendItems) {
+          seenIds.add(item.maHang);
+          const meta = metaMap[item.maHang] || metaValues.find(m => m.tenHang && item.tenHang && m.tenHang.toLowerCase() === item.tenHang.toLowerCase());
+          const tonKho = item.tonKho !== undefined ? Number(item.tonKho) : (meta?.tonKho || 15);
+          const donGia = Number(item.donGia) || meta?.donGia || 0;
+          const anhChinh = meta?.anhChinh || item.hinhAnh || 'https://i.hoanghamobile.vn/Uploads/2024/09/10/iphone-16-pro-natural-titan.png';
+
+          mergedList.push({
             maHang: item.maHang,
             tenHang: item.tenHang,
             donGia: donGia,
-            giaGoc: Math.round(donGia * 1.08),
+            giaGoc: meta?.giaGoc || Math.round(donGia * 1.08),
             dvt: item.dvt || 'Cái',
-            maNhom: item.maNhom,
-            tenNhom: item.tenNhom || (this.nhomHang.find(n => n.maNhom === item.maNhom)?.tenNhom || 'Điện thoại'),
-            maLoai: item.maLoai,
-            tenLoai: item.tenLoai || (this.loaiHang.find(l => l.maLoai === item.maLoai)?.tenLoai || ''),
-            nhanHieu: item.tenLoai || 'Chính hãng',
+            maNhom: item.maNhom || meta?.maNhom || 'DIENTHOAI',
+            tenNhom: item.tenNhom || meta?.tenNhom || (this.nhomHang.find(n => n.maNhom === item.maNhom)?.tenNhom || 'Điện thoại'),
+            maLoai: item.maLoai || meta?.maLoai || 'OTHER',
+            tenLoai: item.tenLoai || meta?.nhanHieu || (this.loaiHang.find(l => l.maLoai === item.maLoai)?.tenLoai || ''),
+            nhanHieu: item.tenLoai || meta?.nhanHieu || 'Chính hãng',
             quanLyImei: !!item.quanLyIMEI,
-            thoiHanBaoHanh: item.thoiHanBaoHanh !== undefined ? item.thoiHanBaoHanh : (item.quanLyIMEI ? 12 : 0),
+            thoiHanBaoHanh: item.thoiHanBaoHanh !== undefined ? item.thoiHanBaoHanh : 12,
             tonKho: tonKho,
             anhChinh: anhChinh,
-            mauSac: [{ id: 'std', ten: 'Mặc định', anh: anhChinh, hex: '#d70018' }],
-            phienBan: [{ id: 'std', dungLuong: 'Tiêu chuẩn', gia: donGia, giaGoc: Math.round(donGia * 1.08), tonKho: tonKho }]
-          };
-        });
+            mauSac: meta?.mauSac && meta.mauSac.length > 0 ? meta.mauSac : [{ id: 'std', ten: 'Mặc định', anh: anhChinh, hex: '#d70018' }],
+            phienBan: meta?.phienBan && meta.phienBan.length > 0 ? meta.phienBan : [{ id: 'std', dungLuong: 'Tiêu chuẩn', gia: donGia, giaGoc: Math.round(donGia * 1.08), tonKho: tonKho }],
+            thongSo: meta?.thongSo || {}
+          });
+        }
 
+        // Add metadata products not yet in backend
+        for (const meta of metaValues) {
+          if (!seenIds.has(meta.maHang)) {
+            mergedList.push({
+              maHang: meta.maHang,
+              tenHang: meta.tenHang,
+              donGia: meta.donGia,
+              giaGoc: meta.giaGoc || Math.round(meta.donGia * 1.08),
+              dvt: 'Cái',
+              maNhom: meta.maNhom || 'DIENTHOAI',
+              tenNhom: meta.tenNhom || 'Điện thoại',
+              maLoai: meta.maLoai || 'OTHER',
+              tenLoai: meta.nhanHieu || '',
+              nhanHieu: meta.nhanHieu || 'Chính hãng',
+              quanLyImei: true,
+              thoiHanBaoHanh: 12,
+              tonKho: 15,
+              anhChinh: meta.anhChinh,
+              mauSac: meta.mauSac || [{ id: 'std', ten: 'Mặc định', anh: meta.anhChinh, hex: '#d70018' }],
+              phienBan: meta.phienBan || [{ id: 'std', dungLuong: 'Tiêu chuẩn', gia: meta.donGia, giaGoc: meta.giaGoc, tonKho: 15 }],
+              thongSo: meta.thongSo || {}
+            });
+          }
+        }
+
+        this.products = mergedList;
         this.isInitialized = true;
         this.loadError = null;
       } catch (err) {
         this.isInitialized = false;
         this.loadError = 'Không tải được sản phẩm, vui lòng thử lại';
         console.error('StoreDataManager init error:', err);
-        // Hiển thị thông báo lỗi lên giao diện nếu có shelf
         const shelf = document.getElementById('product-shelves');
         if (shelf) {
           shelf.innerHTML = `<div class="p-8 text-center text-rose-600 font-bold bg-rose-50 rounded-2xl border border-rose-200 my-6">
@@ -109,7 +130,7 @@
 
     getFeaturedPhones(brand = 'all') {
       return this.products.filter(p => {
-        const isPhone = p.maNhom === 'NH01';
+        const isPhone = p.maNhom === 'NH01' || p.maNhom === 'DIENTHOAI';
         if (!isPhone) return false;
         if (!brand || brand === 'all') return true;
         return (p.nhanHieu || '').toLowerCase().includes(brand.toLowerCase());
@@ -133,7 +154,7 @@
     }
 
     getAccessories() {
-      return this.products.filter(p => p.maNhom === 'NH02' || p.maNhom === 'NH03');
+      return this.products.filter(p => p.maNhom === 'NH02' || p.maNhom === 'NH03' || p.maNhom === 'PHUKIEN' || p.maNhom === 'AMTHANH');
     }
 
     getProductsByBrand(brand = 'all') {

@@ -14,4 +14,7 @@ public class BaoHanhDTO {
     private String ngayKT;
     private int thoiHanThang;
     private String dieuKien;
+    private String trangThai;
+    private Integer soNgayConLai;
 }
+

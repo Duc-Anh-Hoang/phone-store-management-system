@@ -71,6 +71,39 @@
      */
     addItem(product, variant, color, qty = 1) {
       if (!product) return { success: false, message: 'Sản phẩm không hợp lệ' };
+
+      // Hỗ trợ truyền 1 đối tượng item duy nhất { maHang, tenHang, price/donGia, ... }
+      if (arguments.length === 1 && typeof product === 'object' && (product.price !== undefined || product.donGia !== undefined)) {
+        const itemObj = product;
+        const vName = itemObj.variantName || itemObj.phienBan || '';
+        const cName = itemObj.colorName || itemObj.mauSac || '';
+        const cartItemId = itemObj.id || (itemObj.maHang + '_' + (vName || 'def') + '_' + (cName || 'def'));
+        const addQty = Math.max(1, parseInt(itemObj.qty || itemObj.soLuong, 10) || 1);
+        const stockAvailable = itemObj.maxStock || itemObj.tonKho || 99;
+
+        const existingIndex = this.items.findIndex(item => item.id === cartItemId);
+        if (existingIndex > -1) {
+          this.items[existingIndex].qty += addQty;
+        } else {
+          this.items.push({
+            id: cartItemId,
+            maHang: itemObj.maHang || cartItemId,
+            tenHang: itemObj.tenHang || itemObj.name || 'Sản phẩm',
+            variantName: vName,
+            colorName: cName,
+            colorHex: itemObj.colorHex || '#16A34A',
+            image: itemObj.image || itemObj.hinhAnh || itemObj.anhChinh || 'images/default-phone.png',
+            price: Number(itemObj.price || itemObj.donGia || 0),
+            oldPrice: Number(itemObj.oldPrice || itemObj.giaGoc || itemObj.price || itemObj.donGia || 0),
+            qty: addQty,
+            maxStock: stockAvailable
+          });
+        }
+        this.saveCart();
+        this.showToast('Đã thêm "' + (itemObj.tenHang || 'sản phẩm') + '" vào giỏ hàng!', 'success');
+        return { success: true };
+      }
+
       qty = Math.max(1, parseInt(qty, 10) || 1);
 
       const variantId = variant ? variant.id : 'default';
@@ -277,7 +310,11 @@
         container.innerHTML = this.items.map(item => `
           <div class="flex gap-3.5 p-3.5 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
             <div class="w-20 h-20 rounded-xl bg-slate-50 p-1.5 flex items-center justify-center flex-shrink-0 border border-slate-100 overflow-hidden">
-              <img src="${item.image}" alt="${item.tenHang}" class="w-full h-full object-contain">
+              ${item.image ? `
+                <img src="${item.image}" alt="${item.tenHang}" class="w-full h-full object-contain">
+              ` : `
+                <i class="fa-solid fa-mobile-screen-button text-slate-300 text-xl"></i>
+              `}
             </div>
             <div class="flex-1 flex flex-col justify-between min-w-0">
               <div class="flex items-start justify-between gap-2">

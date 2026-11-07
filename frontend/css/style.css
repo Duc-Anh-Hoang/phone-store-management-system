@@ -1,39 +1,61 @@
+/* Global High-Contrast Typography & Sharp Font Smoothing */
+* {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+}
+input, button, select, textarea {
+  font-family: inherit;
+}
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 /* ==========================================================================
    STYLE CHÍNH CHO LANDING PAGE BÁN ĐIỆN THOẠI FLAGSHIP
    Hiện đại - Công nghệ - Tối giản (Modern Tech)
    ========================================================================== */
 
 :root {
-  --color-primary: #80ffbf;
-  --color-primary-hover: #66e6a5;
-  --color-primary-deep: #064e29;
-  --color-primary-light: #eafff5;
-  --color-primary-pale: #dcffed;
-  --color-accent: #80ffbf;
-  --color-navy: #061a0f;
-  --color-background: #f4f7f5;
-  --color-surface: #ffffff;
+  --color-primary: #1E3A8A;
+  --color-primary-hover: #1D4ED8;
+  --color-primary-deep: #0F172A;
+  --color-primary-light: #EFF6FF;
+  --color-primary-pale: #DBEAFE;
+  --color-secondary: #2563EB;
+  --color-secondary-hover: #1D4ED8;
+  --color-accent: #FF7A00;
+  --color-accent-hover: #E06800;
+  --color-accent-light: #FFEDD5;
+  --color-navy: #111827;
+  --color-background: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-card: #FFFFFF;
   --color-text: #111827;
-  --color-text-muted: #6b7280;
-  --color-border: #e2e8f0;
-  --color-success: #80ffbf;
-  --color-warning: #f59e0b;
-  --color-danger: #dc2626;
-  --color-info: #2563eb;
+  --color-text-secondary: #64748B;
+  --color-text-muted: #64748B;
+  --color-border: #E5E7EB;
+  --color-success: #22C55E;
+  --color-warning: #F97316;
+  --color-danger: #EF4444;
+  --color-info: #2563EB;
 
-  /* Custom Glows */
-  --glow-primary: rgba(128, 255, 191, 0.35);
-  --glow-desert: rgba(197, 168, 142, 0.3);
+  /* Custom Glows & Metrics */
+  --glow-primary: rgba(30, 58, 138, 0.25);
+  --glow-secondary: rgba(37, 99, 235, 0.25);
+  --glow-accent: rgba(255, 122, 0, 0.35);
+
+  --radius-btn: 12px;
+  --radius-card: 16px;
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 12px 28px rgba(0, 0, 0, 0.12);
 }
 
 /* Scroll mượt mà và padding offset cho Header Sticky */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 85px;
+  scroll-padding-top: 195px;
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--color-background);
   color: var(--color-text);
   overflow-x: hidden;
@@ -60,7 +82,7 @@ body {
 
 /* Hiệu ứng nền Premium Glow và Gradient */
 .hero-radial-bg {
-  background: radial-gradient(circle at 75% 45%, rgba(221, 196, 173, 0.28) 0%, rgba(22, 163, 74, 0.08) 35%, rgba(243, 244, 246, 0) 70%);
+  background: radial-gradient(circle at 75% 45%, rgba(37, 99, 235, 0.12) 0%, rgba(30, 58, 138, 0.06) 35%, rgba(248, 250, 252, 0) 70%);
 }
 
 .dark-product-card {
@@ -100,34 +122,77 @@ body {
 
 /* Lựa chọn màu sắc (Color Swatches) */
 .color-choice-input:checked + .color-choice-label {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(51, 255, 102, 0.45);
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35);
   transform: translateY(-2px);
 }
 
 /* Lựa chọn dung lượng */
 .storage-choice-input:checked + .storage-choice-label {
-  border-color: var(--color-primary);
+  border-color: var(--color-secondary);
   background-color: var(--color-primary-light);
-  color: var(--color-primary-deep);
+  color: var(--color-primary);
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(51, 255, 102, 0.25);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
 }
 
 /* Phương thức thanh toán */
 .payment-choice-input:checked + .payment-choice-label {
-  border-color: var(--color-primary);
+  border-color: var(--color-secondary);
   background-color: var(--color-primary-light);
 }
 
-/* Card hover animation */
+/* Card hover animation & Design Tokens */
 .card-hover-effect {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-hover-effect:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 16px 28px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+}
+
+.product-card {
+  border-radius: 16px !important;
+  background-color: #ffffff;
+  border: 1px solid #E5E7EB;
+  padding: 18px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  border-color: #BFDBFE;
+}
+
+.btn-cta-orange {
+  height: 44px;
+  border-radius: 12px;
+  background-color: #FF7A00;
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 4px 14px rgba(255, 122, 0, 0.35);
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-cta-orange:hover {
+  background-color: #E06800;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(224, 104, 0, 0.45);
+}
+
+/* Chip Category Buttons */
+.chip-cat-btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chip-cat-btn:hover {
+  transform: translateY(-1px);
 }
 
 /* Modal Backdrop và Animation */
@@ -237,8 +302,8 @@ body {
 
 .feedback-slick-slider .slick-prev:hover,
 .feedback-slick-slider .slick-next:hover {
-  background-color: var(--color-primary) !important;
-  border-color: var(--color-primary) !important;
+  background-color: var(--color-secondary) !important;
+  border-color: var(--color-secondary) !important;
   transform: scale(1.08);
 }
 
@@ -291,7 +356,7 @@ body {
   content: '';
   width: 26px;
   height: 8px;
-  background-color: var(--color-primary);
+  background-color: var(--color-secondary);
   border-radius: 9999px;
   opacity: 1;
 }
@@ -372,5 +437,224 @@ body {
   body {
     padding-bottom: 70px;
   }
+}
+
+
+
+/* Vibrant Blue Header Background (Hoang Ha Mobile style) */
+.header-blue-banner {
+  background-color: #0b45a6 !important;
+  background-image: url('data:image/jpeg;base64,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') !important;
+  background-position: center center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Dual Category Tabs (Phone & Tablet, Laptop, etc. - Bright Blue Header-BG Theme) */
+.dual-cat-tab-active {
+  background: #0057B7 url('../images/tab-active-bg.jpg') center center / cover no-repeat !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 18px rgba(0, 87, 183, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  z-index: 10;
+}
+
+.dual-cat-tab-active:hover {
+  filter: brightness(1.08) !important;
+  box-shadow: 0 6px 24px rgba(0, 102, 255, 0.48) !important;
+  transform: translateY(-1.5px) !important;
+}
+
+.dual-cat-tab-inactive {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #1e3a8a !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Hover trên tab không active: Sử dụng nền header-bg sáng rực rỡ với hiệu ứng nổi 3D */
+.dual-cat-tab-inactive:hover {
+  background: linear-gradient(135deg, rgba(14, 116, 255, 0.88), rgba(0, 85, 220, 0.92)), url('../images/tab-active-bg.jpg') center center / cover no-repeat !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 6px 22px rgba(0, 102, 255, 0.38) !important;
+  transform: translateY(-1.5px) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dual-brand-pill {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.dual-brand-pill:hover {
+  border-color: #0066FF !important;
+  color: #0066FF !important;
+  background-color: #eff6ff !important;
+  box-shadow: 0 2px 8px rgba(0, 102, 255, 0.18) !important;
+  transform: translateY(-1px) !important;
+}
+
+.dual-brand-pill.active-brand-pill {
+  background: linear-gradient(135deg, #0077ff, #0055ee) !important;
+  color: #ffffff !important;
+  border-color: #0066ff !important;
+  box-shadow: 0 3px 12px rgba(0, 102, 255, 0.35) !important;
+  transform: translateY(-1px) !important;
+}
+
+.dual-brand-pill.active-brand-pill img {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* Hide scrollbar utility across all browsers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* Banner image crisp rendering & Cross-fade animation */
+.hero-fade-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.65s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.65s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-fade-slide.active-slide {
+  opacity: 1;
+  visibility: visible;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.hero-fade-slide img {
+  image-rendering: auto;
+}
+
+/* Banner tab under-slider active indicator (Tone xanh dương đồng bộ thanh tìm kiếm) */
+.hero-tab-item {
+  position: relative;
+  transition: all 0.25s ease;
+  min-height: 76px;
+  background-color: transparent !important;
+}
+
+@media (min-width: 640px) {
+  .hero-tab-item {
+    min-height: 80px;
+  }
+}
+
+/* Vạch phân cách ngắn thanh lịch giữa các cột tiêu đề (chuẩn Hoàng Hà Mobile) */
+.hero-tab-item:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 24%;
+  bottom: 24%;
+  width: 1px;
+  background-color: #E2E8F0;
+  pointer-events: none;
+}
+
+.hero-tab-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 3.5px;
+  background: linear-gradient(90deg, #1D4ED8 0%, #2563EB 50%, #3B82F6 100%);
+  border-radius: 9999px 9999px 0 0;
+  transform: scaleX(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 -1px 6px rgba(37, 99, 235, 0.35);
+}
+
+.hero-tab-item.active-tab::after {
+  transform: scaleX(1);
+}
+
+/* Glossy White Buttons & Inputs (Hoàng Hà Mobile style with 3D shine) */
+.btn-header-glossy {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5F9FE 55%, #E3EFFF 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 
+    0 3px 10px rgba(2, 28, 85, 0.2),
+    inset 0 1px 1.5px #FFFFFF,
+    inset 0 -1.5px 2px rgba(37, 99, 235, 0.12) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.btn-header-glossy:hover {
+  background: linear-gradient(180deg, #FFFFFF 0%, #ECF4FE 55%, #D7E9FE 100%) !important;
+  box-shadow: 
+    0 5px 14px rgba(2, 28, 85, 0.28),
+    inset 0 1px 2px #FFFFFF,
+    inset 0 -1.5px 2px rgba(37, 99, 235, 0.18) !important;
+  transform: translateY(-1px);
+}
+
+.btn-header-glossy:active {
+  background: linear-gradient(180deg, #E2EEFE 0%, #FFFFFF 100%) !important;
+  box-shadow: 
+    0 1px 3px rgba(2, 28, 85, 0.2),
+    inset 0 1px 2px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(0);
+}
+
+/* =========================================================================
+   TRẠM TIẾP SỨC ONLINE - CAMPAIGN DEAL FRAME & TABS
+   ========================================================================= */
+.deal-tab-btn {
+  background-color: #ffffff;
+  border-bottom: 3px solid transparent !important;
+  transition: all 0.2s ease-in-out;
+}
+
+.deal-tab-btn img {
+  mix-blend-mode: multiply;
+}
+
+.deal-tab-btn.active-deal-tab {
+  background-color: #FEFCE8 !important; /* Màu kem sáng nổi bật như ảnh mẫu */
+  border-bottom: 3px solid #0057B7 !important;
+  box-shadow: inset 0 -2px 0 0 #0057B7;
+}
+
+.deal-tab-btn:hover:not(.active-deal-tab) {
+  background-color: #f8fafc;
+}
+
+.deal-product-card,
+.deal-product-item {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.deal-product-card:hover,
+.deal-product-item:hover {
+  transform: translateY(-2px);
+}
+
+/* Accessory Categories Carousel */
+#accessory-viewport {
+  touch-action: pan-y pinch-zoom;
+}
+#accessory-track {
+  will-change: transform;
 }
 

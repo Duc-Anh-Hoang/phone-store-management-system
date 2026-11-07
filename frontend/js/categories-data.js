@@ -1,0 +1,655 @@
+window.HOANGHA_CATEGORIES_DATA = {
+  "meta": {
+    "title": "Cấu trúc chi tiết các trang chuyên mục Hoàng Hà Mobile",
+    "source": "hoanghamobile.com",
+    "updated_at": "2026-11-05T21:10:00+07:00",
+    "theme_colors": {
+      "primary": "#00483D",
+      "primary_hover": "#006655",
+      "price_sale": "#E0052B",
+      "member_price": "#008B8B",
+      "background": "#F4F6F8",
+      "card_border": "#E2E8F0"
+    }
+  },
+  "layout_standards": {
+    "header": {
+      "components": [
+        "Logo Hoàng Hà Mobile",
+        "Nút Danh mục",
+        "Thanh tìm kiếm (placeholder: 'Hôm nay bạn muốn tìm kiếm gì?')",
+        "Nút Thông báo",
+        "Nút Tài khoản hội viên",
+        "Nút Giỏ hàng"
+      ]
+    },
+    "sidebar_filter": {
+      "components": [
+        "Thương hiệu (Brand logos grid)",
+        "Khoảng giá (Price ranges with item counter)",
+        "Bộ lọc thông số kỹ thuật đặc thù ngành hàng",
+        "Nhu cầu sử dụng"
+      ]
+    },
+    "product_grid": {
+      "columns_desktop": 4,
+      "columns_tablet": 3,
+      "columns_mobile": 2,
+      "card_structure": {
+        "image_area": {
+          "centered_photo": true,
+          "spec_badges_floating": "Góc phải ảnh hiển thị 3-4 icon thông số cốt lõi (Chip, RAM, Pin, Màn hình, BTU...)"
+        },
+        "info_area": {
+          "title": "Tên sản phẩm đầy đủ kèm phiên bản dung lượng/màu sắc",
+          "price_block": {
+            "sale_price": "Màu đỏ đậm nổi bật",
+            "discount_tag": "Badge phần trăm giảm (-X%)",
+            "original_price": "Gạch ngang mờ bên cạnh",
+            "member_price": "Dòng 'Hoàng Hà Member chỉ từ:' màu xanh cyan"
+          },
+          "bank_promos": "Logo các đối tác tài chính (TPBank, VPBank, VIB, Kredivo, Home PayLater) kèm trợ giá hoặc trả góp 0%",
+          "bottom_action": {
+            "stock_status": "Trạng thái 'Sẵn hàng' hoặc 'Liên hệ'",
+            "quick_cart_button": "Nút icon giỏ hàng đỏ mua nhanh"
+          }
+        }
+      },
+      "pagination": "Nút 'Xem thêm [N] sản phẩm'"
+    },
+    "footer_content": {
+      "seo_article": {
+        "title_format": "Thông tin thêm về [Ngành hàng]",
+        "has_table_of_contents": true,
+        "expandable": true
+      },
+      "tech_news_widget": {
+        "title": "Tin tức công nghệ",
+        "items_count": 4,
+        "view_more_link": true
+      }
+    }
+  },
+  "categories": [
+    {
+      "id": "dien-thoai",
+      "slug": "dien-thoai-di-dong",
+      "name": "Điện thoại di động",
+      "url": "https://hoanghamobile.com/dien-thoai-di-dong",
+      "brands": [
+        { "name": "Apple (iPhone)", "featured": true },
+        { "name": "Samsung", "featured": true },
+        { "name": "Xiaomi", "featured": true },
+        { "name": "TECNO", "featured": true },
+        { "name": "OPPO", "featured": true },
+        { "name": "Honor", "featured": true },
+        { "name": "Philips", "featured": false },
+        { "name": "Vivo", "featured": true },
+        { "name": "Sony Xperia", "featured": false },
+        { "name": "itel", "featured": false },
+        { "name": "HTC", "featured": false },
+        { "name": "Oscal", "featured": false },
+        { "name": "Nubia", "featured": false },
+        { "name": "Viettel", "featured": false },
+        { "name": "Nokia", "featured": false },
+        { "name": "Inoi", "featured": false },
+        { "name": "Masstel", "featured": false },
+        { "name": "RedMagic", "featured": false },
+        { "name": "TCL", "featured": false },
+        { "name": "Mobell", "featured": false },
+        { "name": "Benco", "featured": false },
+        { "name": "Xphone", "featured": false }
+      ],
+      "price_ranges": [
+        { "label": "Dưới 1 triệu", "min": 0, "max": 1000000, "count": 20 },
+        { "label": "1 đến 3 triệu", "min": 1000000, "max": 3000000, "count": 19 },
+        { "label": "3 đến 5 triệu", "min": 3000000, "max": 5000000, "count": 22 },
+        { "label": "5 đến 10 triệu", "min": 5000000, "max": 10000000, "count": 30 },
+        { "label": "10 đến 15 triệu", "min": 10000000, "max": 15000000, "count": 15 },
+        { "label": "15 đến 20 triệu", "min": 15000000, "max": 20000000, "count": 10 },
+        { "label": "Trên 20 triệu", "min": 20000000, "max": 100000000, "count": 56 }
+      ],
+      "filter_specs": {
+        "ram": ["3GB", "4GB", "6GB", "8GB", "12GB", "16GB"],
+        "rom": ["32GB", "64GB", "128GB", "256GB", "512GB", "1TB"],
+        "features": [
+          "Mạng 5G",
+          "Màn hình gập (Fold / Flip)",
+          "Sạc không dây",
+          "Chống nước IP68",
+          "Pin khủng trên 5000mAh",
+          "Gaming Phone (Cụm tản nhiệt + Nút trigger)"
+        ]
+      },
+      "spec_badges_on_image": [
+        { "type": "cpu", "icon": "fa-microchip", "examples": ["Snapdragon 8 Elite", "Exynos 1580", "Helio G99", "Apple A18 Pro"] },
+        { "type": "battery", "icon": "fa-battery-full", "examples": ["5000 mAh", "6000 mAh", "4500 mAh"] },
+        { "type": "storage", "icon": "fa-hard-drive", "examples": ["128GB", "256GB", "512GB", "1TB"] }
+      ],
+      "sample_products": [
+        {
+          "name": "Samsung Galaxy S25 Ultra - 12GB/256GB",
+          "sale_price": 25790000,
+          "original_price": 33990000,
+          "discount_percent": 24,
+          "member_price": 25481000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["Snap 8 Elite", "5000mAh", "256GB"],
+          "bank_promo": "TPBank Evo - Giảm đến 500.000đ, trả góp 0% đến 6 tháng"
+        },
+        {
+          "name": "Samsung Galaxy A57 5G - 8GB/128GB",
+          "sale_price": 10990000,
+          "original_price": 13490000,
+          "discount_percent": 19,
+          "member_price": 10790000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["Exynos 1580", "5000mAh", "128GB"],
+          "bank_promo": "VPBank - Mở thẻ VPBank giảm tới 400k"
+        },
+        {
+          "name": "Samsung Galaxy A27 5G - 6GB/128GB",
+          "sale_price": 7990000,
+          "original_price": 9090000,
+          "discount_percent": 12,
+          "member_price": 7790000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["Snapdragon 6 Gen 3", "5000mAh", "128GB"],
+          "bank_promo": "TPBank Evo - Giảm đến 500.000đ"
+        },
+        {
+          "name": "Samsung Galaxy A18 - 6GB/128GB",
+          "sale_price": 6690000,
+          "original_price": 7190000,
+          "discount_percent": 7,
+          "member_price": 6490000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["MediaTek Helio", "5000mAh", "128GB"],
+          "bank_promo": "Trả góp 4 không - Duyệt nhanh 10 phút"
+        }
+      ],
+      "seo_content": {
+        "title": "Thông tin thêm về Điện thoại",
+        "table_of_contents": [
+          "1. Chọn điện thoại theo nhu cầu sử dụng",
+          "2. Chọn điện thoại theo khoảng giá",
+          "3. Những thông số cần quan tâm khi mua điện thoại",
+          "4. Chính sách bảo hành và ưu đãi tại Hoàng Hà Mobile"
+        ],
+        "summary": "Thị trường điện thoại hiện có nhiều lựa chọn từ thiết bị phổ thông, smartphone giá rẻ đến các mẫu cao cấp, điện thoại gập và điện thoại tích hợp AI. Để chọn được sản phẩm phù hợp, bạn nên xác định trước ngân sách, nhu cầu sử dụng và hệ điều hành.",
+        "related_news": [
+          { "title": "Cách đổi số điện thoại Zalo siêu nhanh trên điện thoại", "date": "26/09/2025" },
+          { "title": "Cách chuyển tiền điện thoại, bắn tiền điện thoại Viettel, Mobi, Vina", "date": "14/05/2025" },
+          { "title": "Sửa chữa điện thoại uy tín, chính hãng", "date": "01/03/2025" },
+          { "title": "Rò rỉ điện thoại ChatGPT sẽ là một mẫu điện thoại cao cấp", "date": "11/05/2026" }
+        ]
+      }
+    },
+    {
+      "id": "tablet",
+      "slug": "may-tinh-bang",
+      "name": "Máy tính bảng / Tablet",
+      "url": "https://hoanghamobile.com/may-tinh-bang",
+      "brands": [
+        { "name": "Apple iPad", "featured": true },
+        { "name": "Samsung Galaxy Tab", "featured": true },
+        { "name": "Xiaomi Pad", "featured": true },
+        { "name": "Lenovo Tab", "featured": true },
+        { "name": "Huawei MatePad", "featured": false },
+        { "name": "OPPO Pad", "featured": false },
+        { "name": "Nokia Tab", "featured": false },
+        { "name": "Masstel Tab", "featured": false }
+      ],
+      "price_ranges": [
+        { "label": "Dưới 3 triệu", "min": 0, "max": 3000000, "count": 8 },
+        { "label": "3 đến 8 triệu", "min": 3000000, "max": 8000000, "count": 18 },
+        { "label": "8 đến 15 triệu", "min": 8000000, "max": 15000000, "count": 25 },
+        { "label": "Trên 15 triệu", "min": 15000000, "max": 60000000, "count": 22 }
+      ],
+      "filter_specs": {
+        "screen_size": ["Dưới 8 inch", "8 - 10 inch", "10 - 11 inch", "Trên 11 inch (Pro / Ultra)"],
+        "connectivity": ["Chỉ Wi-Fi", "Wi-Fi + Cellular (4G/5G gắn SIM)"],
+        "accessories_support": [
+          "Hỗ trợ bút cảm ứng (Apple Pencil / S-Pen)",
+          "Hỗ trợ bàn phím từ tính (Magic Keyboard)",
+          "Bao da tích hợp chân dựng"
+        ]
+      },
+      "spec_badges_on_image": [
+        { "type": "screen", "icon": "fa-tablet-screen-button", "examples": ["10.9 inch Retina", "11 inch 144Hz", "12.4 inch OLED"] },
+        { "type": "chip", "icon": "fa-microchip", "examples": ["Apple M2", "Apple M4", "Snapdragon 8 Gen 2"] },
+        { "type": "battery", "icon": "fa-battery-full", "examples": ["8000 mAh", "10090 mAh"] }
+      ],
+      "sample_products": [
+        {
+          "name": "iPad Gen 10 10.9 inch (2022) - Wi-Fi 64GB",
+          "sale_price": 8990000,
+          "original_price": 10990000,
+          "discount_percent": 18,
+          "member_price": 8890000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["10.9 inch Retina", "A14 Bionic", "64GB"],
+          "bank_promo": "Hỗ trợ trả góp 0% qua thẻ tín dụng"
+        },
+        {
+          "name": "Samsung Galaxy Tab S9 FE 5G - 6GB/128GB",
+          "sale_price": 9990000,
+          "original_price": 11990000,
+          "discount_percent": 17,
+          "member_price": 9850000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["10.9 inch 90Hz", "Exynos 1380", "Kèm S-Pen"],
+          "bank_promo": "Tặng kèm bút S-Pen kháng nước IP68"
+        }
+      ],
+      "seo_content": {
+        "title": "Thông tin thêm về Máy tính bảng",
+        "table_of_contents": [
+          "1. Tiêu chí chọn máy tính bảng cho học sinh, sinh viên",
+          "2. Nên chọn iPad OS hay Android Tablet?",
+          "3. Máy tính bảng vẽ đồ họa và làm việc thay thế laptop"
+        ],
+        "summary": "Máy tính bảng là giải pháp trung gian hoàn hảo giữa điện thoại và máy tính xách tay với màn hình cảm ứng lớn, thời lượng pin cả ngày và khả năng tương tác với bút thông minh.",
+        "related_news": [
+          { "title": "So sánh iPad Gen 10 và iPad Air 5: Nên chọn máy nào?", "date": "10/02/2025" }
+        ]
+      }
+    },
+    {
+      "id": "laptop",
+      "slug": "laptop",
+      "name": "Laptop & Máy tính xách tay",
+      "url": "https://hoanghamobile.com/laptop",
+      "brands": [
+        { "name": "Apple (MacBook)", "featured": true },
+        { "name": "ASUS", "featured": true },
+        { "name": "Acer", "featured": true },
+        { "name": "Dell", "featured": true },
+        { "name": "HP", "featured": true },
+        { "name": "Lenovo", "featured": true },
+        { "name": "MSI", "featured": true },
+        { "name": "Gigabyte", "featured": false },
+        { "name": "LG Gram", "featured": false },
+        { "name": "Masstel", "featured": false }
+      ],
+      "price_ranges": [
+        { "label": "Dưới 10 triệu", "min": 0, "max": 10000000, "count": 12 },
+        { "label": "10 đến 15 triệu", "min": 10000000, "max": 15000000, "count": 28 },
+        { "label": "15 đến 20 triệu", "min": 15000000, "max": 20000000, "count": 35 },
+        { "label": "20 đến 30 triệu", "min": 20000000, "max": 30000000, "count": 42 },
+        { "label": "Trên 30 triệu", "min": 30000000, "max": 120000000, "count": 31 }
+      ],
+      "filter_specs": {
+        "cpu": ["Intel Core i3", "Intel Core i5", "Intel Core i7", "Intel Core Ultra", "AMD Ryzen 5", "AMD Ryzen 7", "Apple M1", "Apple M2", "Apple M3"],
+        "ram": ["8GB", "16GB", "32GB", "64GB"],
+        "gpu": ["Card Onboard (Intel Iris Xe / Radeon)", "NVIDIA GeForce RTX 3050", "RTX 4050", "RTX 4060", "RTX 4070"],
+        "screen_size": ["13.3 inch", "14.0 inch", "15.6 inch", "16.0 inch", "17.3 inch"],
+        "refresh_rate": ["60Hz", "120Hz", "144Hz", "165Hz", "240Hz"],
+        "usage_type": ["Học tập - Văn phòng", "Đồ họa - Kỹ thuật", "Gaming chuyên nghiệp", "Mỏng nhẹ cao cấp"]
+      },
+      "spec_badges_on_image": [
+        { "type": "cpu", "icon": "fa-microchip", "examples": ["Core i5-13420H", "Ryzen 7 7735HS", "Apple M3"] },
+        { "type": "ram", "icon": "fa-memory", "examples": ["16GB DDR5", "8GB LPDDR5"] },
+        { "type": "ssd", "icon": "fa-hard-drive", "examples": ["SSD 512GB", "SSD 1TB NVMe"] },
+        { "type": "weight", "icon": "fa-weight-scale", "examples": ["1.38 kg", "2.1 kg"] }
+      ],
+      "sample_products": [
+        {
+          "name": "MacBook Air 13 M3 2024 - 8-Core CPU / 16GB / 256GB SSD",
+          "sale_price": 27490000,
+          "original_price": 31990000,
+          "discount_percent": 14,
+          "member_price": 27190000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["Apple M3", "16GB RAM", "256GB SSD", "1.24kg"],
+          "bank_promo": "Giảm 500k qua thẻ tín dụng TPBank Evo"
+        },
+        {
+          "name": "Laptop Gaming ASUS TUF Gaming F15 - Core i5-12500H / RTX 3050 / 16GB / 512GB / 144Hz",
+          "sale_price": 17990000,
+          "original_price": 21490000,
+          "discount_percent": 16,
+          "member_price": 17790000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["i5-12500H", "RTX 3050 4GB", "16GB DDR4", "144Hz"],
+          "bank_promo": "Tặng Balo Gaming cao cấp + Chuột không dây"
+        }
+      ],
+      "seo_content": {
+        "title": "Thông tin thêm về Laptop",
+        "table_of_contents": [
+          "1. Cách chọn laptop theo ngành nghề và nhu cầu",
+          "2. Laptop Gaming vs Laptop Văn phòng: Điểm khác biệt",
+          "3. Kinh nghiệm kiểm tra máy và chính sách đổi trả"
+        ],
+        "summary": "Hoàng Hà Mobile phân phối chính hãng các dòng laptop hàng đầu từ Apple, ASUS, Dell, HP, Acer, Lenovo với chế độ bảo hành chính hãng lên đến 24 tháng.",
+        "related_news": [
+          { "title": "Top 5 laptop sinh viên giá rẻ dưới 15 triệu đáng mua nhất 2026", "date": "18/01/2026" }
+        ]
+      }
+    },
+    {
+      "id": "man-hinh",
+      "slug": "man-hinh",
+      "name": "Màn hình máy tính",
+      "url": "https://hoanghamobile.com/man-hinh",
+      "brands": [
+        { "name": "ASUS", "featured": true },
+        { "name": "Samsung", "featured": true },
+        { "name": "LG", "featured": true },
+        { "name": "ViewSonic", "featured": true },
+        { "name": "AOC", "featured": true },
+        { "name": "Dell", "featured": true },
+        { "name": "MSI", "featured": true },
+        { "name": "Xiaomi", "featured": true },
+        { "name": "Philips", "featured": false },
+        { "name": "BenQ", "featured": false }
+      ],
+      "price_ranges": [
+        { "label": "Dưới 2 triệu", "min": 0, "max": 2000000, "count": 6 },
+        { "label": "2 đến 4 triệu", "min": 2000000, "max": 4000000, "count": 24 },
+        { "label": "4 đến 7 triệu", "min": 4000000, "max": 7000000, "count": 19 },
+        { "label": "Trên 7 triệu", "min": 7000000, "max": 40000000, "count": 15 }
+      ],
+      "filter_specs": {
+        "screen_size": ["21.5 inch", "23.8 - 24 inch", "27 inch", "31.5 - 32 inch", "34 inch Ultrawide"],
+        "resolution": ["Full HD (1920x1080)", "2K QHD (2560x1440)", "4K UHD (3840x2160)"],
+        "panel_type": ["IPS (Màu sắc chuẩn, góc nhìn rộng)", "VA (Tương phản cao)", "OLED (Đỉnh cao hiển thị)"],
+        "refresh_rate": ["75Hz", "100Hz", "144Hz", "165Hz", "180Hz", "240Hz"],
+        "design": ["Màn hình phẳng", "Màn hình cong (Curved 1500R / 1800R)"]
+      },
+      "spec_badges_on_image": [
+        { "type": "refresh_rate", "icon": "fa-gauge-high", "examples": ["180Hz", "144Hz", "100Hz"] },
+        { "type": "panel", "icon": "fa-desktop", "examples": ["IPS", "Fast IPS", "VA"] },
+        { "type": "response_time", "icon": "fa-bolt", "examples": ["1ms", "0.5ms"] }
+      ],
+      "sample_products": [
+        {
+          "name": "Màn hình Gaming ASUS TUF VG249Q3A - 24 inch / Fast IPS / FHD / 180Hz / 1ms",
+          "sale_price": 2890000,
+          "original_price": 3690000,
+          "discount_percent": 21,
+          "member_price": 2850000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["24 inch FHD", "Fast IPS 180Hz", "1ms GTG"],
+          "bank_promo": "Bảo hành 36 tháng chính hãng 1 đổi 1"
+        },
+        {
+          "name": "Màn hình đồ họa Dell UltraSharp U2724D - 27 inch / 2K QHD / IPS Black / 120Hz",
+          "sale_price": 9990000,
+          "original_price": 11500000,
+          "discount_percent": 13,
+          "member_price": 9850000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["27 inch 2K", "IPS Black 120Hz", "100% sRGB"],
+          "bank_promo": "Hỗ trợ trả góp 0% lãi suất"
+        }
+      ],
+      "seo_content": {
+        "title": "Thông tin thêm về Màn hình máy tính",
+        "table_of_contents": [
+          "1. Hướng dẫn chọn kích thước và độ phân giải màn hình phù hợp",
+          "2. So sánh tấm nền IPS, VA và TN",
+          "3. Màn hình bảo vệ mắt công nghệ Eye Care"
+        ],
+        "summary": "Lựa chọn màn hình hiển thị chất lượng giúp nâng cao hiệu suất làm việc văn phòng và trải nghiệm gaming mượt mà không mỏi mắt.",
+        "related_news": [
+          { "title": "Tần số quét màn hình 60Hz, 120Hz, 144Hz khác biệt ra sao?", "date": "05/01/2026" }
+        ]
+      }
+    },
+    {
+      "id": "dieu-hoa-may-lanh",
+      "slug": "dieu-hoa",
+      "name": "Máy lạnh - Điều hòa & Điện máy",
+      "url": "https://hoanghamobile.com/dieu-hoa",
+      "brands": [
+        { "name": "Daikin", "featured": true },
+        { "name": "Panasonic", "featured": true },
+        { "name": "Casper", "featured": true },
+        { "name": "Funiki", "featured": true },
+        { "name": "LG", "featured": true },
+        { "name": "Samsung", "featured": true },
+        { "name": "Gree", "featured": false },
+        { "name": "Midea", "featured": false },
+        { "name": "TCL", "featured": false },
+        { "name": "Aqua", "featured": false }
+      ],
+      "price_ranges": [
+        { "label": "Dưới 5 triệu", "min": 0, "max": 5000000, "count": 8 },
+        { "label": "5 đến 8 triệu", "min": 5000000, "max": 8000000, "count": 22 },
+        { "label": "8 đến 12 triệu", "min": 8000000, "max": 12000000, "count": 31 },
+        { "label": "Trên 12 triệu", "min": 12000000, "max": 35000000, "count": 17 }
+      ],
+      "filter_specs": {
+        "capacity_btu": [
+          "9.000 BTU (1.0 HP - Phòng dưới 15m²)",
+          "12.000 BTU (1.5 HP - Phòng 15 - 20m²)",
+          "18.000 BTU (2.0 HP - Phòng 20 - 30m²)",
+          "24.000 BTU (2.5 HP - Phòng trên 30m²)"
+        ],
+        "technology": ["Tiết kiệm điện Inverter", "Điều hòa cơ (Non-Inverter)"],
+        "cooling_type": ["Điều hòa 1 chiều (Làm lạnh)", "Điều hòa 2 chiều (Làm lạnh & Sưởi ấm)"],
+        "gas_type": ["Gas R32 (Thế hệ mới, thân thiện môi trường)", "Gas R410A"],
+        "special_features": [
+          "Lọc bụi mịn PM2.5",
+          "Tự làm sạch dàn lạnh iClean",
+          "Điều khiển thông minh qua Wi-Fi smartphone",
+          "Làm lạnh siêu tốc Turbo / Powerful"
+        ]
+      },
+      "spec_badges_on_image": [
+        { "type": "btu", "icon": "fa-snowflake", "examples": ["9.000 BTU", "12.000 BTU", "18.000 BTU"] },
+        { "type": "inverter", "icon": "fa-bolt", "examples": ["Inverter Tiết kiệm điện", "Eco Mode"] },
+        { "type": "gas", "icon": "fa-fire-flame-simple", "examples": ["Gas R32", "Lọc bụi PM2.5"] }
+      ],
+      "sample_products": [
+        {
+          "name": "Điều hòa Casper Inverter 9.000 BTU 1 chiều TC-09IS36 - Gas R32",
+          "sale_price": 4990000,
+          "original_price": 5990000,
+          "discount_percent": 16,
+          "member_price": 4890000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["9.000 BTU (1 HP)", "Inverter", "Gas R32"],
+          "bank_promo": "Miễn phí công lắp đặt tiêu chuẩn + Tặng kèm ống đồng 3m"
+        },
+        {
+          "name": "Điều hòa Daikin Inverter 12.000 BTU 1 chiều FTKB35XVMV - Phin lọc Enzyme Blue",
+          "sale_price": 10490000,
+          "original_price": 12490000,
+          "discount_percent": 16,
+          "member_price": 10290000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["12.000 BTU (1.5 HP)", "Inverter cao cấp", "Lọc PM2.5"],
+          "bank_promo": "Hỗ trợ trả góp 0% - Bảo hành máy nén 5 năm"
+        }
+      ],
+      "seo_content": {
+        "title": "Thông tin thêm về Máy lạnh - Điều hòa",
+        "table_of_contents": [
+          "1. Cách tính công suất điều hòa theo thể tích và diện tích phòng",
+          "2. Tại sao nên chọn điều hòa Inverter tiết kiệm điện năng?",
+          "3. Chính sách lắp đặt, bảo dưỡng và bảo hành tại nhà"
+        ],
+        "summary": "Điều hòa không khí chính hãng Daikin, Panasonic, Casper giúp không gian gia đình luôn mát lành, sạch khuẩn và tiết kiệm chi phí hóa đơn tiền điện tối đa.",
+        "related_news": [
+          { "title": "Mẹo sử dụng máy lạnh cả đêm chỉ tốn 4000đ tiền điện", "date": "15/04/2025" }
+        ]
+      }
+    },
+    {
+      "id": "dong-ho-thong-minh",
+      "slug": "dong-ho-thong-minh",
+      "name": "Đồng hồ thông minh & Smartwatch",
+      "url": "https://hoanghamobile.com/dong-ho-thong-minh",
+      "brands": [
+        { "name": "Apple Watch", "featured": true },
+        { "name": "Samsung Galaxy Watch", "featured": true },
+        { "name": "Garmin", "featured": true },
+        { "name": "Xiaomi Band", "featured": true },
+        { "name": "Huawei Watch", "featured": true },
+        { "name": "Amazfit", "featured": false },
+        { "name": "Coros", "featured": false },
+        { "name": "Kiddi (Định vị trẻ em)", "featured": false }
+      ],
+      "price_ranges": [
+        { "label": "Dưới 1 triệu (Smartband)", "min": 0, "max": 1000000, "count": 14 },
+        { "label": "1 đến 3 triệu", "min": 1000000, "max": 3000000, "count": 21 },
+        { "label": "3 đến 7 triệu", "min": 3000000, "max": 7000000, "count": 19 },
+        { "label": "Trên 7 triệu", "min": 7000000, "max": 25000000, "count": 16 }
+      ],
+      "filter_specs": {
+        "user_type": ["Thể thao chuyên nghiệp (Chạy bộ, Bơi lội, Leo núi)", "Thời trang - Công sở", "Định vị trẻ em an toàn"],
+        "health_sensors": ["Đo nhịp tim 24/7", "Nồng độ oxy SpO2", "Điện tâm đồ ECG", "Theo dõi giấc ngủ sâu"],
+        "battery_life": ["1 - 2 ngày (Sạc mỗi ngày)", "7 - 14 ngày (Pin trâu)", "Trên 2 tuần"]
+      },
+      "spec_badges_on_image": [
+        { "type": "pin", "icon": "fa-battery-full", "examples": ["Pin 14 ngày", "Pin 18 giờ"] },
+        { "type": "waterproof", "icon": "fa-water", "examples": ["5ATM", "IP68"] }
+      ],
+      "sample_products": [
+        {
+          "name": "Vòng đeo tay thông minh Xiaomi Smart Band 9",
+          "sale_price": 890000,
+          "original_price": 1090000,
+          "discount_percent": 18,
+          "member_price": 850000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["AMOLED 60Hz", "Pin 21 ngày", "Đo SpO2"],
+          "bank_promo": "Bảo hành 12 tháng chính hãng DGW"
+        }
+      ],
+      "seo_content": {
+        "title": "Thông tin thêm về Đồng hồ thông minh",
+        "table_of_contents": [
+          "1. Tiêu chí chọn đồng hồ thông minh theo phong cách sống",
+          "2. Tính năng theo dõi sức khỏe và luyện tập"
+        ],
+        "summary": "Smartwatch không chỉ là phụ kiện thời trang mà còn là người bạn đồng hành theo dõi nhịp sinh học và sức khỏe liên tục 24/7.",
+        "related_news": []
+      }
+    },
+    {
+      "id": "am-thanh",
+      "slug": "thiet-bi-am-thanh",
+      "name": "Âm thanh / Tai nghe & Loa",
+      "url": "https://hoanghamobile.com/thiet-bi-am-thanh",
+      "brands": [
+        { "name": "Apple (AirPods)", "featured": true },
+        { "name": "Sony", "featured": true },
+        { "name": "JBL", "featured": true },
+        { "name": "Marshall", "featured": true },
+        { "name": "Harman Kardon", "featured": true },
+        { "name": "Sennheiser", "featured": false },
+        { "name": "Soundcore (Anker)", "featured": true },
+        { "name": "Edifier", "featured": false }
+      ],
+      "price_ranges": [
+        { "label": "Dưới 500 nghìn", "min": 0, "max": 500000, "count": 18 },
+        { "label": "500k đến 2 triệu", "min": 500000, "max": 2000000, "count": 32 },
+        { "label": "2 đến 5 triệu", "min": 2000000, "max": 5000000, "count": 27 },
+        { "label": "Trên 5 triệu", "min": 5000000, "max": 20000000, "count": 14 }
+      ],
+      "filter_specs": {
+        "device_type": ["Tai nghe True Wireless (Nhét tai)", "Tai nghe Chụp tai (Over-ear)", "Loa Bluetooth di động", "Loa Soundbar TV", "Loa cắm điện gia đình"],
+        "features": ["Chống ồn chủ động (ANC)", "Chế độ Xuyên âm (Transparency)", "Kháng nước IPX5/IPX7", "Âm thanh vòm Spatial Audio"]
+      },
+      "spec_badges_on_image": [
+        { "type": "playtime", "icon": "fa-clock", "examples": ["Pin 30 giờ", "Pin 20 giờ"] },
+        { "type": "anc", "icon": "fa-ear-listen", "examples": ["Chống ồn ANC", "Spatial Audio"] }
+      ],
+      "sample_products": [
+        {
+          "name": "Tai nghe không dây Apple AirPods 4 - Bản Tiêu Chuẩn",
+          "sale_price": 3490000,
+          "original_price": 3790000,
+          "discount_percent": 8,
+          "member_price": 3420000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["Chip H2", "Pin 30 giờ", "Cổng Type-C"],
+          "bank_promo": "Giảm thêm 300k khi mở thẻ tín dụng"
+        },
+        {
+          "name": "Loa Bluetooth Marshall Emberton II - Chính Hãng ASH",
+          "sale_price": 3890000,
+          "original_price": 4990000,
+          "discount_percent": 22,
+          "member_price": 3790000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["Pin 30+ Giờ", "Kháng nước IP67", "Âm thanh 360°"],
+          "bank_promo": "Hỗ trợ trả góp 0% duyệt hồ sơ nhanh"
+        }
+      ],
+      "seo_content": {
+        "title": "Thông tin thêm về Thiết bị âm thanh",
+        "table_of_contents": [
+          "1. Chọn tai nghe nhét tai hay chụp tai chống ồn?",
+          "2. Đánh giá chất âm các dòng loa Marshall và JBL"
+        ],
+        "summary": "Khám phá thế giới âm thanh sống động với các thiết bị tai nghe, loa chính hãng từ Sony, Apple, JBL, Marshall với chất âm đỉnh cao.",
+        "related_news": []
+      }
+    },
+    {
+      "id": "phu-kien",
+      "slug": "phu-kien",
+      "name": "Phụ kiện tổng hợp",
+      "url": "https://hoanghamobile.com/phu-kien",
+      "brands": [
+        { "name": "Anker", "featured": true },
+        { "name": "Ugreen", "featured": true },
+        { "name": "Baseus", "featured": true },
+        { "name": "Innostyle", "featured": false },
+        { "name": "Pisen", "featured": false },
+        { "name": "Spigen", "featured": false },
+        { "name": "UAG", "featured": false },
+        { "name": "Imou (Camera)", "featured": true },
+        { "name": "Ezviz (Camera)", "featured": true }
+      ],
+      "price_ranges": [
+        { "label": "Dưới 200 nghìn", "min": 0, "max": 200000, "count": 45 },
+        { "label": "200k đến 500k", "min": 200000, "max": 500000, "count": 62 },
+        { "label": "500k đến 1 triệu", "min": 500000, "max": 1000000, "count": 38 },
+        { "label": "Trên 1 triệu", "min": 1000000, "max": 10000000, "count": 29 }
+      ],
+      "filter_specs": {
+        "accessory_categories": [
+          "Củ sạc nhanh (20W, 30W, 65W GaN, 100W, 140W)",
+          "Cáp sạc Type-C, Lightning, MFi",
+          "Pin sạc dự phòng (10.000mAh, 20.000mAh, MagSafe không dây)",
+          "Ốp lưng & Kính cường lực chống nhìn trộm",
+          "Camera an ninh xoay 360 độ (Đàm thoại 2 chiều, Xem đêm có màu)",
+          "Router Wi-Fi 6 & Thiết bị mạng",
+          "Chuột & Bàn phím máy tính"
+        ]
+      },
+      "spec_badges_on_image": [
+        { "type": "watt", "icon": "fa-bolt", "examples": ["65W GaN", "20W PD"] },
+        { "type": "capacity", "icon": "fa-battery-full", "examples": ["10.000 mAh", "20.000 mAh"] }
+      ],
+      "sample_products": [
+        {
+          "name": "Củ sạc nhanh Anker 511 Nano 3 30W - A2147",
+          "sale_price": 290000,
+          "original_price": 420000,
+          "discount_percent": 31,
+          "member_price": 280000,
+          "stock_status": "Sẵn hàng",
+          "image_badges": ["30W GaN", "Chân gập gọn", "Bảo hành 18 tháng"],
+          "bank_promo": "Mua kèm điện thoại giảm thêm 10%"
+        }
+      ],
+      "seo_content": {
+        "title": "Thông tin thêm về Phụ kiện công nghệ",
+        "table_of_contents": [
+          "1. Top các phụ kiện không thể thiếu khi mua smartphone mới",
+          "2. Cách chọn củ sạc nhanh an toàn chống chai pin"
+        ],
+        "summary": "Hệ thống phụ kiện chính hãng đa dạng từ củ cáp sạc, pin dự phòng đến camera an ninh và thiết bị smart home với chế độ bảo hành 1 đổi 1 trong 12 - 18 tháng.",
+        "related_news": []
+      }
+    }
+  ]
+}
+;

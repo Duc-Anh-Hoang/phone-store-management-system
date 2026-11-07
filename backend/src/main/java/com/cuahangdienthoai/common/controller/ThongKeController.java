@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/thongke")
+@RequestMapping({"/api/thongke", "/api/dashboard"})
 @RequiredArgsConstructor
 public class ThongKeController {
 
@@ -29,7 +29,7 @@ public class ThongKeController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/kenhban")
+    @GetMapping({"/kenhban", "/channels"})
     public ResponseEntity<List<Map<String, Object>>> getDoanhThuKenhBan() {
         String sql = "SELECT ISNULL(h.KENHBAN, 'khac') AS KENHBAN, COUNT(*) AS SOHOADON, " +
                      "ISNULL(SUM(h.TONGTIEN), 0) AS TONGTIEN, ISNULL(SUM(h.TIENGIAMGIA), 0) AS TIENGIAMGIA, " +
@@ -38,7 +38,7 @@ public class ThongKeController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/nhomhang")
+    @GetMapping({"/nhomhang", "/categories"})
     public ResponseEntity<List<Map<String, Object>>> getDoanhThuNhomHang() {
         String sql = "SELECT ng.MANHOM, ng.TENNHOM, ISNULL(SUM(v.SLBAN), 0) AS SOLUONGBAN, " +
                      "ISNULL(SUM(v.THANHTIEN_DONG), 0) AS DOANHTHU " +
@@ -49,7 +49,7 @@ public class ThongKeController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/tonghop")
+    @GetMapping({"/tonghop", "/summary"})
     public ResponseEntity<Map<String, Object>> getTongHop() {
         Long tongHoaDon = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM dbo.HoaDon", Long.class);
         BigDecimal tongDoanhThu = jdbcTemplate.queryForObject("SELECT ISNULL(SUM(THANHTIEN), 0) FROM dbo.HoaDon", BigDecimal.class);
@@ -72,6 +72,27 @@ public class ThongKeController {
             mayBaoHanh = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM dbo.PhieuTiepNhanBaoHanh WHERE TRANGTHAI = 'dang_sua'", Long.class);
         } catch (Exception ignored) {}
 
+        BigDecimal doanhThuTaiQuay = BigDecimal.ZERO;
+        Long soHoaDonTaiQuay = 0L;
+        try {
+            doanhThuTaiQuay = jdbcTemplate.queryForObject("SELECT ISNULL(SUM(THANHTIEN), 0) FROM dbo.HoaDon WHERE KENHBAN = 'tai_quay'", BigDecimal.class);
+            soHoaDonTaiQuay = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM dbo.HoaDon WHERE KENHBAN = 'tai_quay'", Long.class);
+        } catch (Exception ignored) {}
+
+        BigDecimal doanhThuOnline = BigDecimal.ZERO;
+        Long soHoaDonOnline = 0L;
+        try {
+            doanhThuOnline = jdbcTemplate.queryForObject("SELECT ISNULL(SUM(THANHTIEN), 0) FROM dbo.HoaDon WHERE KENHBAN = 'online'", BigDecimal.class);
+            soHoaDonOnline = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM dbo.HoaDon WHERE KENHBAN = 'online'", Long.class);
+        } catch (Exception ignored) {}
+
+        BigDecimal tongTienHoanTra = BigDecimal.ZERO;
+        Long soDonHoanTra = 0L;
+        try {
+            tongTienHoanTra = jdbcTemplate.queryForObject("SELECT ISNULL(SUM(SOTIENHOAN), 0) FROM dbo.TraHang", BigDecimal.class);
+            soDonHoanTra = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM dbo.TraHang", Long.class);
+        } catch (Exception ignored) {}
+
         Map<String, Object> result = new HashMap<>();
         result.put("tongHoaDon", tongHoaDon != null ? tongHoaDon : 0L);
         result.put("tongDoanhThu", tongDoanhThu != null ? tongDoanhThu : BigDecimal.ZERO);
@@ -79,8 +100,18 @@ public class ThongKeController {
         result.put("tongMatHang", tongMatHang != null ? tongMatHang : 0L);
         result.put("tongDonOnline", tongDonOnline != null ? tongDonOnline : 0L);
         result.put("donChoDuyet", donChoDuyet != null ? donChoDuyet : 0L);
+        result.put("donOnlineChoXacNhan", donChoDuyet != null ? donChoDuyet : 0L);
         result.put("tongTonKho", tongTonKho != null ? tongTonKho : 0L);
         result.put("mayBaoHanh", mayBaoHanh != null ? mayBaoHanh : 0L);
+        result.put("soBaoHanhDangXuLy", mayBaoHanh != null ? mayBaoHanh : 0L);
+
+        result.put("doanhThuTaiQuay", doanhThuTaiQuay != null ? doanhThuTaiQuay : BigDecimal.ZERO);
+        result.put("soHoaDonTaiQuay", soHoaDonTaiQuay != null ? soHoaDonTaiQuay : 0L);
+        result.put("doanhThuOnline", doanhThuOnline != null ? doanhThuOnline : BigDecimal.ZERO);
+        result.put("soHoaDonOnline", soHoaDonOnline != null ? soHoaDonOnline : 0L);
+
+        result.put("tongTienHoanTra", tongTienHoanTra != null ? tongTienHoanTra : BigDecimal.ZERO);
+        result.put("soDonHoanTra", soDonHoanTra != null ? soDonHoanTra : 0L);
 
         return ResponseEntity.ok(result);
     }

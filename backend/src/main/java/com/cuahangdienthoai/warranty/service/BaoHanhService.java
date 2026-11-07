@@ -27,10 +27,11 @@ public class BaoHanhService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy bảo hành: " + maBH));
     }
 
-    public BaoHanhDTO getByIMEI(String maIMEI) {
-        return baoHanhRepository.findByImeiMaIMEI(maIMEI)
+    public BaoHanhDTO getByIMEI(String query) {
+        return baoHanhRepository.findByImeiMaIMEI(query)
+                .or(() -> baoHanhRepository.findByImeiSoIMEI(query))
                 .map(this::toDTO)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy bảo hành cho IMEI: " + maIMEI));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy bảo hành cho IMEI: " + query));
     }
 
     @Transactional
@@ -41,6 +42,17 @@ public class BaoHanhService {
     private BaoHanhDTO toDTO(BaoHanh e) {
         LocalDateTime ngayKT = e.getNgayBD() != null
                 ? e.getNgayBD().plusMonths(e.getThoiHanThang()) : null;
+        
+        Integer soNgayConLai = null;
+        String trangThai = "con_han";
+        if (ngayKT != null) {
+            long days = java.time.temporal.ChronoUnit.DAYS.between(java.time.LocalDate.now(), ngayKT.toLocalDate());
+            soNgayConLai = (int) days;
+            if (days < 0) {
+                trangThai = "het_han";
+            }
+        }
+
         return BaoHanhDTO.builder()
                 .maBH(e.getMaBH())
                 .soHD(e.getHoaDon().getSoHD())
@@ -54,6 +66,8 @@ public class BaoHanhService {
                 .ngayKT(ngayKT != null ? ngayKT.toString() : null)
                 .thoiHanThang(e.getThoiHanThang())
                 .dieuKien(e.getDieuKien())
+                .trangThai(trangThai)
+                .soNgayConLai(soNgayConLai)
                 .build();
     }
 }
